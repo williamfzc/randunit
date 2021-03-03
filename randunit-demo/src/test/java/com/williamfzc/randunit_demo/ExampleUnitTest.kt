@@ -2,7 +2,12 @@ package com.williamfzc.randunit_demo
 
 import org.junit.Test
 
-import org.junit.Assert.*
+import randoop.condition.SpecificationCollection
+import randoop.main.GenInputsAbstract
+import randoop.main.ThrowClassNameError
+import randoop.reflection.DefaultReflectionPredicate
+import randoop.reflection.OperationModel
+import randoop.reflection.VisibilityPredicate
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -12,6 +17,16 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+        val model = OperationModel.createModel(
+            VisibilityPredicate.PackageVisibilityPredicate(GenInputsAbstract.junit_package_name),
+            DefaultReflectionPredicate(),
+            GenInputsAbstract.omit_methods,
+            setOf<String>(),
+            setOf<String>(),
+            ThrowClassNameError(),
+            GenInputsAbstract.literals_file,
+            SpecificationCollection.create(GenInputsAbstract.specifications)
+        )
+        val operations = model.operations
     }
 }
