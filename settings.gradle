@@ -1,2 +1,3 @@
+include ':randunit'
 include ':randunit-demo'
 rootProject.name = "randunit"
