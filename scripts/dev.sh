@@ -6,11 +6,11 @@ cd ..
 echo `pwd`
 
 # compile sdk
-./gradlew clean randunit:assembleDebug
+./gradlew clean randunit-android:assembleDebug
 
 # compile demo
-cp -rf randunit/build/outputs/aar/randunit-debug.aar randunit-demo/libs/
+cp -rf randunit-android/build/outputs/aar/*.aar randunit-demo/libs/
 ./gradlew clean randunit-demo:assembleDebug
 
 # ok
-echo "ok"
+echo "ok :)"

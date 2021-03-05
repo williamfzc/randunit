@@ -17,17 +17,6 @@ import randoop.reflection.VisibilityPredicate
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        val model = OperationModel.createModel(
-            VisibilityPredicate.PackageVisibilityPredicate(GenInputsAbstract.junit_package_name),
-            DefaultReflectionPredicate(),
-            GenInputsAbstract.omit_methods,
-            setOf<String>(),
-            setOf<String>(),
-            ThrowClassNameError(),
-            GenInputsAbstract.literals_file,
-            SpecificationCollection.create(GenInputsAbstract.specifications)
-        )
-        val operations = model.operations
-        println("operation: $operations")
+
     }
 }

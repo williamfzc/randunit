@@ -1,54 +1,13 @@
 plugins {
-    id 'com.android.library'
-    id 'kotlin-android'
+    id 'java-library'
+    id 'kotlin'
 }
 
-android {
-    compileSdkVersion 30
-
-    defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_7
+    targetCompatibility = JavaVersion.VERSION_1_7
 }
 
 dependencies {
-    // for randoop
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "com.google.code.gson:gson:2.+"
-    // https://mvnrepository.com/artifact/org.plumelib/bcel-util
-    implementation 'org.plumelib:bcel-util:1.1.10'
-    // https://mvnrepository.com/artifact/org.plumelib/options
-    implementation 'org.plumelib:options:1.0.5'
-    // https://mvnrepository.com/artifact/org.plumelib/plume-util
-    implementation 'org.plumelib:plume-util:1.4.1'
-    // https://mvnrepository.com/artifact/org.plumelib/reflection-util
-    implementation 'org.plumelib:reflection-util:1.0.3'
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.core:core-ktx:1.2.0'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'com.google.android.material:material:1.1.0'
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
