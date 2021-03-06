@@ -5,7 +5,7 @@ cd $SHELL_FOLDER
 cd ..
 echo `pwd`
 
-./gradlew clean randunit-demo:assembleDebug randunit-demo:test
+./gradlew ktlintFormat clean randunit-demo:assembleDebug randunit-demo:test
 
 # ok
 echo "ok :)"

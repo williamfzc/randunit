@@ -1,6 +1,5 @@
 package com.williamfzc.randunit.helper
 
-
 object TypeHelper {
     var builtinTypeFilter = setOf("java.", "android.")
 

@@ -1,6 +1,7 @@
 package com.williamfzc.randunit.operations
 
-import java.util.*
+import java.util.LinkedList
+import java.util.Queue
 
 open class OperationManager {
     private var operations: Queue<AbstractOperation> = LinkedList<AbstractOperation>()
