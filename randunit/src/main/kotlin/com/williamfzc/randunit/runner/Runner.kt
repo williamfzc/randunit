@@ -6,9 +6,14 @@ import org.jeasy.random.EasyRandom
 import org.jeasy.random.ObjectCreationException
 import java.lang.Exception
 import java.lang.reflect.Modifier
+import java.util.logging.Logger
 
 class Runner {
-    private val easyRandom = EasyRandom()
+    companion object {
+        private val easyRandom = EasyRandom()
+        private val logger = Logger.getLogger("Runner")
+    }
+
 
     fun run(operation: AbstractOperation, operationManager: OperationManager) {
         methodLoop@ for (eachMethod in operation.type.declaredMethods) {
@@ -38,11 +43,11 @@ class Runner {
             }
 
             // exec
-            println("invoking: $eachMethod")
+            logger.info("invoking: $eachMethod")
             try {
                 eachMethod.invoke(caller, *args.toTypedArray())
             } catch (e: Exception) {
-                println("invoke failed: $e")
+                logger.warning("invoke failed: $e")
             }
         }
     }
@@ -53,6 +58,6 @@ class Runner {
             run(op, operationManager)
             op = operationManager.poll()
         }
-        println("run finished")
+        logger.info("run finished")
     }
 }
