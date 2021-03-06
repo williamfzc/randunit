@@ -49,6 +49,14 @@ class MethodModel(
                 return null
             }
         }
-        return Statement(method, generateCaller(), args.toList())
+        // gen caller
+        val caller = try {
+            generateCaller()
+        } catch (e: Exception) {
+            logger.warning("gen caller failed: $e")
+            return null
+        }
+
+        return Statement(method, caller, args.toList())
     }
 }
