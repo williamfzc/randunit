@@ -1,44 +1,42 @@
 package com.williamfzc.randunit.runner
 
+import com.williamfzc.randunit.helper.MethodHelper
+import com.williamfzc.randunit.helper.TypeHelper
 import com.williamfzc.randunit.operations.AbstractOperation
 import com.williamfzc.randunit.operations.OperationManager
-import org.jeasy.random.EasyRandom
 import org.jeasy.random.ObjectCreationException
 import java.lang.Exception
-import java.lang.reflect.Modifier
 import java.util.logging.Logger
 
 class Runner {
     companion object {
-        private val easyRandom = EasyRandom()
         private val logger = Logger.getLogger("Runner")
     }
 
-
-    fun run(operation: AbstractOperation, operationManager: OperationManager) {
+    private fun run(operation: AbstractOperation, operationManager: OperationManager) {
         methodLoop@ for (eachMethod in operation.type.declaredMethods) {
-            if (!eachMethod.isAccessible)
-                eachMethod.isAccessible = true
+            MethodHelper.forceMethodAccessible(eachMethod)
 
+            // static or not
             val caller =
-                if (Modifier.isStatic(eachMethod.modifiers))
+                if (MethodHelper.isMethodStatic(eachMethod))
                     operation.type
                 else
                     operation.getInstance()
 
-            // args
+            // mock args
             val argTypes = eachMethod.parameterTypes
             val args = mutableListOf<Any>()
             for (eachType in argTypes) {
                 try {
-                    args.add(easyRandom.nextObject(eachType))
+                    args.add(TypeHelper.mock(eachType))
                 } catch (e: ObjectCreationException) {
                     e.printStackTrace()
                     continue@methodLoop
                 }
 
-                // not built-in type
-                if (!eachType.canonicalName.startsWith("java.") && !eachType.canonicalName.startsWith("android."))
+                // add types in parameters for recursively query
+                if (!TypeHelper.isBuiltinType(eachType))
                     operationManager.addClazz(eachType)
             }
 
