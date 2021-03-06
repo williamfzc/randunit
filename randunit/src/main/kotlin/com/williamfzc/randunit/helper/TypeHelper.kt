@@ -16,4 +16,12 @@ object TypeHelper {
                 return true
         return false
     }
+
+    fun isNullType(t: Class<*>): Boolean {
+        return t == Void::class.java
+    }
+
+    fun isValidType(t: Class<*>): Boolean {
+        return !isBuiltinType(t).and(!isNullType(t))
+    }
 }
