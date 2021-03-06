@@ -35,6 +35,10 @@ android {
     }
 }
 
+ktlint {
+    disabledRules = ["no-wildcard-imports"]
+}
+
 dependencies {
     // main sdk
     embed(project(':randunit'))
@@ -44,4 +48,5 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.2.0'
 
     testImplementation 'junit:junit:4.+'
+    testImplementation project(':randunit')
 }

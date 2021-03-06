@@ -20,7 +20,7 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         val opm = OperationManager()
-        opm.addClazz(AAA::class.java)
+        opm.addClazz(Runner::class.java)
         Runner().runAll(opm)
     }
 }

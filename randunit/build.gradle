@@ -9,6 +9,10 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+ktlint {
+    disabledRules = ["no-wildcard-imports"]
+}
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'org.jeasy:easy-random-core:4.3.0'
