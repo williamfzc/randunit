@@ -10,7 +10,8 @@ import java.util.logging.Logger
 // desc this method
 class MethodModel(
     private val callerOperation: AbstractOperation,
-    private val method: Method
+    private val method: Method,
+    private val mockModel: MockModel
 ) {
     private val parametersTypes = method.parameterTypes
 
@@ -37,7 +38,7 @@ class MethodModel(
         val args = mutableListOf<Any>()
         for (eachType in parametersTypes) {
             try {
-                args.add(TypeHelper.mock(eachType))
+                args.add(mockModel.mock(eachType))
             } catch (e: ObjectCreationException) {
                 logger.warning("object mock failed: $eachType")
                 return null

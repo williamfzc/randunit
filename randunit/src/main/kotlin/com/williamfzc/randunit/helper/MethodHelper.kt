@@ -8,10 +8,6 @@ object MethodHelper {
         return Modifier.isStatic(method.modifiers)
     }
 
-    fun isMethodAccessible(method: Method): Boolean {
-        return method.isAccessible
-    }
-
     fun forceMethodAccessible(method: Method) {
         method.isAccessible = true
     }
