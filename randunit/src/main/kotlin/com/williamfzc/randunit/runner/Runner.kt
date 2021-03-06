@@ -6,10 +6,11 @@ import com.williamfzc.randunit.models.MockModel
 import com.williamfzc.randunit.operations.AbstractOperation
 import com.williamfzc.randunit.operations.OperationManager
 import java.lang.Exception
+import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.util.logging.Logger
 
-class Runner(private val cfg: RunnerConfig = RunnerConfig()) {
+class Runner(private val cfg: RunnerConfig = RunnerConfig()) : RunnerHookLayer {
     companion object {
         private val logger = Logger.getLogger("Runner")
     }
@@ -23,7 +24,9 @@ class Runner(private val cfg: RunnerConfig = RunnerConfig()) {
         }
 
         for (eachMethod in operation.type.declaredMethods) {
+            beforeMethod(eachMethod, operation, operationManager)
             runMethod(eachMethod, operation, operationManager)
+            afterMethod(eachMethod, operation, operationManager)
         }
     }
 
@@ -44,9 +47,14 @@ class Runner(private val cfg: RunnerConfig = RunnerConfig()) {
             stat?.run {
                 try {
                     logger.info("invoking: $method")
+                    beforeExec(this)
                     exec()
-                } catch (e: Exception) {
+                    afterExec(this)
+                } catch (e: InvocationTargetException) {
                     logger.warning("invoke failed: $e")
+                } catch (e: Exception) {
+                    logger.warning("unknown error happened")
+                    e.printStackTrace()
                 }
             }
         }
@@ -55,7 +63,11 @@ class Runner(private val cfg: RunnerConfig = RunnerConfig()) {
     fun runAll(operationManager: OperationManager) {
         var op = operationManager.poll()
         while (null != op) {
+            beforeOperation(op, operationManager)
             run(op, operationManager)
+            afterOperation(op, operationManager)
+
+            // get the next one
             op = operationManager.poll()
         }
         logger.info("run finished")
