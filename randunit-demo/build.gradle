@@ -29,11 +29,25 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+        unitTests.all {
+            systemProperty 'robolectric.enabledSdks', '28'
+        }
+    }
 }
 
 dependencies {
     // for sdk
-    testImplementation fileTree(dir: 'libs', include: ['*.aar'])
+//    testImplementation (fileTree(dir: 'libs', include: ['*.aar']))
+    testImplementation project(":randunit")
+    testImplementation project(":randunit-android")
+    testImplementation 'org.jeasy:easy-random-core:4.3.0'
+    testImplementation 'org.robolectric:robolectric:4.4'
+
+//    testImplementation project(":randunit-android")
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.2.0'

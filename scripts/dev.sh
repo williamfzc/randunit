@@ -5,12 +5,7 @@ cd $SHELL_FOLDER
 cd ..
 echo `pwd`
 
-# compile sdk
-./gradlew clean randunit-android:assembleDebug
-
-# compile demo
-cp -rf randunit-android/build/outputs/aar/*.aar randunit-demo/libs/
-./gradlew clean randunit-demo:assembleDebug
+./gradlew clean randunit-demo:assembleDebug randunit-demo:test
 
 # ok
 echo "ok :)"

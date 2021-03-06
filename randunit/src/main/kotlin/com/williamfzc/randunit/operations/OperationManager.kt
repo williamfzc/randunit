@@ -2,16 +2,16 @@ package com.williamfzc.randunit.operations
 
 import java.util.*
 
-class OperationManager {
-    private var operations = LinkedList<AbstractOperation>()
+open class OperationManager {
+    private var operations: Queue<AbstractOperation> = LinkedList<AbstractOperation>()
 
-    fun append(op: AbstractOperation) {
+    fun add(op: AbstractOperation) {
         operations.add(op)
     }
 
-    fun popFirst(): AbstractOperation? {
+    fun poll(): AbstractOperation? {
         return operations.poll()
     }
 
-    fun addClazz(newClazz: Class<*>) = append(NormalOperation.of(newClazz))
+    open fun addClazz(newClazz: Class<*>) = add(NormalOperation.of(newClazz))
 }
