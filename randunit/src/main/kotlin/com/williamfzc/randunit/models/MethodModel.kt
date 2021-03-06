@@ -4,6 +4,7 @@ import com.williamfzc.randunit.helper.MethodHelper
 import com.williamfzc.randunit.helper.TypeHelper
 import com.williamfzc.randunit.operations.AbstractOperation
 import org.jeasy.random.ObjectCreationException
+import java.lang.Exception
 import java.lang.reflect.Method
 import java.util.logging.Logger
 
@@ -35,8 +36,12 @@ class MethodModel(
     }
 
     fun generateStatement(): Statement? {
-        val args = mutableListOf<Any>()
+        val args = mutableListOf<Any?>()
         for (eachType in parametersTypes) {
+            if (TypeHelper.isNullType(eachType)) {
+                args.add(null)
+                continue
+            }
             try {
                 args.add(mockModel.mock(eachType))
             } catch (e: ObjectCreationException) {
