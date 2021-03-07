@@ -11,4 +11,11 @@ object MethodHelper {
     fun forceMethodAccessible(method: Method) {
         method.isAccessible = true
     }
+
+    fun isBuiltinMethod(method: Method): Boolean {
+        for (eachPrefix in TypeHelper.builtinTypeFilter)
+            if (method.toGenericString().startsWith(eachPrefix))
+                return true
+        return false
+    }
 }
