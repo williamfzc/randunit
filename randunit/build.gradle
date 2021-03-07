@@ -16,6 +16,13 @@ ktlint {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'org.jeasy:easy-random-core:4.3.0'
+    // for generating junit4 format cases
+    implementation 'junit:junit:4.12'
+    implementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    implementation 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 
-    testImplementation 'junit:junit:4.+'
+    // for inner unittest
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 }

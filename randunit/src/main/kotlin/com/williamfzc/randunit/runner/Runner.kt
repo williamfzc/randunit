@@ -11,7 +11,7 @@ import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.util.logging.Logger
 
-class Runner(private val cfg: RunnerConfig = RunnerConfig()) : RunnerHookLayer {
+open class Runner(private val cfg: RunnerConfig = RunnerConfig()) : RunnerHookLayer {
     companion object {
         private val logger = Logger.getLogger("Runner")
     }
@@ -57,7 +57,8 @@ class Runner(private val cfg: RunnerConfig = RunnerConfig()) : RunnerHookLayer {
                 try {
                     logger.info("invoking: $method")
                     beforeExec(this)
-                    exec()
+                    if (!cfg.dryRun)
+                        exec()
                     afterExec(this)
                 } catch (e: InvocationTargetException) {
                     logger.warning("invoke failed: $e")
