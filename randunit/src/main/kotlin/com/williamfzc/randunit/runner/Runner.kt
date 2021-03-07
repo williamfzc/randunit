@@ -1,6 +1,7 @@
 package com.williamfzc.randunit.runner
 
 import com.williamfzc.randunit.helper.MethodHelper
+import com.williamfzc.randunit.helper.TypeHelper
 import com.williamfzc.randunit.models.MethodModel
 import com.williamfzc.randunit.models.MockModel
 import com.williamfzc.randunit.operations.AbstractOperation
@@ -17,8 +18,16 @@ class Runner(private val cfg: RunnerConfig = RunnerConfig()) : RunnerHookLayer {
 
     var mockModel: MockModel = MockModel(cfg.mockParameters)
 
+    private fun verifyOperation(operation: AbstractOperation): Boolean {
+        operation.type.let {
+            return TypeHelper.isValidType(it).and(
+                !TypeHelper.hasTypePrefix(it, cfg.filterType)
+            )
+        }
+    }
+
     private fun run(operation: AbstractOperation, operationManager: OperationManager) {
-        if (!operation.isValid()) {
+        if (!verifyOperation(operation)) {
             logger.info("operation ${operation.type} is invalid, skipped")
             return
         }
