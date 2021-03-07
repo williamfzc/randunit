@@ -3,7 +3,6 @@ package com.williamfzc.randunit.models
 import com.williamfzc.randunit.helper.MethodHelper
 import com.williamfzc.randunit.helper.TypeHelper
 import com.williamfzc.randunit.operations.AbstractOperation
-import org.jeasy.random.ObjectCreationException
 import java.lang.Exception
 import java.lang.reflect.Method
 import java.util.logging.Logger
@@ -20,11 +19,16 @@ class MethodModel(
         private val logger = Logger.getLogger("MethodModel")
     }
 
-    private fun generateCaller(): Any {
-        // todo: singleton?
-        if (MethodHelper.isMethodStatic(method))
-            return callerOperation.type
-        return callerOperation.getInstance()
+    private fun generateCaller(): Any? {
+        try {
+            if (MethodHelper.isMethodStatic(method))
+                return callerOperation.type
+            return callerOperation.getInstance()
+        } catch (e: Exception) {
+            // failed to create a real caller
+            // use the mock one
+            return mockModel.mock(callerOperation.type)
+        }
     }
 
     fun getRelativeTypes(): Set<Class<*>> {
@@ -46,25 +50,16 @@ class MethodModel(
 //            }
 
             // easy-random can not mock java.lang.Class
-            // which returns a null always
+            // which returns a `null` always
             if (eachType.canonicalName == "java.lang.Class")
                 return null
 
-            try {
-                args.add(mockModel.mock(eachType))
-            } catch (e: ObjectCreationException) {
-                logger.warning("object mock failed: $eachType")
-                return null
-            }
+            args.add(mockModel.mock(eachType))
         }
         // gen caller
-        val caller = try {
-            generateCaller()
-        } catch (e: Exception) {
-            logger.warning("gen caller failed: $e")
-            return null
+        generateCaller()?.let { caller ->
+            return Statement(method, caller, args.toList())
         }
-
-        return Statement(method, caller, args.toList())
+        return null
     }
 }
