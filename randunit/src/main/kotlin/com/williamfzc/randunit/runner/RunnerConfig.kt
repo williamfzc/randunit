@@ -4,8 +4,9 @@ import org.jeasy.random.EasyRandomParameters
 
 data class RunnerConfig(
     val mockParameters: EasyRandomParameters? = null,
-    val batchSize: Int = 5,
+    val batchSize: Int = 2,
     val filterType: Set<String> = setOf(),
     val dryRun: Boolean = false,
-    val statementLimit: Int = 1000
+    val statementLimit: Int = 1000,
+    val includePrivateMethod: Boolean = false
 )

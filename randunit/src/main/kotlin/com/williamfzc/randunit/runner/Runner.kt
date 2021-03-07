@@ -57,7 +57,8 @@ open class Runner(private val cfg: RunnerConfig = RunnerConfig()) : RunnerHookLa
         operation: AbstractOperation,
         operationManager: OperationManager
     ) {
-        MethodHelper.forceMethodAccessible(method)
+        if (cfg.includePrivateMethod)
+            MethodHelper.forceMethodAccessible(method)
         val model = MethodModel(operation, method, mockModel)
 
         // append some rel types
