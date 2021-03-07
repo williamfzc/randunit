@@ -38,10 +38,18 @@ class MethodModel(
     fun generateStatement(): Statement? {
         val args = mutableListOf<Any?>()
         for (eachType in parametersTypes) {
-            if (TypeHelper.isNullType(eachType)) {
-                args.add(null)
-                continue
-            }
+
+            // todo: non-null check and attack
+//            if (!eachType.isAnnotationPresent(NotNull::class.java)) {
+//                args.add(null)
+//                continue
+//            }
+
+            // easy-random can not mock java.lang.Class
+            // which returns a null always
+            if (eachType.canonicalName == "java.lang.Class")
+                return null
+
             try {
                 args.add(mockModel.mock(eachType))
             } catch (e: ObjectCreationException) {
