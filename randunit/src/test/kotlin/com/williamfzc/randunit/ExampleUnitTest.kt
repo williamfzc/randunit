@@ -4,10 +4,12 @@ import com.williamfzc.randunit.models.Statement
 import com.williamfzc.randunit.operations.OperationManager
 import com.williamfzc.randunit.runner.Runner
 import com.williamfzc.randunit.runner.RunnerConfig
+import io.mockk.MockKException
 import org.junit.Test
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.TestFactory
+import java.lang.Exception
 import java.util.stream.Stream
 import kotlin.collections.ArrayList
 
@@ -22,7 +24,6 @@ class AAA {
 }
 
 class BBB
-
 
 class ExampleUnitTest {
     @Test
@@ -40,7 +41,12 @@ class ExampleUnitTest {
             override fun beforeExec(statement: Statement) {
                 super.beforeExec(statement)
                 val dynamicTest: DynamicTest = dynamicTest("hahah") {
-                    statement.exec()
+                    try {
+                        statement.exec()
+                    } catch (e: Exception) {
+                        if ((e.cause !is MockKException).and(e.cause !is UninitializedPropertyAccessException))
+                            throw e
+                    }
                 }
                 dynamicTests.add(dynamicTest)
             }
