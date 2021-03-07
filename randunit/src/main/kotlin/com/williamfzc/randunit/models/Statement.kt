@@ -11,9 +11,14 @@ class Statement(
     companion object {
         private val logger = Logger.getLogger("Statement")
     }
+
     // todo: statement is a data
     fun exec() {
         logger.info("invoking method $method with $parameters")
         method.invoke(caller, *parameters.toTypedArray())
+    }
+
+    fun getName(): String {
+        return "statement_${caller}_${method}_with_$parameters"
     }
 }
