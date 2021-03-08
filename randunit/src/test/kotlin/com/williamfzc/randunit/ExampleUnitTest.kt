@@ -29,6 +29,7 @@ class ExampleUnitTest {
 
     @TestFactory
     fun withJunit(): Stream<DynamicTest>? {
-        return RandUnit.runWithTestFactory(setOf(Runner::class.java))
+        val clsSet = setOf(Runner::class.java)
+        return RandUnit.runWithTestFactory(clsSet)
     }
 }
