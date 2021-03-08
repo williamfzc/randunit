@@ -9,7 +9,6 @@ import com.williamfzc.randunit.models.MockModel
 import com.williamfzc.randunit.operations.AbstractOperation
 import com.williamfzc.randunit.operations.OperationManager
 import java.lang.Exception
-import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.util.logging.Logger
 
@@ -77,22 +76,14 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
         for (eachRelType in model.getRelativeTypes())
             operationManager.addClazz(eachRelType)
 
-        for (i in 1..cfg.batchSize) {
-            val stat = model.generateStatement()
-            statementCount++
-            stat?.run {
-                try {
-                    logger.info("invoking: $method")
-                    beforeExec(this)
-                    if (!cfg.dryRun)
-                        exec()
-                    afterExec(this)
-                } catch (e: InvocationTargetException) {
-                    logger.warning("invoke failed: $e")
-                } catch (e: Exception) {
-                    logger.warning("unknown error happened: $e")
-                    e.printStackTrace()
-                }
+        val stat = model.generateStatement()
+        statementCount++
+        stat?.run {
+            try {
+                handle(this)
+            } catch (e: Exception) {
+                logger.warning("unknown error happened: $e")
+                e.printStackTrace()
             }
         }
     }

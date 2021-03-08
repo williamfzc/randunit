@@ -12,7 +12,6 @@ import java.util.stream.Stream
 abstract class RandUnitBase {
     abstract fun getOperationManager(): OperationManager
 
-    // todo: need more config
     fun runWithTestFactory(
         targetClasses: Set<Class<*>>,
         cfg: ScannerConfig? = null
@@ -20,8 +19,7 @@ abstract class RandUnitBase {
         val dynamicTests: MutableList<DynamicTest> = ArrayList()
 
         class CustomScanner(cfg: ScannerConfig) : Scanner(cfg) {
-            override fun beforeExec(statement: Statement) {
-                super.beforeExec(statement)
+            override fun handle(statement: Statement) {
                 val dynamicTest: DynamicTest = DynamicTest.dynamicTest(statement.getName()) {
                     try {
                         statement.exec()
@@ -35,7 +33,6 @@ abstract class RandUnitBase {
         }
 
         val finalCfg = cfg ?: ScannerConfig()
-        finalCfg.dryRun = true
 
         val opm = getOperationManager()
         for (eachClazz in targetClasses)

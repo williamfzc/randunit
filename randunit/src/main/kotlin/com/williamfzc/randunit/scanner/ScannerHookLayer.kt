@@ -32,13 +32,6 @@ interface ScannerHookLayer {
     ) {
     }
 
-    fun beforeExec(
-        statement: Statement
-    ) {
-    }
-
-    fun afterExec(
-        statement: Statement
-    ) {
+    fun handle(statement: Statement) {
     }
 }
