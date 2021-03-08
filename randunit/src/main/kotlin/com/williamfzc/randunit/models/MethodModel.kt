@@ -1,7 +1,7 @@
 package com.williamfzc.randunit.models
 
-import com.williamfzc.randunit.helper.MethodHelper
-import com.williamfzc.randunit.helper.TypeHelper
+import com.williamfzc.randunit.helper.isStatic
+import com.williamfzc.randunit.helper.isValidType
 import com.williamfzc.randunit.operations.AbstractOperation
 import java.lang.Exception
 import java.lang.reflect.Method
@@ -20,13 +20,18 @@ class MethodModel(
     }
 
     private fun generateCaller(): Any? {
+        // todo: caller only (maybe) be accessed inside test runner
+        // so this method should be called inside TestCase
+        // parameters too!!
         try {
-            if (MethodHelper.isMethodStatic(method))
+            if (method.isStatic())
                 return callerOperation.type
             return callerOperation.getInstance()
         } catch (e: Exception) {
             // failed to create a real caller
             // use the mock one
+            logger.warning("generate caller $callerOperation failed, use the mock one")
+            e.printStackTrace()
             return mockModel.mock(callerOperation.type)
         }
     }
@@ -34,7 +39,7 @@ class MethodModel(
     fun getRelativeTypes(): Set<Class<*>> {
         val typeSet = parametersTypes.toMutableSet()
         val returnType = method.returnType
-        if (TypeHelper.isValidType(returnType))
+        if (returnType.isValidType())
             typeSet.add(returnType)
         return typeSet
     }

@@ -12,9 +12,11 @@ class Statement(
         private val logger = Logger.getLogger("Statement")
     }
 
-    // todo: statement is a data
+    // todo: statement is a data model
+    // should contain types only (and how to get their instances
+    // values will be generated when exec() called
     fun exec() {
-        logger.info("invoking method $method with $parameters")
+        logger.info("$caller invoking method $method with $parameters")
         method.invoke(caller, *parameters.toTypedArray())
     }
 

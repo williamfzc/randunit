@@ -3,19 +3,13 @@ package com.williamfzc.randunit.helper
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
-object MethodHelper {
-    fun isMethodStatic(method: Method): Boolean {
-        return Modifier.isStatic(method.modifiers)
-    }
+fun Method.isStatic(): Boolean = Modifier.isStatic(this.modifiers)
 
-    fun forceMethodAccessible(method: Method) {
-        method.isAccessible = true
-    }
-
-    fun isBuiltinMethod(method: Method): Boolean {
-        for (eachPrefix in TypeHelper.builtinTypeFilter)
-            if (method.toGenericString().startsWith(eachPrefix))
-                return true
-        return false
-    }
+fun Method.isBuiltin(): Boolean {
+    for (eachPrefix in BUILTIN_TYPE_PREFIX_FILTER)
+        if (this.toGenericString().startsWith(eachPrefix))
+            return true
+    return false
 }
+
+fun Method.isPrivateOrProtected(): Boolean = this::class.java.isPrivateOrProtected()

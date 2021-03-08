@@ -1,7 +1,9 @@
 package com.williamfzc.randunit.runner
 
-import com.williamfzc.randunit.helper.MethodHelper
-import com.williamfzc.randunit.helper.TypeHelper
+import com.williamfzc.randunit.helper.hasTypePrefix
+import com.williamfzc.randunit.helper.isBuiltin
+import com.williamfzc.randunit.helper.isPrivateOrProtected
+import com.williamfzc.randunit.helper.isValidType
 import com.williamfzc.randunit.models.MethodModel
 import com.williamfzc.randunit.models.MockModel
 import com.williamfzc.randunit.operations.AbstractOperation
@@ -22,15 +24,24 @@ open class Runner(private val cfg: RunnerConfig = RunnerConfig()) : RunnerHookLa
 
     private fun verifyOperation(operation: AbstractOperation): Boolean {
         operation.type.let {
-            return TypeHelper.isValidType(it).and(
-                !TypeHelper.hasTypePrefix(it, cfg.filterType)
+            return it.isValidType().and(
+                !it.hasTypePrefix(cfg.filterType)
                     .and(!opHistory.contains(operation.getId()))
             )
         }
     }
 
     private fun verifyMethod(method: Method): Boolean {
-        return !MethodHelper.isBuiltinMethod(method)
+        if (method.isBuiltin())
+            return false
+
+        // exclude protected and private methods
+        method.isAccessible = true
+        if (method.isPrivateOrProtected()) {
+            if (!cfg.includePrivateMethod)
+                return false
+        }
+        return true
     }
 
     private fun run(operation: AbstractOperation, operationManager: OperationManager) {
@@ -42,8 +53,10 @@ open class Runner(private val cfg: RunnerConfig = RunnerConfig()) : RunnerHookLa
         logger.info("start running op: ${operation.type.canonicalName}")
 
         for (eachMethod in operation.type.declaredMethods) {
-            if (!verifyMethod(eachMethod))
+            if (!verifyMethod(eachMethod)) {
+                logger.info("verify method ${eachMethod.name} false, skipped")
                 continue
+            }
             beforeMethod(eachMethod, operation, operationManager)
             runMethod(eachMethod, operation, operationManager)
             afterMethod(eachMethod, operation, operationManager)
@@ -57,8 +70,6 @@ open class Runner(private val cfg: RunnerConfig = RunnerConfig()) : RunnerHookLa
         operation: AbstractOperation,
         operationManager: OperationManager
     ) {
-        if (cfg.includePrivateMethod)
-            MethodHelper.forceMethodAccessible(method)
         val model = MethodModel(operation, method, mockModel)
 
         // append some rel types
@@ -78,7 +89,7 @@ open class Runner(private val cfg: RunnerConfig = RunnerConfig()) : RunnerHookLa
                 } catch (e: InvocationTargetException) {
                     logger.warning("invoke failed: $e")
                 } catch (e: Exception) {
-                    logger.warning("unknown error happened")
+                    logger.warning("unknown error happened: $e")
                     e.printStackTrace()
                 }
             }
