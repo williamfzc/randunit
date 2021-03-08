@@ -1,12 +1,12 @@
 package com.williamfzc.randunit
 
 import com.williamfzc.randunit.operations.*
-import com.williamfzc.randunit.runner.Runner
+import com.williamfzc.randunit.scanner.Scanner
 import org.junit.Test
 
 class ExampleUnitTest {
     private val clzSet = setOf(
-        Runner::class.java,
+        Scanner::class.java,
         AndroidOperationManager::class.java,
         ActivityOperation::class.java,
         ServiceOperation::class.java,
@@ -23,6 +23,6 @@ class ExampleUnitTest {
             opm.addClazz(each)
         }
 
-        Runner().runAll(opm)
+        Scanner().scanAll(opm)
     }
 }

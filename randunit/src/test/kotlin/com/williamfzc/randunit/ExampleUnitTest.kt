@@ -1,7 +1,7 @@
 package com.williamfzc.randunit
 
 import com.williamfzc.randunit.operations.OperationManager
-import com.williamfzc.randunit.runner.Runner
+import com.williamfzc.randunit.scanner.Scanner
 import org.junit.Test
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
@@ -23,13 +23,13 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         val opm = OperationManager()
-        opm.addClazz(Runner::class.java)
-        Runner().runAll(opm)
+        opm.addClazz(Scanner::class.java)
+        Scanner().scanAll(opm)
     }
 
     @TestFactory
     fun withJunit(): Stream<DynamicTest>? {
-        val clsSet = setOf(Runner::class.java)
+        val clsSet = setOf(Scanner::class.java)
         return RandUnit.runWithTestFactory(clsSet)
     }
 }

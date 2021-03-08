@@ -1,11 +1,11 @@
-package com.williamfzc.randunit.runner
+package com.williamfzc.randunit.scanner
 
 import com.williamfzc.randunit.models.Statement
 import com.williamfzc.randunit.operations.AbstractOperation
 import com.williamfzc.randunit.operations.OperationManager
 import java.lang.reflect.Method
 
-interface RunnerHookLayer {
+interface ScannerHookLayer {
     fun beforeMethod(
         method: Method,
         operation: AbstractOperation,

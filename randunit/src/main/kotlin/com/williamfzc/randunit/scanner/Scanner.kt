@@ -1,4 +1,4 @@
-package com.williamfzc.randunit.runner
+package com.williamfzc.randunit.scanner
 
 import com.williamfzc.randunit.extensions.hasTypePrefix
 import com.williamfzc.randunit.extensions.isBuiltin
@@ -13,7 +13,8 @@ import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.util.logging.Logger
 
-open class Runner(private val cfg: RunnerConfig = RunnerConfig()) : RunnerHookLayer {
+open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
+    ScannerHookLayer {
     companion object {
         private val logger = Logger.getLogger("Runner")
     }
@@ -44,7 +45,7 @@ open class Runner(private val cfg: RunnerConfig = RunnerConfig()) : RunnerHookLa
         return true
     }
 
-    private fun run(operation: AbstractOperation, operationManager: OperationManager) {
+    private fun scan(operation: AbstractOperation, operationManager: OperationManager) {
         // todo: depth for avoiding recursively run
         if (!verifyOperation(operation)) {
             logger.info("operation ${operation.type} is invalid, skipped")
@@ -58,14 +59,14 @@ open class Runner(private val cfg: RunnerConfig = RunnerConfig()) : RunnerHookLa
                 continue
             }
             beforeMethod(eachMethod, operation, operationManager)
-            runMethod(eachMethod, operation, operationManager)
+            scanMethod(eachMethod, operation, operationManager)
             afterMethod(eachMethod, operation, operationManager)
         }
         logger.info("op $operation end")
         opHistory.add(operation.getId())
     }
 
-    private fun runMethod(
+    private fun scanMethod(
         method: Method,
         operation: AbstractOperation,
         operationManager: OperationManager
@@ -96,11 +97,11 @@ open class Runner(private val cfg: RunnerConfig = RunnerConfig()) : RunnerHookLa
         }
     }
 
-    fun runAll(operationManager: OperationManager) {
+    fun scanAll(operationManager: OperationManager) {
         var op = operationManager.poll()
         while (null != op) {
             beforeOperation(op, operationManager)
-            run(op, operationManager)
+            scan(op, operationManager)
             afterOperation(op, operationManager)
 
             // get the next one

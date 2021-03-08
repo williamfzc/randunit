@@ -2,8 +2,8 @@ package com.williamfzc.randunit
 
 import com.williamfzc.randunit.models.Statement
 import com.williamfzc.randunit.operations.OperationManager
-import com.williamfzc.randunit.runner.Runner
-import com.williamfzc.randunit.runner.RunnerConfig
+import com.williamfzc.randunit.scanner.Scanner
+import com.williamfzc.randunit.scanner.ScannerConfig
 import io.mockk.MockKException
 import org.junit.jupiter.api.DynamicTest
 import java.lang.Exception
@@ -15,11 +15,11 @@ abstract class RandUnitBase {
     // todo: need more config
     fun runWithTestFactory(
         targetClasses: Set<Class<*>>,
-        cfg: RunnerConfig? = null
+        cfg: ScannerConfig? = null
     ): Stream<DynamicTest> {
         val dynamicTests: MutableList<DynamicTest> = ArrayList()
 
-        class CustomRunner(cfg: RunnerConfig) : Runner(cfg) {
+        class CustomScanner(cfg: ScannerConfig) : Scanner(cfg) {
             override fun beforeExec(statement: Statement) {
                 super.beforeExec(statement)
                 val dynamicTest: DynamicTest = DynamicTest.dynamicTest(statement.getName()) {
@@ -34,13 +34,13 @@ abstract class RandUnitBase {
             }
         }
 
-        val finalCfg = cfg ?: RunnerConfig()
+        val finalCfg = cfg ?: ScannerConfig()
         finalCfg.dryRun = true
 
         val opm = getOperationManager()
         for (eachClazz in targetClasses)
             opm.addClazz(eachClazz)
-        CustomRunner(finalCfg).runAll(opm)
+        CustomScanner(finalCfg).scanAll(opm)
 
         return dynamicTests.stream()
     }

@@ -1,8 +1,8 @@
-package com.williamfzc.randunit.runner
+package com.williamfzc.randunit.scanner
 
 import com.williamfzc.randunit.mock.MockConfig
 
-data class RunnerConfig(
+data class ScannerConfig(
     var mockConfig: MockConfig = MockConfig(),
     var batchSize: Int = 2,
     var filterType: Set<String> = setOf(),

@@ -1,7 +1,7 @@
 package com.williamfzc.randunit_demo
 
 import com.williamfzc.randunit.operations.AndroidOperationManager
-import com.williamfzc.randunit.runner.Runner
+import com.williamfzc.randunit.scanner.Scanner
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -27,6 +27,6 @@ class ExampleUnitTest {
     fun addition_isCorrect() {
         val opm = AndroidOperationManager()
         opm.addClazz(MainActivity::class.java)
-        Runner().runAll(opm)
+        Scanner().scanAll(opm)
     }
 }
