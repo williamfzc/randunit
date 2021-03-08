@@ -12,32 +12,43 @@ import java.util.stream.Stream
 abstract class RandUnitBase {
     abstract fun getOperationManager(): OperationManager
 
+    fun collectStatements(
+        targetClasses: Set<Class<*>>,
+        cfg: ScannerConfig? = null
+    ): List<Statement> {
+        val ret = mutableListOf<Statement>()
+
+        class CustomScanner(cfg: ScannerConfig) : Scanner(cfg) {
+            override fun handle(statement: Statement) {
+                ret.add(statement)
+            }
+        }
+
+        val finalCfg = cfg ?: ScannerConfig()
+        val opm = getOperationManager()
+        for (eachClazz in targetClasses)
+            opm.addClazz(eachClazz)
+        CustomScanner(finalCfg).scanAll(opm)
+        return ret
+    }
+
     fun runWithTestFactory(
         targetClasses: Set<Class<*>>,
         cfg: ScannerConfig? = null
     ): Stream<DynamicTest> {
         val dynamicTests: MutableList<DynamicTest> = ArrayList()
 
-        class CustomScanner(cfg: ScannerConfig) : Scanner(cfg) {
-            override fun handle(statement: Statement) {
-                val dynamicTest: DynamicTest = DynamicTest.dynamicTest(statement.getName()) {
-                    try {
-                        statement.exec()
-                    } catch (e: Exception) {
-                        if ((e.cause !is MockKException).and(e.cause !is UninitializedPropertyAccessException))
-                            throw e
-                    }
+        collectStatements(targetClasses, cfg).forEach {
+            val dynamicTest: DynamicTest = DynamicTest.dynamicTest(it.getName()) {
+                try {
+                    it.exec()
+                } catch (e: Exception) {
+                    if ((e.cause !is MockKException).and(e.cause !is UninitializedPropertyAccessException))
+                        throw e
                 }
-                dynamicTests.add(dynamicTest)
             }
+            dynamicTests.add(dynamicTest)
         }
-
-        val finalCfg = cfg ?: ScannerConfig()
-
-        val opm = getOperationManager()
-        for (eachClazz in targetClasses)
-            opm.addClazz(eachClazz)
-        CustomScanner(finalCfg).scanAll(opm)
 
         return dynamicTests.stream()
     }
