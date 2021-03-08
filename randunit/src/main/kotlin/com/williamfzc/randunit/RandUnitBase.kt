@@ -7,9 +7,11 @@ import com.williamfzc.randunit.scanner.ScannerConfig
 import io.mockk.MockKException
 import org.junit.jupiter.api.DynamicTest
 import java.lang.Exception
+import java.util.logging.Logger
 import java.util.stream.Stream
 
 abstract class RandUnitBase {
+    private val logger = Logger.getLogger("RandUnit")
     abstract fun getOperationManager(): OperationManager
 
     fun collectStatements(
@@ -29,6 +31,7 @@ abstract class RandUnitBase {
         for (eachClazz in targetClasses)
             opm.addClazz(eachClazz)
         CustomScanner(finalCfg).scanAll(opm)
+        logger.info("scan finished, statements count: ${ret.size}")
         return ret
     }
 
@@ -39,15 +42,19 @@ abstract class RandUnitBase {
         val dynamicTests: MutableList<DynamicTest> = ArrayList()
 
         collectStatements(targetClasses, cfg).forEach {
-            val dynamicTest: DynamicTest = DynamicTest.dynamicTest(it.getName()) {
-                try {
-                    it.exec()
-                } catch (e: Exception) {
-                    if ((e.cause !is MockKException).and(e.cause !is UninitializedPropertyAccessException))
-                        throw e
+            // each statement will be executed at least twice
+            // make it a config soon
+            for (each in 1..2) {
+                val dynamicTest: DynamicTest = DynamicTest.dynamicTest(it.getName()) {
+                    try {
+                        it.exec()
+                    } catch (e: Exception) {
+                        if ((e.cause !is MockKException).and(e.cause !is UninitializedPropertyAccessException))
+                            throw e
+                    }
                 }
+                dynamicTests.add(dynamicTest)
             }
-            dynamicTests.add(dynamicTest)
         }
 
         return dynamicTests.stream()

@@ -15,7 +15,7 @@ import java.util.logging.Logger
 open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
     ScannerHookLayer {
     companion object {
-        private val logger = Logger.getLogger("Runner")
+        private val logger = Logger.getLogger("Scanner")
     }
 
     var mockModel: MockModel = MockModel(cfg.mockConfig)
@@ -50,7 +50,7 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
             logger.info("operation ${operation.type} is invalid, skipped")
             return
         }
-        logger.info("start running op: ${operation.type.canonicalName}")
+        logger.info("start scanning op: ${operation.type.canonicalName}")
 
         for (eachMethod in operation.type.declaredMethods) {
             if (!verifyMethod(eachMethod)) {
@@ -103,6 +103,6 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
                 break
             }
         }
-        logger.info("run finished")
+        logger.info("scan finished")
     }
 }
