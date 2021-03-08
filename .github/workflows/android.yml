@@ -24,3 +24,10 @@ jobs:
         cd scripts
         chmod +x test.sh
         ./test.sh
+        cd ..
+    - name: Upload to Codecov
+      uses: codecov/codecov-action@v1.2.1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./randunit/build/reports/jacoco/test/jacocoTestReport.xml
+        flags: unittests
