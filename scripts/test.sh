@@ -8,4 +8,4 @@ echo `pwd`
 ./gradlew ktlintFormat
 ./gradlew randunit:jacocoTestReport
 ./gradlew randunit-android:jacocoTestReportDebug
-./gradlew randunit-demo:assembleDebug
+./gradlew randunit-demo:test

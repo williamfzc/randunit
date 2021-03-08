@@ -19,16 +19,16 @@ class AAA {
 
 class BBB
 
-class ExampleUnitTest {
+class SelfSmokeUnitTest {
     @Test
-    fun addition_isCorrect() {
+    fun scanSimple() {
         val opm = OperationManager()
-        opm.addClazz(Scanner::class.java)
+        opm.addClazz(AAA::class.java)
         Scanner().scanAll(opm)
     }
 
     @TestFactory
-    fun withJunit(): Stream<DynamicTest>? {
+    fun scanItself(): Stream<DynamicTest>? {
         val clsSet = setOf(Scanner::class.java)
         return RandUnit.runWithTestFactory(clsSet)
     }

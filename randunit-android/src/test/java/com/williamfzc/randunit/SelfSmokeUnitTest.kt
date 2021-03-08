@@ -2,9 +2,12 @@ package com.williamfzc.randunit
 
 import com.williamfzc.randunit.operations.*
 import com.williamfzc.randunit.scanner.Scanner
-import org.junit.Test
+import org.junit.jupiter.api.DynamicTest
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestFactory
+import java.util.stream.Stream
 
-class ExampleUnitTest {
+class SelfSmokeUnitTest {
     private val clzSet = setOf(
         Scanner::class.java,
         AndroidOperationManager::class.java,
@@ -16,7 +19,7 @@ class ExampleUnitTest {
     )
 
     @Test
-    fun addition_isCorrect() {
+    fun scanOnly() {
         val opm = AndroidOperationManager()
 
         for (each in clzSet) {
@@ -24,5 +27,10 @@ class ExampleUnitTest {
         }
 
         Scanner().scanAll(opm)
+    }
+
+    @TestFactory
+    fun scanItself(): Stream<DynamicTest>? {
+        return RandUnitAndroid.runWithTestFactory(clzSet)
     }
 }

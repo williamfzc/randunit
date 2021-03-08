@@ -8,23 +8,11 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 
-class AAA {
-    fun a() {}
-    fun b(b: String?) {}
-    fun c(): String {
-        return "aaa"
-    }
-
-    fun d(b: BBB?) {}
-}
-
-class BBB
-
-@Config(sdk=[28])
+@Config(sdk = [28])
 @RunWith(RobolectricTestRunner::class)
-class ExampleUnitTest {
+class SelfSmokeUnitTest {
     @Test
-    fun addition_isCorrect() {
+    fun scanSimple() {
         val opm = AndroidOperationManager()
         opm.addClazz(MainActivity::class.java)
         Scanner().scanAll(opm)
