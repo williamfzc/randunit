@@ -1,45 +1,34 @@
 package com.williamfzc.randunit.models
 
-import io.mockk.mockkClass
-import io.mockk.mockkObject
-import org.jeasy.random.EasyRandom
-import org.jeasy.random.EasyRandomParameters
-import org.jeasy.random.ObjectCreationException
+import com.williamfzc.randunit.mock.AbstractMocker
+import com.williamfzc.randunit.mock.EasyRandomMocker
+import com.williamfzc.randunit.mock.MockConfig
+import com.williamfzc.randunit.mock.MockkMocker
 import java.lang.Exception
-import kotlin.reflect.KClass
+import java.util.logging.Logger
 
-class MockModel(easyRandomParameters: EasyRandomParameters? = null) {
-    private val usedEasyRandomParameters =
-        easyRandomParameters ?: genDefaultEasyRandomParameters()
-    private val easyRandom = EasyRandom(usedEasyRandomParameters)
+class MockModel(mockConfig: MockConfig) {
+    companion object {
+        private val logger = Logger.getLogger("MockModel")
+    }
 
-    private fun genDefaultEasyRandomParameters(): EasyRandomParameters {
-        return EasyRandomParameters()
-            .scanClasspathForConcreteTypes(true)
+    private val mockerList = mutableListOf<AbstractMocker>()
+    init {
+        mockerList.add(EasyRandomMocker(mockConfig))
+        mockerList.add(MockkMocker(mockConfig))
     }
 
     fun <T : Any> mock(t: Class<T>): Any? {
-        return try {
-            mockWithEasyRandom(t)
-        } catch (e: ObjectCreationException) {
-            // try mockk (kt
+        for (eachMocker in mockerList) {
             try {
-                mockWithMockk(t.kotlin)
+                val m = eachMocker.mock(t)
+                logger.info("mock type $t finished")
+                return m
             } catch (e: Exception) {
-                null
+                logger.warning("mock type $t failed: $e")
+                continue
             }
         }
-    }
-
-    fun <T> mockWithEasyRandom(t: Class<T>): T {
-        return easyRandom.nextObject(t)
-    }
-
-    fun <T : Any> mockWithMockk(t: KClass<T>): Any {
-        t.objectInstance?.let {
-            return mockkObject(it)
-        } ?: run {
-            return mockkClass(t)
-        }
+        return null
     }
 }

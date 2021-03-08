@@ -16,7 +16,7 @@ open class Runner(private val cfg: RunnerConfig = RunnerConfig()) : RunnerHookLa
         private val logger = Logger.getLogger("Runner")
     }
 
-    var mockModel: MockModel = MockModel(cfg.mockParameters)
+    var mockModel: MockModel = MockModel(cfg.mockConfig)
     var statementCount = 0
     var opHistory = mutableSetOf<String>()
 
