@@ -1,7 +1,7 @@
 package com.williamfzc.randunit.models
 
-import com.williamfzc.randunit.helper.isStatic
-import com.williamfzc.randunit.helper.isValidType
+import com.williamfzc.randunit.extensions.isStatic
+import com.williamfzc.randunit.extensions.isValidType
 import com.williamfzc.randunit.operations.AbstractOperation
 import java.lang.Exception
 import java.lang.reflect.Method

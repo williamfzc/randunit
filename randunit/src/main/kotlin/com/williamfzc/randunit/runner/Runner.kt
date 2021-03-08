@@ -1,9 +1,9 @@
 package com.williamfzc.randunit.runner
 
-import com.williamfzc.randunit.helper.hasTypePrefix
-import com.williamfzc.randunit.helper.isBuiltin
-import com.williamfzc.randunit.helper.isPrivateOrProtected
-import com.williamfzc.randunit.helper.isValidType
+import com.williamfzc.randunit.extensions.hasTypePrefix
+import com.williamfzc.randunit.extensions.isBuiltin
+import com.williamfzc.randunit.extensions.isPrivateOrProtected
+import com.williamfzc.randunit.extensions.isValidType
 import com.williamfzc.randunit.models.MethodModel
 import com.williamfzc.randunit.models.MockModel
 import com.williamfzc.randunit.operations.AbstractOperation

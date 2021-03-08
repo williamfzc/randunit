@@ -1,4 +1,4 @@
-package com.williamfzc.randunit.helper
+package com.williamfzc.randunit.extensions
 
 import java.lang.reflect.Modifier
 
