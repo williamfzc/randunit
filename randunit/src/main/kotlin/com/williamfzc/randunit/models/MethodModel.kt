@@ -7,8 +7,7 @@ import java.lang.reflect.Method
 // desc this method
 class MethodModel(
     private val callerOperation: AbstractOperation,
-    private val method: Method,
-    private val mockModel: MockModel
+    private val method: Method
 ) {
     private val parametersTypes = method.parameterTypes
 
@@ -35,6 +34,6 @@ class MethodModel(
             if (eachType.canonicalName == "java.lang.Class")
                 return null
         }
-        return Statement(method, callerOperation, parametersTypes.toList(), mockModel)
+        return Statement(method, callerOperation, parametersTypes.toList())
     }
 }

@@ -22,7 +22,7 @@ class MockModel(mockConfig: MockConfig) {
         for (eachMocker in mockerList) {
             try {
                 val m = eachMocker.mock(t)
-                logger.info("mock type $t finished")
+                logger.info("mock type $t finished by $eachMocker")
                 return m
             } catch (e: Exception) {
                 logger.warning("mock type $t failed: $e")

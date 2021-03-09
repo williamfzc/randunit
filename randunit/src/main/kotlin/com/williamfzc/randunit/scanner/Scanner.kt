@@ -5,7 +5,6 @@ import com.williamfzc.randunit.extensions.isBuiltin
 import com.williamfzc.randunit.extensions.isPrivateOrProtected
 import com.williamfzc.randunit.extensions.isValidType
 import com.williamfzc.randunit.models.MethodModel
-import com.williamfzc.randunit.models.MockModel
 import com.williamfzc.randunit.operations.AbstractOperation
 import com.williamfzc.randunit.operations.OperationManager
 import java.lang.Exception
@@ -18,7 +17,6 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
         private val logger = Logger.getLogger("Scanner")
     }
 
-    var mockModel: MockModel = MockModel(cfg.mockConfig)
     var statementCount = 0
     var opHistory = mutableSetOf<String>()
 
@@ -70,7 +68,7 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
         operation: AbstractOperation,
         operationManager: OperationManager
     ) {
-        val model = MethodModel(operation, method, mockModel)
+        val model = MethodModel(operation, method)
 
         // append some rel types
         for (eachRelType in model.getRelativeTypes())

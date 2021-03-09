@@ -45,11 +45,12 @@ abstract class RandUnitBase {
         collectStatements(targetClasses, cfg).forEach {
             // each statement will be executed at least twice
             // make it a config soon
-            val env = SimpleTestEnv()
             for (each in 1..2) {
                 val dynamicTest: DynamicTest = DynamicTest.dynamicTest(it.getName()) {
                     try {
-                        env.run(it)
+                        val env = SimpleTestEnv()
+                        env.add(it)
+                        env.start()
                     } catch (e: Exception) {
                         if ((e.cause !is MockKException).and(e.cause !is UninitializedPropertyAccessException))
                             throw e
