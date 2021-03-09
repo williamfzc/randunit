@@ -1,6 +1,7 @@
 package com.williamfzc.randunit_demo
 
 import com.williamfzc.randunit.RandUnitAndroid
+import com.williamfzc.randunit.env.EnvConfig
 import com.williamfzc.randunit.env.NormalTestEnv
 import com.williamfzc.randunit.models.StatementModel
 import org.junit.Test
@@ -22,7 +23,8 @@ class SelfSmokeWithJUnit4(private val statementModel: StatementModel) {
 
     @Test
     fun run() {
-        val env = NormalTestEnv()
+        val envConfig = EnvConfig(ignoreException = setOf(IllegalStateException::class.java))
+        val env = NormalTestEnv(envConfig)
         env.add(statementModel)
         env.start()
     }

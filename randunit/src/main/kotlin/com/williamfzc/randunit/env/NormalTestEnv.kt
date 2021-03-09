@@ -3,9 +3,11 @@ package com.williamfzc.randunit.env
 import com.williamfzc.randunit.extensions.isStatic
 import com.williamfzc.randunit.models.StatementModel
 import java.lang.Exception
+import java.lang.reflect.InvocationTargetException
+import java.lang.reflect.Method
 import java.util.logging.Logger
 
-class NormalTestEnv(envConfig: EnvConfig = EnvConfig()) : AbstractTestEnv(envConfig) {
+class NormalTestEnv(private val envConfig: EnvConfig = EnvConfig()) : AbstractTestEnv(envConfig) {
     companion object {
         private val logger = Logger.getLogger("StandardTestEnv")
     }
@@ -49,9 +51,35 @@ class NormalTestEnv(envConfig: EnvConfig = EnvConfig()) : AbstractTestEnv(envCon
             logger.warning("parameters mock failed, skipped")
             return
         }
-
-        statementModel.method.invoke(caller, *parameters.toTypedArray())
+        runSafely(caller, statementModel.method, parameters)
     }
 
+    private fun isIgnoredException(e: Exception): Boolean {
+        for (eachIgnoreException in envConfig.ignoreException) {
+            if (e::class.java == eachIgnoreException)
+                return true
+        }
+        return false
+    }
 
+    private fun runSafely(caller: Any, method: Method, parameters: List<Any?>) {
+        val returnValueOfInvoke = try {
+            method.invoke(caller, *parameters.toTypedArray())
+        } catch (e: Exception) {
+            val realException =
+                if ((e is InvocationTargetException).and(null != e.cause))
+                    e.cause as Exception
+                else
+                    e
+            if (!isIgnoredException(realException))
+                throw e
+
+            // else, ignore
+            logger.info("error $realException happened but allowed")
+            null
+        }
+
+        // todo: verify return value type
+        logger.info("return value: $returnValueOfInvoke")
+    }
 }
