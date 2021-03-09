@@ -1,5 +1,6 @@
 # randunit
 
+[![workflow name](https://github.com/williamfzc/randunit/workflows/Android%20CI/badge.svg)](https://github.com/williamfzc/randunit)
 [![codecov](https://codecov.io/gh/williamfzc/randunit/branch/main/graph/badge.svg?token=FNCFFQFVP8)](https://codecov.io/gh/williamfzc/randunit)
 
 > Build Android/JVM applications with confidence and less effort.
