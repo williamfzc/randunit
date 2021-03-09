@@ -1,23 +1,23 @@
 package com.williamfzc.randunit
 
-import com.williamfzc.randunit.env.SimpleTestEnv
-import com.williamfzc.randunit.models.Statement
+import com.williamfzc.randunit.env.NormalTestEnv
+import com.williamfzc.randunit.models.StatementModel
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 @RunWith(Parameterized::class)
-class SelfSmokeWIthJUnit4(val statement: Statement) {
+class SelfSmokeWIthJUnit4(val statementModel: StatementModel) {
     companion object {
         @JvmStatic
         @Parameterized.Parameters
-        fun data(): Collection<Statement> {
+        fun data(): Collection<StatementModel> {
             return RandUnit.collectStatements(setOf(RandUnit::class.java))
         }
     }
 
     @Test
     fun run() {
-        SimpleTestEnv().run(statement)
+        NormalTestEnv().run(statementModel)
     }
 }

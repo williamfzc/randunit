@@ -1,7 +1,7 @@
 package com.williamfzc.randunit
 
-import com.williamfzc.randunit.env.SimpleTestEnv
-import com.williamfzc.randunit.models.Statement
+import com.williamfzc.randunit.env.NormalTestEnv
+import com.williamfzc.randunit.models.StatementModel
 import com.williamfzc.randunit.operations.OperationManager
 import com.williamfzc.randunit.scanner.Scanner
 import com.williamfzc.randunit.scanner.ScannerConfig
@@ -18,12 +18,12 @@ abstract class RandUnitBase {
     fun collectStatements(
         targetClasses: Set<Class<*>>,
         cfg: ScannerConfig? = null
-    ): List<Statement> {
-        val ret = mutableListOf<Statement>()
+    ): List<StatementModel> {
+        val ret = mutableListOf<StatementModel>()
 
         class CustomScanner(cfg: ScannerConfig) : Scanner(cfg) {
-            override fun handle(statement: Statement) {
-                ret.add(statement)
+            override fun handle(statementModel: StatementModel) {
+                ret.add(statementModel)
             }
         }
 
@@ -48,7 +48,7 @@ abstract class RandUnitBase {
             for (each in 1..2) {
                 val dynamicTest: DynamicTest = DynamicTest.dynamicTest(it.getName()) {
                     try {
-                        val env = SimpleTestEnv()
+                        val env = NormalTestEnv()
                         env.add(it)
                         env.start()
                     } catch (e: Exception) {

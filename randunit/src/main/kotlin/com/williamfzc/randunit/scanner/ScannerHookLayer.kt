@@ -1,6 +1,6 @@
 package com.williamfzc.randunit.scanner
 
-import com.williamfzc.randunit.models.Statement
+import com.williamfzc.randunit.models.StatementModel
 import com.williamfzc.randunit.operations.AbstractOperation
 import com.williamfzc.randunit.operations.OperationManager
 import java.lang.reflect.Method
@@ -32,6 +32,6 @@ interface ScannerHookLayer {
     ) {
     }
 
-    fun handle(statement: Statement) {
+    fun handle(statementModel: StatementModel) {
     }
 }

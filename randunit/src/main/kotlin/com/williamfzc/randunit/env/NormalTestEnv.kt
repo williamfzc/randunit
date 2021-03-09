@@ -1,19 +1,19 @@
 package com.williamfzc.randunit.env
 
 import com.williamfzc.randunit.extensions.isStatic
-import com.williamfzc.randunit.models.Statement
+import com.williamfzc.randunit.models.StatementModel
 import java.lang.Exception
 import java.util.logging.Logger
 
-class SimpleTestEnv(envConfig: EnvConfig = EnvConfig()) : AbstractTestEnv(envConfig) {
+class NormalTestEnv(envConfig: EnvConfig = EnvConfig()) : AbstractTestEnv(envConfig) {
     companion object {
         private val logger = Logger.getLogger("StandardTestEnv")
     }
 
-    private fun generateCaller(statement: Statement): Any? {
-        val callOperation = statement.callerOperation
+    private fun generateCaller(statementModel: StatementModel): Any? {
+        val callOperation = statementModel.callerOperation
         try {
-            if (statement.method.isStatic())
+            if (statementModel.method.isStatic())
                 return callOperation.type
             return callOperation.getInstance()
         } catch (e: Exception) {
@@ -25,9 +25,9 @@ class SimpleTestEnv(envConfig: EnvConfig = EnvConfig()) : AbstractTestEnv(envCon
         }
     }
 
-    private fun generateParameters(statement: Statement): List<Any?> {
+    private fun generateParameters(statementModel: StatementModel): List<Any?> {
         val ret = mutableListOf<Any?>()
-        for (each in statement.parametersTypes) {
+        for (each in statementModel.parametersTypes) {
             mockModel.mock(each)?.let {
                 ret.add(it)
             }
@@ -35,21 +35,23 @@ class SimpleTestEnv(envConfig: EnvConfig = EnvConfig()) : AbstractTestEnv(envCon
         return ret
     }
 
-    override fun run(statement: Statement) {
-        logger.info(statement.getDesc())
+    override fun run(statementModel: StatementModel) {
+        logger.info("running: ${statementModel.getDesc()}")
 
-        val caller = generateCaller(statement)
-        if (null == caller) {
+        val caller = generateCaller(statementModel)
+        caller ?: run {
             logger.warning("generate caller failed, skipped")
             return
         }
 
-        val parameters = generateParameters(statement)
-        if (parameters.size != statement.parametersTypes.size) {
+        val parameters = generateParameters(statementModel)
+        if (parameters.size != statementModel.parametersTypes.size) {
             logger.warning("parameters mock failed, skipped")
             return
         }
 
-        statement.method.invoke(caller, *parameters.toTypedArray())
+        statementModel.method.invoke(caller, *parameters.toTypedArray())
     }
+
+
 }

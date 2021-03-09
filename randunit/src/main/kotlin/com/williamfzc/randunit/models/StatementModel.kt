@@ -3,7 +3,7 @@ package com.williamfzc.randunit.models
 import com.williamfzc.randunit.operations.AbstractOperation
 import java.lang.reflect.Method
 
-data class Statement(
+data class StatementModel(
     // a `method call` may looks like:
     // methodA(caller, param1, param2)
     val method: Method,

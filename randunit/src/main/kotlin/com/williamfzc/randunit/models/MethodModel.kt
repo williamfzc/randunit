@@ -19,7 +19,7 @@ class MethodModel(
         return typeSet
     }
 
-    fun generateStatement(): Statement? {
+    fun generateStatement(): StatementModel? {
         // verify
         for (eachType in parametersTypes) {
 
@@ -34,6 +34,6 @@ class MethodModel(
             if (eachType.canonicalName == "java.lang.Class")
                 return null
         }
-        return Statement(method, callerOperation, parametersTypes.toList())
+        return StatementModel(method, callerOperation, parametersTypes.toList())
     }
 }

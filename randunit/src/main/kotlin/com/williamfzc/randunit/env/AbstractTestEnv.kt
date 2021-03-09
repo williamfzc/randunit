@@ -1,7 +1,7 @@
 package com.williamfzc.randunit.env
 
 import com.williamfzc.randunit.models.MockModel
-import com.williamfzc.randunit.models.Statement
+import com.williamfzc.randunit.models.StatementModel
 
 // todo: current statement == statement model
 // env was designed for running inside something like TestCase/TestSuite
@@ -14,19 +14,19 @@ abstract class AbstractTestEnv(envConfig: EnvConfig = EnvConfig()) {
 
     open fun prepareEnv() {}
     open fun beforeRun() {}
-    open fun beforeEachRun(statement: Statement) {}
-    abstract fun run(statement: Statement)
-    open fun afterEachRun(statement: Statement) {}
+    open fun beforeEachRun(statementModel: StatementModel) {}
+    abstract fun run(statementModel: StatementModel)
+    open fun afterEachRun(statementModel: StatementModel) {}
     open fun afterRun() {}
 
-    private val statements = mutableListOf<Statement>()
+    private val statementModels = mutableListOf<StatementModel>()
 
-    fun add(statement: Statement) = statements.add(statement)
+    fun add(statementModel: StatementModel) = statementModels.add(statementModel)
 
     fun start() {
         prepareEnv()
         beforeRun()
-        for (each in statements) {
+        for (each in statementModels) {
             beforeEachRun(each)
             run(each)
             afterEachRun(each)
