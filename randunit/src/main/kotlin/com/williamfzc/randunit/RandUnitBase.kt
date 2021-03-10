@@ -60,7 +60,7 @@ abstract class RandUnitBase {
         val dynamicTests: MutableList<DynamicTest> = ArrayList()
 
         collectStatements(targetClasses, cfg).forEach {
-            val dynamicTest: DynamicTest = DynamicTest.dynamicTest(it.getName()) {
+            val dynamicTest: DynamicTest = DynamicTest.dynamicTest(it.getDesc()) {
                 try {
                     val env = NormalTestEnv()
                     env.add(it)

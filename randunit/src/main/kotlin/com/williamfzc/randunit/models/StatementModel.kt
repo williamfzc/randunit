@@ -25,8 +25,8 @@ data class StatementModel(
     val callerOperation: AbstractOperation,
     val parametersTypes: List<Class<*>>
 ) {
-    fun getName(): String {
-        return "statement_${method}_with_$parametersTypes"
+    override fun toString(): String {
+        return "<statement_${callerOperation}.${method}($parametersTypes)>"
     }
 
     fun getDesc(): String {
