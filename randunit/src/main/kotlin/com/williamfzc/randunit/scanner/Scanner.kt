@@ -10,6 +10,7 @@ import com.williamfzc.randunit.operations.OperationManager
 import java.lang.Exception
 import java.lang.reflect.Method
 import java.util.logging.Logger
+import kotlin.reflect.jvm.javaMethod
 
 open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
     ScannerHookLayer {
@@ -49,8 +50,24 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
             return
         }
         logger.info("start scanning op: ${operation.type.canonicalName}")
+        val collectedMethods = mutableListOf(*operation.type.declaredMethods)
 
-        for (eachMethod in operation.type.declaredMethods) {
+        // inner classes should be considered
+        for (eachInnerClass in operation.type.classes)
+            operationManager.addClazz(eachInnerClass)
+
+        // fields
+        for (eachField in operation.type.declaredFields) {
+            operationManager.addClazz(eachField.type)
+
+            // access (get and set
+            if (eachField.isAccessible) {
+                collectedMethods.add(eachField::set.javaMethod)
+                collectedMethods.add(eachField::get.javaMethod)
+            }
+        }
+
+        for (eachMethod in collectedMethods) {
             if (!verifyMethod(eachMethod)) {
                 logger.info("verify method ${eachMethod.name} false, skipped")
                 continue
