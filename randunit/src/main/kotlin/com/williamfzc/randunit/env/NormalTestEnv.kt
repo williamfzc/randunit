@@ -2,6 +2,7 @@ package com.williamfzc.randunit.env
 
 import com.williamfzc.randunit.extensions.isStatic
 import com.williamfzc.randunit.models.StatementModel
+import io.mockk.MockKException
 import java.lang.Exception
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
@@ -10,7 +11,9 @@ import java.util.logging.Logger
 class NormalTestEnv(private val envConfig: EnvConfig = EnvConfig()) : AbstractTestEnv(envConfig) {
     companion object {
         private val logger = Logger.getLogger("StandardTestEnv")
+        private val BUILTIN_IGNORED_EXCEPTIONS = setOf(MockKException::class.java)
     }
+    private val ignoredExceptions = BUILTIN_IGNORED_EXCEPTIONS.plus(envConfig.ignoreExceptions)
 
     private fun generateCaller(statementModel: StatementModel): Any? {
         val callOperation = statementModel.callerOperation
@@ -55,7 +58,7 @@ class NormalTestEnv(private val envConfig: EnvConfig = EnvConfig()) : AbstractTe
     }
 
     private fun isIgnoredException(e: Exception): Boolean {
-        for (eachIgnoreException in envConfig.ignoreException) {
+        for (eachIgnoreException in ignoredExceptions) {
             if (e::class.java == eachIgnoreException)
                 return true
         }

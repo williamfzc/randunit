@@ -5,11 +5,11 @@ import io.mockk.mockkObject
 
 class MockkMocker(cfg: MockConfig) : AbstractMocker(cfg) {
     override fun mock(t: Class<*>): Any {
-        val kotlinT = t.kotlin
-        kotlinT.objectInstance?.let {
+        val kt = t.kotlin
+        kt.objectInstance?.let {
             return mockkObject(it)
         } ?: run {
-            return mockkClass(kotlinT)
+            return mockkClass(kt)
         }
     }
 }
