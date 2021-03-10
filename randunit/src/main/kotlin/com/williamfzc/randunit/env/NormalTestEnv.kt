@@ -72,7 +72,7 @@ class NormalTestEnv(private val envConfig: EnvConfig = EnvConfig()) : AbstractTe
                 else
                     e
             if (!isIgnoredException(realException))
-                throw e
+                throw realException
 
             // else, ignore
             logger.info("error $realException happened but allowed")
