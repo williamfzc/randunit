@@ -1,7 +1,7 @@
 package com.williamfzc.randunit.operations
 
 abstract class AbstractOperation {
-    open lateinit var type: Class<*>
+    open var type: Class<*> = Any::class.java
     abstract fun getInstance(): Any
 
     fun getId(): String {
