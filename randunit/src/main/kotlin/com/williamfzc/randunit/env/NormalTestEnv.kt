@@ -15,6 +15,7 @@
  */
 package com.williamfzc.randunit.env
 
+import com.williamfzc.randunit.exceptions.RUTypeException
 import com.williamfzc.randunit.extensions.isStatic
 import com.williamfzc.randunit.models.StatementModel
 import io.mockk.MockKException
@@ -81,7 +82,7 @@ class NormalTestEnv(private val envConfig: EnvConfig = EnvConfig()) : AbstractTe
     }
 
     private fun runSafely(caller: Any, method: Method, parameters: List<Any?>) {
-        val returnValueOfInvoke = try {
+        val returnValueOfInvoke: Any? = try {
             method.invoke(caller, *parameters.toTypedArray())
         } catch (e: Exception) {
             val realException =
@@ -97,7 +98,11 @@ class NormalTestEnv(private val envConfig: EnvConfig = EnvConfig()) : AbstractTe
             null
         }
 
-        // todo: verify return value type
-        logger.info("return value: $returnValueOfInvoke")
+        returnValueOfInvoke?.let { v ->
+            val retType = v.javaClass
+            val shouldBe = method.returnType.javaClass
+            if (shouldBe.isAssignableFrom(retType))
+                throw RUTypeException("return type $retType != $shouldBe")
+        }
     }
 }
