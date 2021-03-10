@@ -22,7 +22,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'org.jeasy:easy-random-core:4.3.0'
     implementation "io.mockk:mockk:1.10.6"
-    runtimeOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
     // for generating junit4 format cases
     implementation 'junit:junit:4.12'
