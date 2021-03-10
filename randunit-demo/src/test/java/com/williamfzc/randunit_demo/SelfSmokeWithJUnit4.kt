@@ -23,7 +23,7 @@ class SelfSmokeWithJUnit4(private val statementModel: StatementModel) {
 
     @Test
     fun run() {
-        val envConfig = EnvConfig(ignoreException = setOf(IllegalStateException::class.java))
+        val envConfig = EnvConfig(ignoreExceptions = setOf(IllegalStateException::class.java))
         val env = NormalTestEnv(envConfig)
         env.add(statementModel)
         env.start()

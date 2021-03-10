@@ -30,7 +30,7 @@ class SelfSmokeUnitTest {
     }
 
     @TestFactory
-    fun scanItself(): Stream<DynamicTest>? {
+    fun scanItself(): Iterable<DynamicTest> {
         return RandUnitAndroid.runWithTestFactory(clzSet)
     }
 }
