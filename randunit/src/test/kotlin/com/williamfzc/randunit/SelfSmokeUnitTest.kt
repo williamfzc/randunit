@@ -7,7 +7,6 @@ import com.williamfzc.randunit.testres.CCC
 import org.junit.Test
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
-import java.util.stream.Stream
 
 class SelfSmokeUnitTest {
     @Test
@@ -19,13 +18,13 @@ class SelfSmokeUnitTest {
     }
 
     @TestFactory
-    fun scanAndRun(): Stream<DynamicTest>? {
+    fun scanAndRun(): Iterable<DynamicTest> {
         val clsSet = setOf(CCC::class.java, AAA::class.java)
         return RandUnit.runWithTestFactory(clsSet)
     }
 
     @TestFactory
-    fun scanItself(): Stream<DynamicTest>? {
+    fun scanItself(): Iterable<DynamicTest> {
         val clsSet = setOf(Scanner::class.java)
         return RandUnit.runWithTestFactory(clsSet)
     }
