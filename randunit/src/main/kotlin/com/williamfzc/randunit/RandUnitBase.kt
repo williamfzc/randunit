@@ -15,6 +15,7 @@
  */
 package com.williamfzc.randunit
 
+import com.williamfzc.randunit.env.EnvConfig
 import com.williamfzc.randunit.env.NormalTestEnv
 import com.williamfzc.randunit.models.StatementModel
 import com.williamfzc.randunit.operations.OperationManager
@@ -55,14 +56,15 @@ abstract class RandUnitBase {
 
     fun runWithTestFactory(
         targetClasses: Set<Class<*>>,
-        cfg: ScannerConfig? = null
+        scannerConfig: ScannerConfig? = null,
+        envConfig: EnvConfig = EnvConfig()
     ): Iterable<DynamicTest> {
         val dynamicTests: MutableList<DynamicTest> = ArrayList()
 
-        collectStatements(targetClasses, cfg).forEach {
+        collectStatements(targetClasses, scannerConfig).forEach {
             val dynamicTest: DynamicTest = DynamicTest.dynamicTest(it.getDesc()) {
                 try {
-                    val env = NormalTestEnv()
+                    val env = NormalTestEnv(envConfig)
                     env.add(it)
                     env.start()
                 } catch (e: Exception) {

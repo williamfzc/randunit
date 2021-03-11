@@ -15,32 +15,64 @@
  */
 package com.williamfzc.randunit
 
+import com.williamfzc.randunit.env.NormalTestEnv
+import com.williamfzc.randunit.models.StatementModel
 import com.williamfzc.randunit.operations.OperationManager
 import com.williamfzc.randunit.scanner.Scanner
-import com.williamfzc.randunit.testres.AAA
-import com.williamfzc.randunit.testres.CCC
-import org.junit.Test
+import com.williamfzc.randunit.scanner.ScannerConfig
+import io.mockk.MockKException
 import org.junit.jupiter.api.DynamicTest
-import org.junit.jupiter.api.TestFactory
+import java.lang.Exception
+import java.util.logging.Logger
 
-class SelfSmokeUnitTest {
-    @Test
-    fun scanSimple() {
-        val opm = OperationManager()
-        opm.addClazz(CCC::class.java)
-        opm.addClazz(AAA::class.java)
-        Scanner().scanAll(opm)
+abstract class RandUnitBase {
+    companion object {
+        private val logger = Logger.getLogger("RandUnit")
     }
 
-    @TestFactory
-    fun scanAndRun(): Iterable<DynamicTest> {
-        val clsSet = setOf(CCC::class.java, AAA::class.java)
-        return RandUnit.runWithTestFactory(clsSet)
+    abstract fun getOperationManager(): OperationManager
+
+    fun collectStatements(
+        targetClasses: Set<Class<*>>,
+        cfg: ScannerConfig? = null
+    ): List<StatementModel> {
+        val ret = mutableListOf<StatementModel>()
+
+        class CustomScanner(cfg: ScannerConfig) : Scanner(cfg) {
+            override fun handle(statementModel: StatementModel) {
+                ret.add(statementModel)
+            }
+        }
+
+        val finalCfg = cfg ?: ScannerConfig()
+        val opm = getOperationManager()
+        for (eachClazz in targetClasses)
+            opm.addClazz(eachClazz)
+        CustomScanner(finalCfg).scanAll(opm)
+        logger.info("scan finished, statements count: ${ret.size}")
+        return ret
     }
 
-    @TestFactory
-    fun scanItself(): Iterable<DynamicTest> {
-        val clsSet = setOf(Scanner::class.java)
-        return RandUnit.runWithTestFactory(clsSet)
+    fun runWithTestFactory(
+        targetClasses: Set<Class<*>>,
+        cfg: ScannerConfig? = null
+    ): Iterable<DynamicTest> {
+        val dynamicTests: MutableList<DynamicTest> = ArrayList()
+
+        collectStatements(targetClasses, cfg).forEach {
+            val dynamicTest: DynamicTest = DynamicTest.dynamicTest(it.getDesc()) {
+                try {
+                    val env = NormalTestEnv()
+                    env.add(it)
+                    env.start()
+                } catch (e: Exception) {
+                    if ((e.cause !is MockKException).and(e.cause !is UninitializedPropertyAccessException))
+                        throw e
+                }
+            }
+            dynamicTests.add(dynamicTest)
+        }
+
+        return dynamicTests
     }
 }
