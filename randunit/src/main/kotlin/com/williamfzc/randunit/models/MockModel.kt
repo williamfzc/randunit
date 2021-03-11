@@ -15,10 +15,7 @@
  */
 package com.williamfzc.randunit.models
 
-import com.williamfzc.randunit.mock.AbstractMocker
-import com.williamfzc.randunit.mock.EasyRandomMocker
-import com.williamfzc.randunit.mock.MockConfig
-import com.williamfzc.randunit.mock.MockkMocker
+import com.williamfzc.randunit.mock.*
 import java.lang.Exception
 import java.util.logging.Logger
 
@@ -29,8 +26,10 @@ class MockModel(mockConfig: MockConfig) {
 
     private val mockerList = mutableListOf<AbstractMocker>()
     init {
+        mockerList.add(MockitoMocker(mockConfig))
         mockerList.add(EasyRandomMocker(mockConfig))
-        mockerList.add(MockkMocker(mockConfig))
+        if (mockConfig.ktFirst)
+            mockerList.add(0, MockkMocker(mockConfig))
     }
 
     fun <T : Any> mock(t: Class<T>): Any? {

@@ -15,9 +15,8 @@
  */
 package com.williamfzc.randunit.mock
 
-import org.jeasy.random.EasyRandomParameters
+import org.mockito.Mockito
 
-data class MockConfig(
-    val easyRandomParameters: EasyRandomParameters? = null,
-    val ktFirst: Boolean = false
-)
+class MockitoMocker(cfg: MockConfig) : AbstractMocker(cfg) {
+    override fun mock(t: Class<*>): Any = Mockito.mock(t)
+}

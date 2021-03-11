@@ -21,9 +21,12 @@ ktlint {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+    // mock libs
     implementation 'org.jeasy:easy-random-core:4.3.0'
     implementation "io.mockk:mockk:1.10.6"
-    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    implementation "org.mockito:mockito-core:2.+"
 
     // for generating junit4 format cases
     implementation 'junit:junit:4.12'
