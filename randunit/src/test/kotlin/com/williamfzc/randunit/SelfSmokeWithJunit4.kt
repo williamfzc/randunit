@@ -29,7 +29,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 @RunWith(Parameterized::class)
-class SelfSmokeWIthJUnit4(val statementModel: StatementModel) {
+class SelfSmokeWIthJUnit4(private val statementModel: StatementModel) {
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "{0}")

@@ -5,7 +5,6 @@ import com.williamfzc.randunit.scanner.Scanner
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
-import java.util.stream.Stream
 
 class SelfSmokeUnitTest {
     private val clzSet = setOf(
