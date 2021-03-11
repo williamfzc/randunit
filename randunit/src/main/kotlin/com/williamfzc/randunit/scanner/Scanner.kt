@@ -15,15 +15,12 @@
  */
 package com.williamfzc.randunit.scanner
 
-import com.williamfzc.randunit.extensions.hasTypePrefix
-import com.williamfzc.randunit.extensions.isBuiltin
-import com.williamfzc.randunit.extensions.isPrivateOrProtected
-import com.williamfzc.randunit.extensions.isValidType
+import com.williamfzc.randunit.extensions.*
 import com.williamfzc.randunit.models.MethodModel
 import com.williamfzc.randunit.operations.AbstractOperation
 import com.williamfzc.randunit.operations.OperationManager
-import java.lang.Exception
 import java.lang.reflect.Method
+import java.util.*
 import java.util.logging.Logger
 import kotlin.reflect.jvm.javaMethod
 
@@ -36,12 +33,26 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
     var statementCount = 0
     var opHistory = mutableSetOf<String>()
 
+    private fun verifyClass(t: Class<*>): Boolean {
+        val ret = t.isValidType()
+            .and(!t.hasTypePrefix(cfg.excludeFilter))
+
+        // avoid NoClassDef
+        try {
+            t.canonicalName
+        } catch (e: NoClassDefFoundError) {
+            return false
+        }
+
+        // include filter?
+        if (cfg.includeFilter.isNotEmpty())
+            return ret.and(t.hasTypePrefix(cfg.includeFilter))
+        return ret
+    }
+
     private fun verifyOperation(operation: AbstractOperation): Boolean {
         operation.type.let {
-            return it.isValidType().and(
-                !it.hasTypePrefix(cfg.filterType)
-                    .and(!opHistory.contains(operation.getId()))
-            )
+            return verifyClass(it).and(!opHistory.contains(operation.getId()))
         }
     }
 
@@ -58,27 +69,34 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
         return true
     }
 
-    private fun scan(operation: AbstractOperation, operationManager: OperationManager) {
-        // todo: depth for avoiding recursively run
+    private fun scanWithLock(operation: AbstractOperation, operationManager: OperationManager) {
+        val opRawType = operation.type
         if (!verifyOperation(operation)) {
-            logger.info("operation ${operation.type} is invalid, skipped")
+            logger.info("operation $opRawType is invalid, skipped")
             return
         }
-        logger.info("start scanning op: ${operation.type.canonicalName}")
-        val collectedMethods = mutableListOf(*operation.type.declaredMethods)
+
+        logger.info("start scanning op: ${opRawType.canonicalName}")
+        val collectedMethods = mutableListOf(*opRawType.getDeclaredMethodsSafely())
+
+        // todo: count of classes from loader can be a large number ...
+        if (cfg.recursively)
+            for (eachClz in getClassesFromLoader(opRawType.classLoader))
+                if (verifyClass(eachClz))
+                    operationManager.addClazz(eachClz)
 
         // inner classes should be considered
-        for (eachInnerClass in operation.type.classes)
+        for (eachInnerClass in opRawType.getDeclaredClassesSafely())
             operationManager.addClazz(eachInnerClass)
 
         // fields
-        for (eachField in operation.type.declaredFields) {
+        for (eachField in opRawType.getDeclaredFieldsSafely()) {
             operationManager.addClazz(eachField.type)
 
             // access (get and set
             if (eachField.isAccessible) {
-                collectedMethods.add(eachField::set.javaMethod)
-                collectedMethods.add(eachField::get.javaMethod)
+                eachField::set.javaMethod?.let { collectedMethods.add(it) }
+                eachField::get.javaMethod?.let { collectedMethods.add(it) }
             }
         }
 
@@ -93,6 +111,34 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
         }
         logger.info("op $operation end")
         opHistory.add(operation.getId())
+    }
+
+    private fun scan(operation: AbstractOperation, operationManager: OperationManager) {
+        synchronized(operation.type) {
+            scanWithLock(operation, operationManager)
+        }
+    }
+
+    // NOTICE: this method can not be used in android
+    // but actually our unit tests will only run on JVM (robolectric)
+    // https://stackoverflow.com/questions/2681459/how-can-i-list-all-classes-loaded-in-a-specific-class-loader
+    private fun getClassesFromLoader(loader: ClassLoader): Iterable<Class<*>> {
+        synchronized(loader) {
+            return try {
+                val f = ClassLoader::class.java.getDeclaredField("classes")
+                f.isAccessible = true
+                // return value is a vector ... with lots of potential thread issues
+                val vector = f.get(Thread.currentThread().contextClassLoader) as Vector<Class<*>>
+                val s = mutableSetOf<Class<*>>()
+                vector.forEach {
+                    s.add(it)
+                }
+                s
+            } catch (e: Exception) {
+                logger.warning("failed to get classes from class loader: $loader because of $e")
+                setOf()
+            }
+        }
     }
 
     private fun scanMethod(
@@ -133,6 +179,7 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
                 break
             }
         }
-        logger.info("scan finished")
+
+        logger.info("scan finished, relative classes: $opHistory")
     }
 }

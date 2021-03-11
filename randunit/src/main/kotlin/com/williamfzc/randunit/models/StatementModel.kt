@@ -18,7 +18,7 @@ package com.williamfzc.randunit.models
 import com.williamfzc.randunit.operations.AbstractOperation
 import java.lang.reflect.Method
 
-data class StatementModel(
+class StatementModel(
     // a `method call` may looks like:
     // methodA(caller, param1, param2)
     val method: Method,
@@ -26,7 +26,7 @@ data class StatementModel(
     val parametersTypes: List<Class<*>>
 ) {
     override fun toString(): String {
-        return "<statement_${callerOperation}.${method}($parametersTypes)>"
+        return "<statement_$callerOperation.$method($parametersTypes)>"
     }
 
     fun getDesc(): String {

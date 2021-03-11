@@ -15,12 +15,15 @@
  */
 package com.williamfzc.randunit.extensions
 
+import java.lang.Exception
+import java.lang.reflect.Field
+import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
 val BUILTIN_TYPE_PREFIX_FILTER = setOf("java.", "android.", "kotlin.")
 
 fun Class<*>.hasTypePrefix(prefix: String): Boolean {
-    return this.canonicalName.startsWith(prefix)
+    return this.name.startsWith(prefix)
 }
 
 fun Class<*>.hasTypePrefix(prefixes: Set<String>): Boolean {
@@ -52,3 +55,30 @@ fun Class<*>.getTypeModifiersWithoutFinal(): Int = this.modifiers and Modifier.F
 fun Class<*>.isPrivate(): Boolean = Modifier.isPrivate(this.getTypeModifiersWithoutFinal())
 fun Class<*>.isProtected(): Boolean = Modifier.isProtected(this.getTypeModifiersWithoutFinal())
 fun Class<*>.isPrivateOrProtected(): Boolean = this.isPrivate().or(this.isProtected())
+fun Class<*>.getDeclaredMethodsSafely(): Array<out Method> {
+    return try {
+        this.declaredMethods
+    } catch (e: VerifyError) {
+        arrayOf()
+    }
+}
+
+fun Class<*>.getDeclaredClassesSafely(): Array<out Class<*>> {
+    return try {
+        this.declaredClasses
+    } catch (e: Exception) {
+        when (e) {
+            is VerifyError -> arrayOf()
+            is ClassNotFoundException -> arrayOf()
+            else -> throw e
+        }
+    }
+}
+
+fun Class<*>.getDeclaredFieldsSafely(): Array<out Field> {
+    return try {
+        this.declaredFields
+    } catch (e: VerifyError) {
+        arrayOf()
+    }
+}

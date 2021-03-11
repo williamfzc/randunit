@@ -20,6 +20,6 @@ abstract class AbstractOperation {
     abstract fun getInstance(): Any
 
     fun getId(): String {
-        return type.canonicalName
+        return type.name
     }
 }
