@@ -31,7 +31,7 @@ import org.junit.Test
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 
-class SelfSmokeUnitTest {
+class SelfSmokeWithJUnit5 {
     @Test
     fun scanSimple() {
         val opm = OperationManager()
