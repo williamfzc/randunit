@@ -19,6 +19,7 @@ import com.williamfzc.randunit.env.EnvConfig
 import com.williamfzc.randunit.env.NormalTestEnv
 import com.williamfzc.randunit.models.StatementModel
 import com.williamfzc.randunit.models.toJson
+import com.williamfzc.randunit.operations.AbstractOperation
 import com.williamfzc.randunit.operations.OperationManager
 import com.williamfzc.randunit.scanner.Scanner
 import com.williamfzc.randunit.scanner.ScannerConfig
@@ -33,6 +34,29 @@ abstract class RandUnitBase {
     }
 
     abstract fun getOperationManager(): OperationManager
+
+    fun collectOperations(
+        targetClasses: Set<Class<*>>,
+        cfg: ScannerConfig? = null
+    ): List<AbstractOperation> {
+        val ret = mutableListOf<AbstractOperation>()
+
+        class CustomScanner(cfg: ScannerConfig) : Scanner(cfg) {
+            override fun beforeOperation(
+                operation: AbstractOperation,
+                operationManager: OperationManager
+            ) {
+                ret.add(operation)
+            }
+        }
+        val finalCfg = cfg ?: ScannerConfig()
+        val opm = getOperationManager()
+        for (eachClazz in targetClasses)
+            opm.addClazz(eachClazz)
+        logger.info("start scanning with cfg: $finalCfg")
+        CustomScanner(finalCfg).scanAll(opm)
+        return ret
+    }
 
     fun collectStatements(
         targetClasses: Set<Class<*>>,

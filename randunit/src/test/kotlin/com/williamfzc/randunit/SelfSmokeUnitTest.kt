@@ -16,12 +16,17 @@
 package com.williamfzc.randunit
 
 import com.williamfzc.randunit.env.EnvConfig
+import com.williamfzc.randunit.env.NormalTestEnv
+import com.williamfzc.randunit.exceptions.RUException
+import com.williamfzc.randunit.exceptions.RUTypeException
 import com.williamfzc.randunit.mock.MockConfig
+import com.williamfzc.randunit.mock.MockkMocker
 import com.williamfzc.randunit.operations.OperationManager
 import com.williamfzc.randunit.scanner.Scanner
 import com.williamfzc.randunit.scanner.ScannerConfig
 import com.williamfzc.randunit.testres.AAA
 import com.williamfzc.randunit.testres.CCC
+import org.junit.Assert
 import org.junit.Test
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
@@ -33,6 +38,31 @@ class SelfSmokeUnitTest {
         opm.addClazz(CCC::class.java)
         opm.addClazz(AAA::class.java)
         Scanner().scanAll(opm)
+    }
+
+    @Test
+    fun scanAndCollect() {
+        val scannerConfig = ScannerConfig(
+            includeFilter = setOf("com.williamfzc.randunit"),
+            excludeFilter = setOf("org.jeasy"),
+            recursively = true,
+            includePrivateMethod = true
+        )
+
+        val clzSet = setOf(
+            RandUnit::class.java,
+            RandUnitBase::class.java,
+            NormalTestEnv::class.java,
+            Scanner::class.java,
+            MockkMocker::class.java,
+            EnvConfig::class.java,
+            RUTypeException::class.java,
+            RUException::class.java,
+        )
+        val operations = RandUnit.collectOperations(clzSet, scannerConfig)
+        val statements = RandUnit.collectStatements(clzSet, scannerConfig)
+        Assert.assertTrue(operations.isNotEmpty())
+        Assert.assertTrue(statements.isNotEmpty())
     }
 
     @TestFactory
@@ -50,7 +80,8 @@ class SelfSmokeUnitTest {
             includePrivateMethod = true
         )
         val mockConfig = MockConfig(ktFirst = true)
-        val envConfig = EnvConfig(mockConfig, ignoreExceptions = setOf(IllegalStateException::class.java))
+        val envConfig =
+            EnvConfig(mockConfig, ignoreExceptions = setOf(IllegalStateException::class.java))
         val clsSet = setOf(Scanner::class.java)
         return RandUnit.runWithTestFactory(clsSet, scannerConfig, envConfig = envConfig)
     }
