@@ -29,15 +29,15 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 @RunWith(Parameterized::class)
-class SelfSmokeWIthJUnit4(private val statementModel: StatementModel) {
+class SelfSmokeWIthJUnit4(val statementModel: StatementModel) {
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "{0}")
         fun data(): Collection<StatementModel> {
             val scannerConfig = ScannerConfig(
                 includeFilter = setOf("com.williamfzc.randunit"),
-                excludeFilter = setOf("org.jeasy"),
-                recursively = true
+                recursively = true,
+                includePrivateMethod = true
             )
             return RandUnit.collectStatements(
                 setOf(
@@ -49,7 +49,6 @@ class SelfSmokeWIthJUnit4(private val statementModel: StatementModel) {
                     EnvConfig::class.java,
                     RUTypeException::class.java,
                     RUException::class.java,
-                    Scanner::class.java
                 ),
                 scannerConfig
             )
