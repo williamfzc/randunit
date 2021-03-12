@@ -15,11 +15,27 @@
  */
 package com.williamfzc.randunit.operations
 
+object DefaultOperationType
+
 abstract class AbstractOperation {
-    open var type: Class<*> = Any::class.java
+    open var type: Class<*> = DefaultOperationType::class.java
     abstract fun getInstance(): Any
 
-    fun getId(): String {
+    override fun hashCode(): Int {
+        return type.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is AbstractOperation) return false
+
+        if (type != other.type) return false
+
+        return true
+    }
+
+    // why not use lazy: it causes some errors in self-check
+    fun id(): String {
         return type.name
     }
 }

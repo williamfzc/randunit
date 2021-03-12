@@ -44,6 +44,10 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
             return false
         }
 
+        // ignore abstract classes
+        if (t.isInterface || t.isAbstract())
+            return false
+
         // include filter?
         if (cfg.includeFilter.isNotEmpty())
             return ret.and(t.hasTypePrefix(cfg.includeFilter))
@@ -52,7 +56,7 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
 
     private fun verifyOperation(operation: AbstractOperation): Boolean {
         operation.type.let {
-            return verifyClass(it).and(!opHistory.contains(operation.getId()))
+            return verifyClass(it).and(!opHistory.contains(operation.id()))
         }
     }
 
@@ -113,7 +117,7 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
             afterMethod(eachMethod, operation, operationManager)
         }
         logger.info("op $operation end")
-        opHistory.add(operation.getId())
+        opHistory.add(operation.id())
     }
 
     private fun scan(operation: AbstractOperation, operationManager: OperationManager) {

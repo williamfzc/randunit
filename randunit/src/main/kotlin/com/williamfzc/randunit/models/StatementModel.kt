@@ -42,14 +42,13 @@ object StatementModelSerializer : JsonSerializer<StatementModel> {
         typeOfSrc: Type?,
         context: JsonSerializationContext?
     ): JsonElement {
+        val jo = JsonObject()
         src?.run {
-            val jo = JsonObject()
-            jo.addProperty("caller", src.callerOperation.getId())
+            jo.addProperty("caller", src.callerOperation.id())
             jo.addProperty("method", src.method.name)
             jo.addProperty("signature", src.method.toGenericString())
-            return jo
         }
-        return JsonObject()
+        return jo
     }
 }
 

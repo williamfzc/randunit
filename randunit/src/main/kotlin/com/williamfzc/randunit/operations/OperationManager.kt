@@ -15,18 +15,15 @@
  */
 package com.williamfzc.randunit.operations
 
-import java.util.LinkedList
-import java.util.Queue
-
 open class OperationManager {
-    private var operations: Queue<AbstractOperation> = LinkedList<AbstractOperation>()
+    private var operations = mutableSetOf<AbstractOperation>()
 
     fun add(op: AbstractOperation) {
         operations.add(op)
     }
 
     fun poll(): AbstractOperation? {
-        return operations.poll()
+        return operations.randomOrNull()?.also { operations.remove(it) }
     }
 
     open fun addClazz(newClazz: Class<*>) = add(NormalOperation.of(newClazz))
