@@ -3,7 +3,10 @@ package com.williamfzc.randunit_demo
 import com.williamfzc.randunit.RandUnitAndroid
 import com.williamfzc.randunit.env.EnvConfig
 import com.williamfzc.randunit.env.NormalTestEnv
+import com.williamfzc.randunit.mock.MockConfig
 import com.williamfzc.randunit.models.StatementModel
+import com.williamfzc.randunit.scanner.Scanner
+import com.williamfzc.randunit.scanner.ScannerConfig
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.ParameterizedRobolectricTestRunner
@@ -17,7 +20,14 @@ class SelfSmokeWithJUnit4(private val statementModel: StatementModel) {
         @JvmStatic
         @ParameterizedRobolectricTestRunner.Parameters
         fun data(): Collection<StatementModel> {
-            return RandUnitAndroid.collectStatements(setOf(MainActivity::class.java))
+            val scannerConfig = ScannerConfig(
+                includeFilter = setOf("com.williamfzc.randunit_demo"),
+                excludeFilter = setOf("org.jeasy"),
+                recursively = true,
+                includePrivateMethod = true
+            )
+
+            return RandUnitAndroid.collectStatements(setOf(MainActivity::class.java), scannerConfig)
         }
     }
 

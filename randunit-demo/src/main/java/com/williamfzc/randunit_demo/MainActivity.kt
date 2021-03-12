@@ -8,4 +8,28 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
     }
+
+    fun a(a: ExampleJava) {}
+
+    private fun b() {}
+
+    companion object {
+        fun c() {
+            println("okok")
+        }
+        private fun d() {
+            println("yes")
+        }
+
+        // this method was designed for making sure these crashes can be found normally
+
+        // this crash should be thrown in cases
+//        fun broken() {
+//            throw RuntimeException("crash!")
+//        }
+    }
+
+//    fun importUnknownClass() {
+//        Class.forName("someclass.unknown")
+//    }
 }
