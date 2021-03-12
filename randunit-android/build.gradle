@@ -1,12 +1,12 @@
 plugins {
-    id 'com.android.library'
-    id 'kotlin-android'
-    id 'com.kezong.fat-aar'
+    id "com.android.library"
+    id "kotlin-android"
+    id "com.kezong.fat-aar"
     id "org.jlleitschuh.gradle.ktlint"
     id "com.vanniktech.android.junit.jacoco"
 }
-apply plugin: 'com.github.dcendents.android-maven'
-group = 'com.williamfzc'
+apply plugin: "com.github.dcendents.android-maven"
+group = "com.williamfzc"
 
 android {
     compileSdkVersion 30
@@ -27,7 +27,7 @@ android {
         }
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
     compileOptions {
@@ -35,7 +35,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "1.8"
     }
 }
 
@@ -45,7 +45,7 @@ ktlint {
 
 // https://github.com/vanniktech/gradle-android-junit-jacoco-plugin
 junitJacoco {
-    jacocoVersion = '0.8.6'
+    jacocoVersion = "0.8.6"
     ignoreProjects = []
     includeNoLocationClasses = false
     includeInstrumentationCoverageInMergedReport = false
@@ -53,14 +53,14 @@ junitJacoco {
 
 dependencies {
     // main sdk
-    embed(project(':randunit'))
-    api 'org.robolectric:robolectric:4.4'
+    embed(project(":randunit"))
+    api "org.robolectric:robolectric:$robolectric_version"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.core:core-ktx:1.2.0'
+    implementation "androidx.core:core-ktx:$core_ktx_version"
 
-    testImplementation 'junit:junit:4.+'
-    testImplementation project(':randunit')
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+    testImplementation "junit:junit:$junit4_version"
+    testImplementation project(":randunit")
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit5_version"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:$junit5_version"
 }
