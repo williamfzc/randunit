@@ -122,6 +122,12 @@ class NormalTestEnv(private val envConfig: EnvConfig = EnvConfig()) : AbstractTe
                     return true
             }
         }
+        e.stackTrace.firstOrNull()?.let {
+            for (eachStopWord in IGNORED_EXCEPTIONS_WORDS) {
+                if (it.toString().contains(eachStopWord))
+                    return true
+            }
+        }
 
         return false
     }
