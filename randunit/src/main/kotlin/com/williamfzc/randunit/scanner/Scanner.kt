@@ -135,6 +135,7 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
     // NOTICE: this method can not be used in android
     // but actually our unit tests will only run on JVM (robolectric)
     // https://stackoverflow.com/questions/2681459/how-can-i-list-all-classes-loaded-in-a-specific-class-loader
+    @Suppress("UNCHECKED_CAST")
     private fun getClassesFromLoader(loader: ClassLoader): Iterable<Class<*>> {
         synchronized(loader) {
             return try {
