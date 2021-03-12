@@ -1,6 +1,13 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
+        // project
+        group_name = "com.williamfzc"
+        product_name = "randunit"
+        android_product_name = "randunit-android"
+        cur_version = "0.1.0"
+
+        // --------
         // kotlin
         kotlin_version = "1.4.20"
         core_ktx_version = "1.2.0"
@@ -19,6 +26,7 @@ buildscript {
     }
 
     repositories {
+        mavenLocal()
         maven {url 'http://maven.aliyun.com/nexus/content/groups/public/'}
         google()
         jcenter()
@@ -50,6 +58,7 @@ buildscript {
 
 allprojects {
     repositories {
+        mavenLocal()
         maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
         mavenCentral()
         jcenter()

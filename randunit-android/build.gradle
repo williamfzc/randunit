@@ -4,9 +4,9 @@ plugins {
     id "com.kezong.fat-aar"
     id "org.jlleitschuh.gradle.ktlint"
     id "com.vanniktech.android.junit.jacoco"
+    id "maven-publish"
 }
-apply plugin: "com.github.dcendents.android-maven"
-group = "com.williamfzc"
+group = group_name
 
 android {
     compileSdkVersion 30
@@ -15,7 +15,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 30
         versionCode 1
-        versionName "1.0"
+        versionName cur_version
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -63,4 +63,26 @@ dependencies {
     testImplementation project(":randunit")
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit5_version"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:$junit5_version"
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+
+                groupId = group_name
+                artifactId = android_product_name
+                version = cur_version
+            }
+            // Creates a Maven publication called “debug”.
+            debug(MavenPublication) {
+                from components.debug
+
+                groupId = group_name
+                artifactId = android_product_name + "-debug"
+                version = cur_version
+            }
+        }
+    }
 }

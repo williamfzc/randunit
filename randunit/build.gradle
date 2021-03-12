@@ -4,7 +4,11 @@ plugins {
     id "org.jlleitschuh.gradle.ktlint"
     id "com.vanniktech.android.junit.jacoco"
     id "com.github.hierynomus.license" version "0.15.0"
+    id "maven-publish"
 }
+
+group = group_name
+version = cur_version
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -42,4 +46,15 @@ dependencies {
 
 license {
     header = file("../NOTICE")
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
 }
