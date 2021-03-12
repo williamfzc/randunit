@@ -49,8 +49,8 @@ abstract class RandUnitBase {
         val opm = getOperationManager()
         for (eachClazz in targetClasses)
             opm.addClazz(eachClazz)
+        logger.info("start scanning with cfg: $finalCfg")
         CustomScanner(finalCfg).scanAll(opm)
-        logger.info("scan finished, statements count: ${ret.size}")
         return ret
     }
 

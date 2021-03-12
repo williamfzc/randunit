@@ -38,7 +38,8 @@ class NormalTestEnv(private val envConfig: EnvConfig = EnvConfig()) : AbstractTe
         private val IGNORED_EXCEPTIONS_WORDS = setOf(
             "org.mockito",
             ".mockk",
-            "MockitoMock"
+            "MockitoMock",
+            "com.williamfzc.randunit"
         )
     }
 

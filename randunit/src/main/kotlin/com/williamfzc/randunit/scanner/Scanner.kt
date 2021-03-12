@@ -85,6 +85,9 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
                 if (verifyClass(eachClz))
                     operationManager.addClazz(eachClz)
 
+        // parent
+        operationManager.addClazz(opRawType.superclass)
+
         // inner classes should be considered
         for (eachInnerClass in opRawType.getDeclaredClassesSafely())
             operationManager.addClazz(eachInnerClass)
@@ -180,6 +183,13 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
             }
         }
 
-        logger.info("scan finished, relative classes: $opHistory")
+        logger.info(
+            """
+            scan finished
+            
+            - relative classes: $opHistory
+            - statement count: $statementCount
+            """.trimIndent()
+        )
     }
 }
