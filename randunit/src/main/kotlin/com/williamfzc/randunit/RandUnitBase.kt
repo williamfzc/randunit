@@ -18,6 +18,7 @@ package com.williamfzc.randunit
 import com.williamfzc.randunit.env.EnvConfig
 import com.williamfzc.randunit.env.NormalTestEnv
 import com.williamfzc.randunit.models.StatementModel
+import com.williamfzc.randunit.models.toJson
 import com.williamfzc.randunit.operations.OperationManager
 import com.williamfzc.randunit.scanner.Scanner
 import com.williamfzc.randunit.scanner.ScannerConfig
@@ -51,6 +52,8 @@ abstract class RandUnitBase {
             opm.addClazz(eachClazz)
         logger.info("start scanning with cfg: $finalCfg")
         CustomScanner(finalCfg).scanAll(opm)
+
+        logger.info(ret.toJson())
         return ret
     }
 

@@ -15,8 +15,10 @@
  */
 package com.williamfzc.randunit.models
 
+import com.google.gson.*
 import com.williamfzc.randunit.operations.AbstractOperation
 import java.lang.reflect.Method
+import java.lang.reflect.Type
 
 class StatementModel(
     // a `method call` may looks like:
@@ -32,4 +34,29 @@ class StatementModel(
     fun getDesc(): String {
         return "[caller ${callerOperation.type}] invoking [method $method] with [params $parametersTypes]"
     }
+}
+
+object StatementModelSerializer : JsonSerializer<StatementModel> {
+    override fun serialize(
+        src: StatementModel?,
+        typeOfSrc: Type?,
+        context: JsonSerializationContext?
+    ): JsonElement {
+        src?.run {
+            val jo = JsonObject()
+            jo.addProperty("caller", src.callerOperation.getId())
+            jo.addProperty("method", src.method.name)
+            jo.addProperty("signature", src.method.toGenericString())
+            return jo
+        }
+        return JsonObject()
+    }
+}
+
+fun Iterable<StatementModel>.toJson(): String {
+    val gson =
+        GsonBuilder()
+            .registerTypeAdapter(StatementModel::class.java, StatementModelSerializer)
+            .create()
+    return gson.toJson(this)
 }
