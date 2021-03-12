@@ -15,7 +15,7 @@
  */
 package com.williamfzc.randunit.scanner
 
-data class ScannerConfig(
+data class ScannerConfig @JvmOverloads constructor(
     var includeFilter: Set<String> = setOf(),
     var excludeFilter: Set<String> = setOf(),
     var excludeMethodFilter: Set<String> = setOf(),

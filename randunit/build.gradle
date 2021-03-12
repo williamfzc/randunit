@@ -34,7 +34,7 @@ dependencies {
     implementation "io.mockk:mockk:$mockk_version"
     implementation "org.mockito:mockito-core:$mockito_version"
 
-    // for generating junit4 format cases
+    // for generating junit format cases
     implementation "org.junit.jupiter:junit-jupiter-api:$junit5_version"
     implementation "org.junit.jupiter:junit-jupiter-engine:$junit5_version"
 
