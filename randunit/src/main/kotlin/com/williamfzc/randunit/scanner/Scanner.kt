@@ -19,6 +19,7 @@ import com.williamfzc.randunit.extensions.*
 import com.williamfzc.randunit.models.MethodModel
 import com.williamfzc.randunit.operations.AbstractOperation
 import com.williamfzc.randunit.operations.OperationManager
+import org.reflections.Reflections
 import java.lang.reflect.Method
 import java.util.*
 import java.util.logging.Logger
@@ -89,8 +90,13 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
                 if (verifyClass(eachClz))
                     operationManager.addClazz(eachClz)
 
-        // parent
+        // parent types
         operationManager.addClazz(opRawType.superclass)
+
+        // search its subtypes if abstract
+        if (opRawType.isInterface || opRawType.isAbstract())
+            for (eachClz in getSubTypes(opRawType))
+                operationManager.addClazz(eachClz)
 
         // inner classes should be considered
         for (eachInnerClass in opRawType.getDeclaredClassesSafely())
@@ -146,6 +152,12 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
                 setOf()
             }
         }
+    }
+
+    private fun getSubTypes(interfaceOrAbstract: Class<*>): Iterable<Class<*>> {
+        return Reflections().getSubTypesOf(
+            interfaceOrAbstract::class.java
+        )
     }
 
     private fun scanMethod(

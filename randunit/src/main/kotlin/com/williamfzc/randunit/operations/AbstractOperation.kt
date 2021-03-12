@@ -18,6 +18,7 @@ package com.williamfzc.randunit.operations
 object DefaultOperationType
 
 abstract class AbstractOperation {
+    // todo: label for identify??
     open var type: Class<*> = DefaultOperationType::class.java
     abstract fun getInstance(): Any
 
