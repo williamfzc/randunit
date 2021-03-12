@@ -18,6 +18,7 @@ package com.williamfzc.randunit.scanner
 data class ScannerConfig(
     var includeFilter: Set<String> = setOf(),
     var excludeFilter: Set<String> = setOf(),
+    var excludeMethodFilter: Set<String> = setOf(),
     var statementLimit: Int = 1000,
     var includePrivateMethod: Boolean = false,
     var recursively: Boolean = false

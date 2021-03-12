@@ -71,6 +71,11 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
             if (!cfg.includePrivateMethod)
                 return false
         }
+
+        // exclude filter
+        for (eachExcludeMethod in cfg.excludeMethodFilter)
+            if (method.name.contains(eachExcludeMethod))
+                return false
         return true
     }
 
