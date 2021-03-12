@@ -31,7 +31,6 @@ dependencies {
     implementation "org.mockito:mockito-core:2.+"
 
     // for generating junit4 format cases
-    implementation 'junit:junit:4.12'
     implementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
     implementation 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 
