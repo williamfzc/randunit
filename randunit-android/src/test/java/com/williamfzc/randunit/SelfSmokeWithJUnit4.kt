@@ -54,7 +54,7 @@ class SelfSmokeWithJUnit4(private val statementModel: StatementModel) {
                 RandUnitAndroid::class.java
             )
 
-            return RandUnitAndroid.collectStatements(
+            return RandUnitAndroid.collectStatementsWithCache(
                 clzSet,
                 scannerConfig
             )

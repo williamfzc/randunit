@@ -34,6 +34,7 @@ abstract class RandUnitBase {
     }
 
     abstract fun getOperationManager(): OperationManager
+    private var statementCache: List<StatementModel> = listOf()
 
     fun collectOperations(
         targetClasses: Set<Class<*>>,
@@ -79,6 +80,18 @@ abstract class RandUnitBase {
 
         logger.info(ret.toJson())
         return ret
+    }
+
+    fun collectStatementsWithCache(
+        targetClasses: Set<Class<*>>,
+        cfg: ScannerConfig? = null
+    ): List<StatementModel> {
+        if (statementCache.isEmpty()) {
+            val ret = collectStatements(targetClasses, cfg)
+            statementCache = ret
+            return ret
+        }
+        return statementCache
     }
 
     fun runWithTestFactory(

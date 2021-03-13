@@ -39,7 +39,7 @@ class SelfSmokeWithJUnit4(private val statementModel: StatementModel) {
                 recursively = true,
                 includePrivateMethod = true
             )
-            return RandUnit.collectStatements(
+            return RandUnit.collectStatementsWithCache(
                 setOf(
                     RandUnit::class.java,
                     RandUnitBase::class.java,
