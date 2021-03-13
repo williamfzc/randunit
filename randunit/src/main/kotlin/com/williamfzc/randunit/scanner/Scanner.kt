@@ -90,6 +90,7 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
         }
 
         logger.info("start scanning op: ${opRawType.canonicalName}")
+        opHistory.add(operation.id())
         val collectedMethods = mutableListOf(*opRawType.getDeclaredMethodsSafely())
 
         // todo: count of classes from loader can be a large number ...
@@ -136,7 +137,6 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
             afterMethod(eachMethod, operation, operationManager)
         }
         logger.info("op $operation end")
-        opHistory.add(operation.id())
     }
 
     private fun scan(operation: AbstractOperation, operationManager: OperationManager) {
