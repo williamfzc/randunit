@@ -53,14 +53,14 @@ junitJacoco {
 
 dependencies {
     // main sdk
-    embed(project(":randunit")) {
-        transitive = true
-    }
+//    api "com.williamfzc:randunit:$cur_version"
+    api project(":randunit")
     api "org.robolectric:robolectric:$robolectric_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.core:core-ktx:$core_ktx_version"
 
     // for generating junit format cases
+    implementation "junit:junit:$junit4_version"
     implementation "org.junit.jupiter:junit-jupiter-api:$junit5_version"
     implementation "org.junit.jupiter:junit-jupiter-engine:$junit5_version"
 

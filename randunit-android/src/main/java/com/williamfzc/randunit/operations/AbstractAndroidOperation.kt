@@ -3,11 +3,11 @@ package com.williamfzc.randunit.operations
 import android.app.Activity
 import android.app.Service
 import android.content.ContentProvider
-import java.util.logging.Logger
+import android.util.Log
 
 abstract class AbstractAndroidOperation : AbstractOperation() {
     companion object {
-        private val logger = Logger.getLogger("AbstractAndroidOperation")
+        private const val TAG = "AndroidOperation"
 
         fun of(t: Class<*>): AbstractAndroidOperation {
             // classify
@@ -17,7 +17,7 @@ abstract class AbstractAndroidOperation : AbstractOperation() {
                 ContentProvider::class.java.isAssignableFrom(t) -> ContentProviderOperation()
                 else -> OtherAndroidOperation()
             }
-            logger.info("new op: $op")
+            Log.d(TAG, "new op: $op")
 
             op.type = t
             return op
