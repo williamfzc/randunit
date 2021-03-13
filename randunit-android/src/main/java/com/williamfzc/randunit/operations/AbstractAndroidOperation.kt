@@ -21,11 +21,11 @@ import android.app.Activity
 import android.app.Fragment
 import android.app.Service
 import android.content.ContentProvider
-import org.apache.logging.log4j.LogManager
+import java.util.logging.Logger
 
 abstract class AbstractAndroidOperation : AbstractOperation() {
     companion object {
-        private val logger = LogManager.getLogger()
+        private val logger = Logger.getGlobal()
 
         fun of(t: Class<*>): AbstractAndroidOperation {
             // classify

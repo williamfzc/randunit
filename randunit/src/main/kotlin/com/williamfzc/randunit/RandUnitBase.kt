@@ -24,13 +24,13 @@ import com.williamfzc.randunit.operations.OperationManager
 import com.williamfzc.randunit.scanner.Scanner
 import com.williamfzc.randunit.scanner.ScannerConfig
 import io.mockk.MockKException
-import org.apache.logging.log4j.LogManager
 import org.junit.jupiter.api.DynamicTest
 import java.lang.Exception
+import java.util.logging.Logger
 
 abstract class RandUnitBase {
     companion object {
-        private val logger = LogManager.getLogger()
+        private val logger = Logger.getGlobal()
     }
 
     abstract fun getOperationManager(): OperationManager
