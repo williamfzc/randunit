@@ -31,7 +31,6 @@ java {
 dependencies {
     testImplementation project(path: ":randunit", configuration: "default")
     testImplementation "org.jeasy:easy-random-core:$easy_random_version"
-    testImplementation "org.robolectric:robolectric:$robolectric_version"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit5_version"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:$junit5_version"
     testImplementation "junit:junit:$junit4_version"

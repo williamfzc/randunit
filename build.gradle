@@ -17,12 +17,12 @@ buildscript {
         // mock
         easy_random_version = "4.3.0"
         mockk_version = "1.10.6"
-        mockito_version = "2.+"
+        mockito_version = "2.23.+"
         // junit
         junit5_version = "5.3.1"
         junit4_version = "4.12"
         // android
-        robolectric_version = "4.4"
+        robolectric_version = "4.5.+"
     }
 
     repositories {
