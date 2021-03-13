@@ -46,12 +46,10 @@ class NormalTestEnv @JvmOverloads constructor(private val envConfig: EnvConfig =
     }
 
     private val ignoredExceptions = BUILTIN_IGNORED_EXCEPTIONS.plus(envConfig.ignoreExceptions)
-    private val opCache = mutableSetOf<AbstractOperation>()
+    private val callerCache = mutableMapOf<String, Any>()
 
-    private fun getCallerInstFromCache(curCallOp: AbstractOperation): AbstractOperation? {
-        return opCache.find {
-            it == curCallOp
-        }
+    private fun getCallerInstFromCache(curCallOp: AbstractOperation): Any? {
+        return callerCache[curCallOp.id()]
     }
 
     private fun generateCaller(statementModel: StatementModel): Any? {
@@ -181,7 +179,7 @@ class NormalTestEnv @JvmOverloads constructor(private val envConfig: EnvConfig =
         returnValueOfInvoke?.let { v ->
             // run successful, cache this caller if `reuse` enabled
             if (envConfig.reuseCaller)
-                opCache.add(operation)
+                callerCache[operation.id()] = caller
 
             val retType = v.javaClass
             val shouldBe = method.returnType.javaClass
