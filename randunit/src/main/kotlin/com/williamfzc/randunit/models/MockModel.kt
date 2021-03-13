@@ -16,12 +16,12 @@
 package com.williamfzc.randunit.models
 
 import com.williamfzc.randunit.mock.*
+import org.apache.logging.log4j.LogManager
 import java.lang.Exception
-import java.util.logging.Logger
 
 open class MockModel(mockConfig: MockConfig) {
     companion object {
-        private val logger = Logger.getLogger("MockModel")
+        private val logger = LogManager.getLogger()
     }
 
     private val mockerList = mutableListOf<AbstractMocker>()
@@ -39,7 +39,7 @@ open class MockModel(mockConfig: MockConfig) {
                 logger.info("mock type $t finished by $eachMocker")
                 return m
             } catch (e: Exception) {
-                logger.warning("mock type $t failed: $e")
+                logger.error("mock type $t failed: $e")
                 continue
             }
         }

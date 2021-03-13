@@ -44,11 +44,13 @@ public class SelfSmokeWithJUnit4InJava {
         Set<String> includeFilter = new HashSet<>();
         includeFilter.add("com.williamfzc.randunit");
         Set<String> empty = new HashSet<>();
+        Set<String> excludeMethodFilter = new HashSet<>();
+        excludeMethodFilter.add("toJson");
 
         ScannerConfig scannerConfig = new ScannerConfig(
                 includeFilter,
                 empty,
-                empty,
+                excludeMethodFilter,
                 20,
                 false,
                 true);

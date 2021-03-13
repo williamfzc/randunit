@@ -18,17 +18,18 @@ package com.williamfzc.randunit.env
 import com.williamfzc.randunit.exceptions.RUTypeException
 import com.williamfzc.randunit.extensions.isStatic
 import com.williamfzc.randunit.models.StatementModel
+import com.williamfzc.randunit.operations.AbstractOperation
 import io.mockk.MockKException
+import org.apache.logging.log4j.LogManager
 import org.mockito.exceptions.base.MockitoException
 import java.lang.Exception
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
-import java.util.logging.Logger
 
 class NormalTestEnv @JvmOverloads constructor(private val envConfig: EnvConfig = EnvConfig()) :
     AbstractTestEnv(envConfig) {
     companion object {
-        private val logger = Logger.getLogger("StandardTestEnv")
+        private val logger = LogManager.getLogger()
         private val BUILTIN_IGNORED_EXCEPTIONS = setOf(
             MockKException::class.java,
             MockitoException::class.java,
@@ -64,7 +65,7 @@ class NormalTestEnv @JvmOverloads constructor(private val envConfig: EnvConfig =
         } catch (e: Exception) {
             // failed to create a real caller
             // use the mock one
-            logger.warning("generate caller $callOperation failed, use the mock one")
+            logger.error("generate caller $callOperation failed, use the mock one")
             e.printStackTrace()
             return mockModel.mock(callOperation.type)
         }
@@ -82,7 +83,7 @@ class NormalTestEnv @JvmOverloads constructor(private val envConfig: EnvConfig =
 
     private fun verifyCallerInst(caller: Any?): Boolean {
         caller ?: run {
-            logger.warning("generate caller failed, skipped")
+            logger.error("generate caller failed, skipped")
             return false
         }
         // base types (kt issues ...
@@ -103,7 +104,7 @@ class NormalTestEnv @JvmOverloads constructor(private val envConfig: EnvConfig =
 
             val parameters = generateParameters(statementModel)
             if (parameters.size != statementModel.parametersTypes.size) {
-                logger.warning("parameters mock failed, skipped")
+                logger.error("parameters mock failed, skipped")
                 return@runFuncSafely
             }
 
@@ -151,7 +152,7 @@ class NormalTestEnv @JvmOverloads constructor(private val envConfig: EnvConfig =
         return try {
             func()
         } catch (e: Exception) {
-            logger.warning("error happened in runFuncSafely: $e")
+            logger.error("error happened in runFuncSafely: $e")
             val realException =
                 if ((e is InvocationTargetException).and(null != e.cause))
                 // it can be an Error type

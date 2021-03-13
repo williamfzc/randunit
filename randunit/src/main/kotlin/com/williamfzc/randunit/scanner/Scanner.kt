@@ -19,16 +19,16 @@ import com.williamfzc.randunit.extensions.*
 import com.williamfzc.randunit.models.MethodModel
 import com.williamfzc.randunit.operations.AbstractOperation
 import com.williamfzc.randunit.operations.OperationManager
+import org.apache.logging.log4j.LogManager
 import org.reflections.Reflections
 import java.lang.reflect.Method
 import java.util.*
-import java.util.logging.Logger
 import kotlin.reflect.jvm.javaMethod
 
 open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
     ScannerHookLayer {
     companion object {
-        private val logger = Logger.getLogger("Scanner")
+        private val logger = LogManager.getLogger()
     }
 
     var statementCount = 0
@@ -158,7 +158,7 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
                 }
                 s
             } catch (e: Exception) {
-                logger.warning("failed to get classes from class loader: $loader because of $e")
+                logger.error("failed to get classes from class loader: $loader because of $e")
                 setOf()
             }
         }
@@ -187,7 +187,7 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
             try {
                 handle(this)
             } catch (e: Exception) {
-                logger.warning("unknown error happened: $e")
+                logger.error("unknown error happened: $e")
                 e.printStackTrace()
             }
         }

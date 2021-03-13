@@ -69,6 +69,9 @@ dependencies {
     testImplementation "junit:junit:$junit4_version"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit5_version"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:$junit5_version"
+
+    annotationProcessor "org.apache.logging.log4j:log4j-core:$log4j_version"
+    implementation "org.apache.logging.log4j:log4j-api:$log4j_version"
 }
 
 afterEvaluate {

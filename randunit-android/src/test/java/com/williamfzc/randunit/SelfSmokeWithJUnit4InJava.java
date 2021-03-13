@@ -28,9 +28,12 @@ public class SelfSmokeWithJUnit4InJava {
     public static Collection<StatementModel> data() {
         Set<String> includeFilter = new HashSet<>();
         includeFilter.add("com.williamfzc.randunit");
+
+        Set<String> excludeMethodFilter = new HashSet<>();
+        excludeMethodFilter.add("toJson");
         Set<String> empty = new HashSet<>();
 
-        ScannerConfig scannerConfig = new ScannerConfig(includeFilter, empty, empty, 500, false, true);
+        ScannerConfig scannerConfig = new ScannerConfig(includeFilter, empty, excludeMethodFilter, 500, false, true);
 
         Set<Class<?>> clzSet = new HashSet<>();
         clzSet.add(RandUnitAndroid.class);
