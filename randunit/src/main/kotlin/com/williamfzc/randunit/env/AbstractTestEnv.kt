@@ -37,9 +37,15 @@ abstract class AbstractTestEnv @JvmOverloads constructor(envConfig: EnvConfig = 
 
     fun add(statementModel: StatementModel) = statementModels.add(statementModel)
 
+    fun addAll(smList: Iterable<StatementModel>) = smList.forEach { add(it) }
+
+    fun removeAll() = statementModels.clear()
+
     fun start() {
         prepareEnv()
         beforeRun()
+        // loop will not drop anything
+        // because maybe it will be reused after that
         for (each in statementModels) {
             beforeEachRun(each)
             run(each)

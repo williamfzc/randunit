@@ -30,6 +30,9 @@ import org.robolectric.annotation.Config
 @RunWith(ParameterizedRobolectricTestRunner::class)
 class SelfSmokeWithJUnit4(private val statementModel: StatementModel) {
     companion object {
+        private val envConfig = EnvConfig(ignoreExceptions = setOf(IllegalStateException::class.java))
+        private val testEnv = NormalTestEnv(envConfig)
+
         @JvmStatic
         @ParameterizedRobolectricTestRunner.Parameters
         fun data(): Collection<StatementModel> {
@@ -60,9 +63,8 @@ class SelfSmokeWithJUnit4(private val statementModel: StatementModel) {
 
     @Test
     fun run() {
-        val envConfig = EnvConfig(ignoreExceptions = setOf(IllegalStateException::class.java))
-        val env = NormalTestEnv(envConfig)
-        env.add(statementModel)
-        env.start()
+        testEnv.add(statementModel)
+        testEnv.start()
+        testEnv.removeAll()
     }
 }

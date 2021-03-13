@@ -91,9 +91,11 @@ abstract class RandUnitBase {
         collectStatements(targetClasses, scannerConfig).forEach {
             val dynamicTest: DynamicTest = DynamicTest.dynamicTest(it.getDesc()) {
                 try {
+                    // todo: looks dynamicTest can not use some objects from outside
                     val env = NormalTestEnv(envConfig)
                     env.add(it)
                     env.start()
+                    env.removeAll()
                 } catch (e: Exception) {
                     if ((e.cause !is MockKException).and(e.cause !is UninitializedPropertyAccessException))
                         throw e

@@ -19,6 +19,7 @@ import java.util.Set;
 @RunWith(ParameterizedRobolectricTestRunner.class)
 public class SelfSmokeWithJUnit4InJava {
     private final StatementModel sm;
+    private static final AbstractTestEnv testEnv = new NormalTestEnv();
 
     public SelfSmokeWithJUnit4InJava(StatementModel s) {
         sm = s;
@@ -42,9 +43,8 @@ public class SelfSmokeWithJUnit4InJava {
 
     @Test
     public void run() {
-        EnvConfig envConfig = new EnvConfig();
-        AbstractTestEnv env = new NormalTestEnv(envConfig);
-        env.add(sm);
-        env.start();
+        testEnv.add(sm);
+        testEnv.start();
+        testEnv.removeAll();
     }
 }
