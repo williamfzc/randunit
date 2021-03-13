@@ -47,4 +47,4 @@ open class MockModel(mockConfig: MockConfig) {
     }
 }
 
-object DefaultMocker: MockModel(MockConfig())
+object DefaultMocker : MockModel(MockConfig())

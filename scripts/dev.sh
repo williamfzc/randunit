@@ -5,7 +5,12 @@ cd $SHELL_FOLDER
 cd ..
 echo `pwd`
 
-./gradlew ktlintFormat clean randunit-android-demo:assembleDebug randunit-android-demo:test
+# check first
+./gradlew ktlintFormat licenseFormat
+
+# build
+./gradlew clean randunit:build randunit:publishToMavenLocal
+./gradlew randunit-android:assembleRelease randunit-android:publishToMavenLocal
 
 # ok
 echo "ok :)"
