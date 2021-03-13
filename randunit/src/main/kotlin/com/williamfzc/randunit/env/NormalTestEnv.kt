@@ -50,7 +50,7 @@ class NormalTestEnv(private val envConfig: EnvConfig = EnvConfig()) : AbstractTe
         try {
             if (statementModel.method.isStatic())
                 return callOperation.type
-            return callOperation.getInstance()
+            return callOperation.getInstanceSafely()
         } catch (e: Exception) {
             // failed to create a real caller
             // use the mock one

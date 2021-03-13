@@ -15,12 +15,27 @@
  */
 package com.williamfzc.randunit.operations
 
+import com.williamfzc.randunit.models.DefaultMocker
+
 object DefaultOperationType
 
 abstract class AbstractOperation {
     // todo: label for identify??
     open var type: Class<*> = DefaultOperationType::class.java
+
+    // will only be called inside env in runtime
     abstract fun getInstance(): Any
+
+    fun getInstanceSafely(): Any {
+        try {
+            return getInstance()
+        } catch (e: TypeCastException) {
+            DefaultMocker.mock(this.type)?.let {
+                return it
+            }
+            return DefaultOperationType
+        }
+    }
 
     override fun hashCode(): Int {
         return type.hashCode()

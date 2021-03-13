@@ -19,7 +19,7 @@ import com.williamfzc.randunit.mock.*
 import java.lang.Exception
 import java.util.logging.Logger
 
-class MockModel(mockConfig: MockConfig) {
+open class MockModel(mockConfig: MockConfig) {
     companion object {
         private val logger = Logger.getLogger("MockModel")
     }
@@ -46,3 +46,5 @@ class MockModel(mockConfig: MockConfig) {
         return null
     }
 }
+
+object DefaultMocker: MockModel(MockConfig())
