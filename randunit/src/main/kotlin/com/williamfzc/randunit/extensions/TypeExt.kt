@@ -43,8 +43,6 @@ fun Class<*>.isValidType(): Boolean {
     return (!this.isBuiltinType())
         .and(!this.isNullType())
         .and(!this.isPrimitive)
-        .and(!this.isInterface)
-        .and(!this.isAbstract())
 }
 
 // notice that:
