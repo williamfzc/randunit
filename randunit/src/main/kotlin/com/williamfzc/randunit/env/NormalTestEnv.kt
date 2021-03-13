@@ -45,9 +45,18 @@ class NormalTestEnv @JvmOverloads constructor(private val envConfig: EnvConfig =
     }
 
     private val ignoredExceptions = BUILTIN_IGNORED_EXCEPTIONS.plus(envConfig.ignoreExceptions)
+    private val opCache = mutableSetOf<AbstractOperation>()
+
+    private fun getCallerInstFromCache(curCallOp: AbstractOperation): AbstractOperation? {
+        return opCache.find {
+            it == curCallOp
+        }
+    }
 
     private fun generateCaller(statementModel: StatementModel): Any? {
         val callOperation = statementModel.callerOperation
+        if (envConfig.reuseCaller)
+            getCallerInstFromCache(callOperation)?.let { return it }
         try {
             if (statementModel.method.isStatic())
                 return callOperation.type
@@ -107,7 +116,12 @@ class NormalTestEnv @JvmOverloads constructor(private val envConfig: EnvConfig =
                 - method: ${statementModel.method}
                 """.trimIndent()
             )
-            return@runFuncSafely runSafely(caller, statementModel.method, parameters)
+            return@runFuncSafely runSafely(
+                caller,
+                statementModel.method,
+                parameters,
+                statementModel.callerOperation
+            )
         }
     }
 
@@ -153,12 +167,21 @@ class NormalTestEnv @JvmOverloads constructor(private val envConfig: EnvConfig =
         }
     }
 
-    private fun runSafely(caller: Any, method: Method, parameters: List<Any?>) {
+    private fun runSafely(
+        caller: Any,
+        method: Method,
+        parameters: List<Any?>,
+        operation: AbstractOperation
+    ) {
         val returnValueOfInvoke: Any? = runFuncSafely {
             method.invoke(caller, *parameters.toTypedArray())
         }
 
         returnValueOfInvoke?.let { v ->
+            // run successful, cache this caller if `reuse` enabled
+            if (envConfig.reuseCaller)
+                opCache.add(operation)
+
             val retType = v.javaClass
             val shouldBe = method.returnType.javaClass
             if (shouldBe.isAssignableFrom(retType))
