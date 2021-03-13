@@ -21,6 +21,7 @@ import com.williamfzc.randunit.operations.AbstractOperation
 import com.williamfzc.randunit.operations.OperationManager
 import org.apache.logging.log4j.LogManager
 import org.reflections.Reflections
+import org.reflections.ReflectionsException
 import java.lang.reflect.Method
 import java.util.*
 import kotlin.reflect.jvm.javaMethod
@@ -165,9 +166,13 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
     }
 
     private fun getSubTypes(interfaceOrAbstract: Class<*>): Iterable<Class<*>> {
-        return Reflections().getSubTypesOf(
-            interfaceOrAbstract::class.java
-        )
+        return try {
+            Reflections().getSubTypesOf(
+                interfaceOrAbstract::class.java
+            )
+        } catch (e: ReflectionsException) {
+            setOf()
+        }
     }
 
     private fun scanMethod(
