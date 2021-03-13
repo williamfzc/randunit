@@ -17,45 +17,39 @@ package com.williamfzc.randunit
 
 import com.williamfzc.randunit.env.EnvConfig
 import com.williamfzc.randunit.env.NormalTestEnv
+import com.williamfzc.randunit.exceptions.RUException
+import com.williamfzc.randunit.exceptions.RUTypeException
+import com.williamfzc.randunit.mock.MockConfig
+import com.williamfzc.randunit.mock.MockkMocker
 import com.williamfzc.randunit.models.StatementModel
-import com.williamfzc.randunit.operations.*
 import com.williamfzc.randunit.scanner.Scanner
 import com.williamfzc.randunit.scanner.ScannerConfig
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.ParameterizedRobolectricTestRunner
-import org.robolectric.annotation.Config
+import org.junit.runners.Parameterized
 
-@Config(sdk = [29])
-@RunWith(ParameterizedRobolectricTestRunner::class)
-class SelfSmokeWithJUnit4(private val statementModel: StatementModel) {
+@RunWith(Parameterized::class)
+class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
     companion object {
-        private val envConfig = EnvConfig(ignoreExceptions = setOf(IllegalStateException::class.java))
-        private val testEnv = NormalTestEnv(envConfig)
-
         @JvmStatic
-        @ParameterizedRobolectricTestRunner.Parameters
+        @Parameterized.Parameters(name = "{0}")
         fun data(): Collection<StatementModel> {
             val scannerConfig = ScannerConfig(
                 includeFilter = setOf("com.williamfzc.randunit"),
-                excludeFilter = setOf("org.jeasy"),
-                excludeMethodFilter = setOf("toJson"),
                 recursively = true,
                 includePrivateMethod = true
             )
-            val clzSet = setOf(
-                Scanner::class.java,
-                AndroidOperationManager::class.java,
-                ActivityOperation::class.java,
-                ServiceOperation::class.java,
-                ContentProviderOperation::class.java,
-                OtherAndroidOperation::class.java,
-                NormalOperation::class.java,
-                RandUnitAndroid::class.java
-            )
-
-            return RandUnitAndroid.collectStatementsWithCache(
-                clzSet,
+            return RandUnit.collectStatementsWithCache(
+                setOf(
+                    RandUnit::class.java,
+                    RandUnitBase::class.java,
+                    NormalTestEnv::class.java,
+                    Scanner::class.java,
+                    MockkMocker::class.java,
+                    EnvConfig::class.java,
+                    RUTypeException::class.java,
+                    RUException::class.java,
+                ),
                 scannerConfig
             )
         }
@@ -63,8 +57,10 @@ class SelfSmokeWithJUnit4(private val statementModel: StatementModel) {
 
     @Test
     fun run() {
-        testEnv.add(statementModel)
-        testEnv.start()
-        testEnv.removeAll()
+        val mockConfig = MockConfig(ktFirst = true)
+        val envConfig = EnvConfig(mockConfig, ignoreExceptions = setOf(IllegalStateException::class.java))
+        val env = NormalTestEnv(envConfig)
+        env.add(statementModel)
+        env.start()
     }
 }

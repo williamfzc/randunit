@@ -10,7 +10,7 @@ import org.robolectric.annotation.Config
 
 @Config(sdk = [29])
 @RunWith(RobolectricTestRunner::class)
-class SelfSmokeWithJUnit5 {
+class SelfSmokeWithJUnit5Test {
     @Test
     fun scanSimple() {
         val opm = AndroidOperationManager()

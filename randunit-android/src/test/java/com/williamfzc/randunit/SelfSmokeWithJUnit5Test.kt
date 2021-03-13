@@ -7,7 +7,7 @@ import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
 
-class SelfSmokeWithJUnit5 {
+class SelfSmokeWithJUnit5Test {
     private val clzSet = setOf(
         Scanner::class.java,
         AndroidOperationManager::class.java,

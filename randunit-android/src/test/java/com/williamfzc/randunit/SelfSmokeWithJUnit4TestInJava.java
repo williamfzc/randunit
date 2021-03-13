@@ -17,11 +17,11 @@ import java.util.Set;
 
 @Config(sdk = {29})
 @RunWith(ParameterizedRobolectricTestRunner.class)
-public class SelfSmokeWithJUnit4InJava {
+public class SelfSmokeWithJUnit4TestInJava {
     private final StatementModel sm;
     private static final AbstractTestEnv testEnv = new NormalTestEnv();
 
-    public SelfSmokeWithJUnit4InJava(StatementModel s) {
+    public SelfSmokeWithJUnit4TestInJava(StatementModel s) {
         sm = s;
     }
 

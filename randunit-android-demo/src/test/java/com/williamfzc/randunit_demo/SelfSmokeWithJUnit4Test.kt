@@ -15,7 +15,7 @@ import org.robolectric.annotation.Config
 
 @Config(sdk = [29])
 @RunWith(ParameterizedRobolectricTestRunner::class)
-class SelfSmokeWithJUnit4(private val statementModel: StatementModel) {
+class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
     companion object {
         private val envConfig = EnvConfig(ignoreExceptions = setOf(IllegalStateException::class.java))
         val env = NormalTestEnv(envConfig)
