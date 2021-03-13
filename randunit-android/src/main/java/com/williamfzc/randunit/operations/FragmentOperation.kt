@@ -20,7 +20,7 @@ package com.williamfzc.randunit.operations
 import android.app.Fragment
 import org.robolectric.Robolectric
 
-class FragmentOperation: AbstractAndroidOperation() {
+class FragmentOperation : AbstractAndroidOperation() {
     override fun getInstance(): Any {
         return Robolectric.buildFragment(type as Class<Fragment>).create().get()
     }

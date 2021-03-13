@@ -8,7 +8,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 
-@Config(sdk = [28])
+@Config(sdk = [29])
 @RunWith(RobolectricTestRunner::class)
 class SelfSmokeWithJUnit5 {
     @Test

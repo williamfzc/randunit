@@ -13,7 +13,7 @@ import org.robolectric.ParameterizedRobolectricTestRunner
 import org.robolectric.annotation.Config
 
 
-@Config(sdk = [28])
+@Config(sdk = [29])
 @RunWith(ParameterizedRobolectricTestRunner::class)
 class SelfSmokeWithJUnit4(private val statementModel: StatementModel) {
     companion object {
