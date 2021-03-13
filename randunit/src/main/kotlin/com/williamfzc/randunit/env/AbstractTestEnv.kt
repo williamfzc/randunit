@@ -18,13 +18,12 @@ package com.williamfzc.randunit.env
 import com.williamfzc.randunit.models.MockModel
 import com.williamfzc.randunit.models.StatementModel
 
-// todo: current statement == statement model
 // env was designed for running inside something like TestCase/TestSuite
 // which can be used by different runner
 // it manages:
 // - statement model (s)
 // - about how to gen runnable statement from statement model
-abstract class AbstractTestEnv(envConfig: EnvConfig = EnvConfig()) {
+abstract class AbstractTestEnv @JvmOverloads constructor(envConfig: EnvConfig = EnvConfig()) {
     val mockModel = MockModel(envConfig.mockConfig)
 
     open fun prepareEnv() {}

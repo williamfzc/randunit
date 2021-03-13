@@ -25,7 +25,8 @@ import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.util.logging.Logger
 
-class NormalTestEnv(private val envConfig: EnvConfig = EnvConfig()) : AbstractTestEnv(envConfig) {
+class NormalTestEnv @JvmOverloads constructor(private val envConfig: EnvConfig = EnvConfig()) :
+    AbstractTestEnv(envConfig) {
     companion object {
         private val logger = Logger.getLogger("StandardTestEnv")
         private val BUILTIN_IGNORED_EXCEPTIONS = setOf(
