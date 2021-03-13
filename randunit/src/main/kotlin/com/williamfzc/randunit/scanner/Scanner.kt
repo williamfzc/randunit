@@ -41,13 +41,15 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
         // avoid NoClassDef
         try {
             t.canonicalName
-        } catch (e: NoClassDefFoundError) {
-            return false
+        } catch (e: Throwable) {
+            // catch all the throwable (not only exceptions
+            // should not cause any errors here whatever
+            return when (e) {
+                is IncompatibleClassChangeError -> false
+                is NoClassDefFoundError -> false
+                else -> throw e
+            }
         }
-
-        // ignore abstract classes
-        if (t.isInterface || t.isAbstract())
-            return false
 
         // include filter?
         if (cfg.includeFilter.isNotEmpty())
@@ -96,7 +98,9 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
                     operationManager.addClazz(eachClz)
 
         // parent types
-        operationManager.addClazz(opRawType.superclass)
+        opRawType.superclass?.let {
+            operationManager.addClazz(it)
+        }
 
         // search its subtypes if abstract
         if (opRawType.isInterface || opRawType.isAbstract())
