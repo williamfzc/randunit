@@ -104,9 +104,12 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
         }
 
         // search its subtypes if abstract
-        if (opRawType.isInterface || opRawType.isAbstract())
+        if (opRawType.isInterface || opRawType.isAbstract()) {
             for (eachClz in getSubTypes(opRawType))
                 operationManager.addClazz(eachClz)
+            // and remove itself
+            return
+        }
 
         // inner classes should be considered
         for (eachInnerClass in opRawType.getDeclaredClassesSafely())
