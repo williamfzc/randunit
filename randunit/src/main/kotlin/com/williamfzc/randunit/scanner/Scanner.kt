@@ -191,6 +191,11 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
         operation: AbstractOperation,
         operationManager: OperationManager
     ) {
+        if (statementCount >= cfg.statementLimit) {
+            logger.info("statement count reach limit: ${cfg.statementLimit}")
+            return
+        }
+
         val model = MethodModel(operation, method)
 
         // append some rel types
@@ -203,7 +208,6 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
                 logger.warning("$statement can not be invoked, skipped")
                 return@run
             }
-            // ok
             statementCount++
             try {
                 handle(this)
@@ -224,10 +228,8 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
             // get the next one
             op = operationManager.poll()
 
-            if (statementCount >= cfg.statementLimit) {
-                logger.info("statement count reach limit: ${cfg.statementLimit}")
+            if (statementCount >= cfg.statementLimit)
                 break
-            }
         }
 
         logger.info(

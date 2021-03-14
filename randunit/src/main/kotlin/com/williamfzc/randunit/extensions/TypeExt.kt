@@ -20,7 +20,7 @@ import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
-val BUILTIN_TYPE_PREFIX_FILTER = setOf("java.lang.Object", "android.", "kotlin.")
+val BUILTIN_TYPE_PREFIX_FILTER = setOf("java.lang.Object", "kotlin.")
 
 fun Class<*>.hasTypePrefix(prefix: String): Boolean {
     return this.name.startsWith(prefix)

@@ -16,16 +16,14 @@
 package com.williamfzc.randunit.operations
 
 open class OperationManager {
-    private var operations = mutableSetOf<AbstractOperation>()
+    private var operations = mutableListOf<AbstractOperation>()
 
     fun add(op: AbstractOperation) {
         operations.add(op)
     }
 
     fun poll(): AbstractOperation? {
-        synchronized(operations) {
-            return operations.randomOrNull()?.also { operations.remove(it) }
-        }
+        return operations.getOrNull(0)
     }
 
     open fun addClazz(newClazz: Class<*>) = add(NormalOperation.of(newClazz))

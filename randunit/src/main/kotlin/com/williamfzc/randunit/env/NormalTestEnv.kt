@@ -74,6 +74,8 @@ class NormalTestEnv @JvmOverloads constructor(private val envConfig: EnvConfig =
         for (each in statementModel.parametersTypes) {
             mockModel.mock(each)?.let {
                 ret.add(it)
+            } ?: run {
+                logger.warning("mock $each failed finally")
             }
         }
         return ret
