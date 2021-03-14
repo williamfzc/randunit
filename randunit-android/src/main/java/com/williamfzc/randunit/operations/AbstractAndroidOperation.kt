@@ -45,6 +45,7 @@ abstract class AbstractAndroidOperation : AbstractOperation() {
     }
 
     override fun canInvoke(method: Method): Boolean {
-        return !method.name.startsWith("on")
+//        return !method.name.startsWith("on")
+        return true
     }
 }

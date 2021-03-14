@@ -175,8 +175,12 @@ class NormalTestEnv @JvmOverloads constructor(private val envConfig: EnvConfig =
         operation: AbstractOperation
     ) {
         val returnValueOfInvoke = synchronized(method) {
-            runFuncSafely {
-                method.invoke(caller, *parameters.toTypedArray())
+            try {
+                runFuncSafely {
+                    method.invoke(caller, *parameters.toTypedArray())
+                }
+            } finally {
+                operation.tearDown(caller)
             }
         }
 

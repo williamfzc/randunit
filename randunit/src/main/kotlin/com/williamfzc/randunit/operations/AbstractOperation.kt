@@ -28,6 +28,7 @@ abstract class AbstractOperation {
     abstract fun getInstance(): Any
 
     open fun canInvoke(method: Method): Boolean = true
+    open fun tearDown(caller: Any) {}
 
     fun getInstanceSafely(): Any {
         try {

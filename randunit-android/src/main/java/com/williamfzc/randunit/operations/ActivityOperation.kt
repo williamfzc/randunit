@@ -8,4 +8,8 @@ class ActivityOperation : AbstractAndroidOperation() {
         @Suppress("UNCHECKED_CAST")
         return Robolectric.buildActivity(type as Class<Activity>).create().get()
     }
+
+    override fun tearDown(caller: Any) {
+        (caller as Activity).finish()
+    }
 }
