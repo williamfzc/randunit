@@ -20,7 +20,7 @@ import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
-val BUILTIN_TYPE_PREFIX_FILTER = setOf("java.", "android.", "kotlin.")
+val BUILTIN_TYPE_PREFIX_FILTER = setOf("java.lang.Object", "android.", "kotlin.")
 
 fun Class<*>.hasTypePrefix(prefix: String): Boolean {
     return this.name.startsWith(prefix)
@@ -56,6 +56,14 @@ fun Class<*>.isPrivateOrProtected(): Boolean = this.isPrivate().or(this.isProtec
 fun Class<*>.getDeclaredMethodsSafely(): Array<out Method> {
     return try {
         this.declaredMethods
+    } catch (e: VerifyError) {
+        arrayOf()
+    }
+}
+
+fun Class<*>.getMethodsSafely(): Array<out Method> {
+    return try {
+        this.methods
     } catch (e: VerifyError) {
         arrayOf()
     }

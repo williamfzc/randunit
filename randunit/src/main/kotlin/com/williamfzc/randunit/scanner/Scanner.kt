@@ -69,8 +69,10 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
     }
 
     private fun verifyMethod(method: Method): Boolean {
-        if (method.isBuiltin())
+        if (method.isBuiltin() || method.isNative()) {
+            logger.warning("method is builtin or native: $method")
             return false
+        }
 
         // exclude protected and private methods
         method.isAccessible = true
@@ -81,8 +83,10 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
 
         // exclude filter
         for (eachExcludeMethod in cfg.excludeMethodFilter)
-            if (method.name.contains(eachExcludeMethod))
+            if (method.name.contains(eachExcludeMethod)) {
+                logger.warning("method $method match filter: $eachExcludeMethod")
                 return false
+            }
         return true
     }
 
@@ -93,9 +97,17 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
             return
         }
 
+        // search its subtypes if abstract
+        if (opRawType.isInterface || opRawType.isAbstract()) {
+            for (eachClz in getSubTypes(opRawType))
+                operationManager.addClazz(eachClz)
+            // and remove itself
+            return
+        }
+
         logger.info("start scanning op: ${opRawType.canonicalName}")
         opHistory.add(operation.id())
-        val collectedMethods = mutableListOf(*opRawType.getDeclaredMethodsSafely())
+        val collectedMethods = mutableListOf(*opRawType.getMethodsSafely())
 
         // todo: count of classes from loader can be a large number ...
         if (cfg.recursively)
@@ -106,14 +118,6 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
         // parent types
         opRawType.superclass?.let {
             operationManager.addClazz(it)
-        }
-
-        // search its subtypes if abstract
-        if (opRawType.isInterface || opRawType.isAbstract()) {
-            for (eachClz in getSubTypes(opRawType))
-                operationManager.addClazz(eachClz)
-            // and remove itself
-            return
         }
 
         // inner classes should be considered

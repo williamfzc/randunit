@@ -21,10 +21,13 @@ import java.lang.reflect.Modifier
 fun Method.isStatic(): Boolean = Modifier.isStatic(this.modifiers)
 
 fun Method.isBuiltin(): Boolean {
-    for (eachPrefix in BUILTIN_TYPE_PREFIX_FILTER)
-        if (this.toGenericString().startsWith(eachPrefix))
+    for (eachPrefix in BUILTIN_TYPE_PREFIX_FILTER) {
+        if (this.declaringClass.name.contains(eachPrefix))
             return true
+    }
     return false
 }
 
 fun Method.isPrivateOrProtected(): Boolean = this::class.java.isPrivateOrProtected()
+
+fun Method.isNative(): Boolean = Modifier.isNative(this.modifiers)
