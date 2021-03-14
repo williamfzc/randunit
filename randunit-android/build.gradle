@@ -37,6 +37,15 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+        unitTests.all {
+            systemProperty "robolectric.dependency.repo.url", "https://repo1.maven.org/maven2"
+            systemProperty "robolectric.dependency.repo.id", "central"
+        }
+    }
 }
 
 ktlint {
@@ -56,7 +65,8 @@ dependencies {
 //    api "com.williamfzc:randunit:$cur_version"
     api project(":randunit")
     api "org.robolectric:robolectric:$robolectric_version"
-    implementation 'androidx.fragment:fragment-testing:1.2.4'
+    implementation "androidx.test:core:$androidx_test_core_version"
+    implementation "androidx.fragment:fragment-testing:$androidx_fragment_test_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.core:core-ktx:$core_ktx_version"
 
@@ -70,6 +80,7 @@ dependencies {
     testImplementation "junit:junit:$junit4_version"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit5_version"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:$junit5_version"
+    testImplementation "androidx.test:core:$androidx_test_core_version"
 }
 
 afterEvaluate {
