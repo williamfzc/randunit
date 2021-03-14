@@ -172,8 +172,10 @@ class NormalTestEnv @JvmOverloads constructor(private val envConfig: EnvConfig =
         parameters: List<Any?>,
         operation: AbstractOperation
     ) {
-        val returnValueOfInvoke: Any? = runFuncSafely {
-            method.invoke(caller, *parameters.toTypedArray())
+        val returnValueOfInvoke = synchronized(method) {
+            runFuncSafely {
+                method.invoke(caller, *parameters.toTypedArray())
+            }
         }
 
         returnValueOfInvoke?.let { v ->
