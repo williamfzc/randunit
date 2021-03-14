@@ -34,6 +34,8 @@ class StatementModel(
     fun getDesc(): String {
         return "[caller ${callerOperation.type}] invoking [method $method] with [params $parametersTypes]"
     }
+
+    fun canInvoke(): Boolean = callerOperation.canInvoke(method)
 }
 
 object StatementModelSerializer : JsonSerializer<StatementModel> {

@@ -23,7 +23,9 @@ open class OperationManager {
     }
 
     fun poll(): AbstractOperation? {
-        return operations.randomOrNull()?.also { operations.remove(it) }
+        synchronized(operations) {
+            return operations.randomOrNull()?.also { operations.remove(it) }
+        }
     }
 
     open fun addClazz(newClazz: Class<*>) = add(NormalOperation.of(newClazz))

@@ -197,9 +197,14 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
         for (eachRelType in model.getRelativeTypes())
             operationManager.addClazz(eachRelType)
 
-        val stat = model.generateStatement()
-        statementCount++
-        stat?.run {
+        val statement = model.generateStatement()
+        statement?.run {
+            if (!statement.canInvoke()) {
+                logger.warning("$statement can not be invoked, skipped")
+                return@run
+            }
+            // ok
+            statementCount++
             try {
                 handle(this)
             } catch (e: Exception) {

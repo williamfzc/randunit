@@ -16,6 +16,7 @@
 package com.williamfzc.randunit.operations
 
 import com.williamfzc.randunit.models.DefaultMocker
+import java.lang.reflect.Method
 
 object DefaultOperationType
 
@@ -25,6 +26,8 @@ abstract class AbstractOperation {
 
     // will only be called inside env in runtime
     abstract fun getInstance(): Any
+
+    open fun canInvoke(method: Method): Boolean = true
 
     fun getInstanceSafely(): Any {
         try {

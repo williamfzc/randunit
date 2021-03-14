@@ -21,6 +21,7 @@ import android.app.Activity
 import android.app.Service
 import android.content.ContentProvider
 import androidx.fragment.app.Fragment
+import java.lang.reflect.Method
 import java.util.logging.Logger
 
 abstract class AbstractAndroidOperation : AbstractOperation() {
@@ -41,5 +42,9 @@ abstract class AbstractAndroidOperation : AbstractOperation() {
             op.type = t
             return op
         }
+    }
+
+    override fun canInvoke(method: Method): Boolean {
+        return !method.name.startsWith("on")
     }
 }

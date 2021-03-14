@@ -30,7 +30,7 @@ dependencies {
     implementation "org.reflections:reflections:$reflections_version"
 
     // mock libs
-    implementation "org.jeasy:easy-random-core:$easy_random_version"
+    api "org.jeasy:easy-random-core:$easy_random_version"
     implementation "io.mockk:mockk:$mockk_version"
     implementation "org.mockito:mockito-core:$mockito_version"
 
