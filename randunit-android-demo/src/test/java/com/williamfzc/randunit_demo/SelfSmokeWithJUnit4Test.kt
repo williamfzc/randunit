@@ -3,9 +3,7 @@ package com.williamfzc.randunit_demo
 import com.williamfzc.randunit.RandUnitAndroid
 import com.williamfzc.randunit.env.EnvConfig
 import com.williamfzc.randunit.env.NormalTestEnv
-import com.williamfzc.randunit.mock.MockConfig
 import com.williamfzc.randunit.models.StatementModel
-import com.williamfzc.randunit.scanner.Scanner
 import com.williamfzc.randunit.scanner.ScannerConfig
 import org.junit.Test
 import org.junit.runner.RunWith
