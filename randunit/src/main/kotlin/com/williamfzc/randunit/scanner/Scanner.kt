@@ -107,7 +107,7 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
 
         logger.info("start scanning op: ${opRawType.canonicalName}")
         opHistory.add(operation.id())
-        val collectedMethods = mutableListOf(*opRawType.getMethodsSafely())
+        val collectedMethods = mutableListOf(*opRawType.getDeclaredMethodsSafely())
 
         // todo: count of classes from loader can be a large number ...
         if (cfg.recursively)
