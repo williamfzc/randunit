@@ -18,9 +18,9 @@
 package com.williamfzc.randunit.operations
 
 import android.app.Activity
-import android.app.Fragment
 import android.app.Service
 import android.content.ContentProvider
+import androidx.fragment.app.Fragment
 import java.util.logging.Logger
 
 abstract class AbstractAndroidOperation : AbstractOperation() {

@@ -17,11 +17,11 @@
 
 package com.williamfzc.randunit.operations
 
-import android.app.Fragment
-import org.robolectric.Robolectric
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.testing.FragmentScenario
 
 class FragmentOperation : AbstractAndroidOperation() {
     override fun getInstance(): Any {
-        return Robolectric.buildFragment(type as Class<Fragment>).create().get()
+        return FragmentScenario.launch(type as Class<Fragment>)
     }
 }
