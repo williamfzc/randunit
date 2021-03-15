@@ -21,5 +21,5 @@ data class ScannerConfig @JvmOverloads constructor(
     var excludeMethodFilter: Set<String> = setOf(),
     var statementLimit: Int = 1000,
     var includePrivateMethod: Boolean = false,
-    var recursively: Boolean = false
+    var recursively: Boolean = true
 )
