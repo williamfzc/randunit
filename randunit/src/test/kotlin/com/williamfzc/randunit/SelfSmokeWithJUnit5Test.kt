@@ -21,7 +21,6 @@ import com.williamfzc.randunit.exceptions.RUException
 import com.williamfzc.randunit.exceptions.RUTypeException
 import com.williamfzc.randunit.mock.MockConfig
 import com.williamfzc.randunit.mock.MockkMocker
-import com.williamfzc.randunit.operations.AbstractOperation
 import com.williamfzc.randunit.operations.OperationManager
 import com.williamfzc.randunit.scanner.Scanner
 import com.williamfzc.randunit.scanner.ScannerConfig
