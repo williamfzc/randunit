@@ -26,7 +26,7 @@ import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.util.logging.Logger
 
-class NormalTestEnv @JvmOverloads constructor(private val envConfig: EnvConfig = EnvConfig()) :
+class NormalTestEnv @JvmOverloads constructor(envConfig: EnvConfig = EnvConfig()) :
     AbstractTestEnv(envConfig) {
     companion object {
         private val logger = Logger.getGlobal()

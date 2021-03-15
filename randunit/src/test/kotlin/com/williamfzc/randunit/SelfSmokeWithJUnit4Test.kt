@@ -18,6 +18,8 @@ package com.williamfzc.randunit
 import com.williamfzc.randunit.cases.RUJUnit4Case
 import com.williamfzc.randunit.env.EnvConfig
 import com.williamfzc.randunit.env.NormalTestEnv
+import com.williamfzc.randunit.env.rules.AbstractRule
+import com.williamfzc.randunit.env.sandbox.Sandbox
 import com.williamfzc.randunit.exceptions.RUException
 import com.williamfzc.randunit.exceptions.RUTypeException
 import com.williamfzc.randunit.mock.MockConfig
@@ -49,7 +51,9 @@ class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
                     EnvConfig::class.java,
                     RUTypeException::class.java,
                     RUException::class.java,
-                    RUJUnit4Case::class.java
+                    RUJUnit4Case::class.java,
+                    Sandbox::class.java,
+                    AbstractRule::class.java
                 ),
                 scannerConfig
             )

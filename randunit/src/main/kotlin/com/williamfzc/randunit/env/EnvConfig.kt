@@ -15,11 +15,13 @@
  */
 package com.williamfzc.randunit.env
 
+import com.williamfzc.randunit.env.sandbox.SandboxConfig
 import com.williamfzc.randunit.mock.MockConfig
 import java.lang.Exception
 
 data class EnvConfig @JvmOverloads constructor(
     var mockConfig: MockConfig = MockConfig(),
     var ignoreExceptions: Set<Class<out Exception>> = setOf(),
-    var reuseCaller: Boolean = false
+    var reuseCaller: Boolean = false,
+    var sandboxConfig: SandboxConfig = SandboxConfig()
 )
