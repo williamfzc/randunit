@@ -13,13 +13,42 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.williamfzc.randunit.scanner
+package com.williamfzc.randunit.cases;
 
-data class ScannerConfig @JvmOverloads constructor(
-    var includeFilter: Set<String> = setOf(),
-    var excludeFilter: Set<String> = setOf(),
-    var excludeMethodFilter: Set<String> = setOf(),
-    var statementLimit: Int = 1000,
-    var includePrivateMethod: Boolean = false,
-    var recursively: Boolean = true
-)
+import com.williamfzc.randunit.RandUnit;
+import com.williamfzc.randunit.env.AbstractTestEnv;
+import com.williamfzc.randunit.env.NormalTestEnv;
+import com.williamfzc.randunit.models.StatementModel;
+import com.williamfzc.randunit.scanner.ScannerConfig;
+
+import org.junit.Test;
+import org.junit.runners.Parameterized;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+abstract public class RUJUnit4Case {
+    protected final StatementModel sm;
+
+    protected static final AbstractTestEnv testEnv = new NormalTestEnv();
+    protected static ScannerConfig scannerConfig = new ScannerConfig();
+    protected static Set<Class<?>> targetClasses = new HashSet<>();
+
+    public RUJUnit4Case(StatementModel sm) {
+        this.sm = sm;
+    }
+
+    @Parameterized.Parameters(name = "{0}")
+    public static Collection<StatementModel> data() {
+        return RandUnit.INSTANCE.collectStatementsWithCache(targetClasses, scannerConfig);
+    }
+
+    @Test
+    public void runStatements() {
+        testEnv.removeAll();
+        testEnv.add(sm);
+        testEnv.start();
+        testEnv.removeAll();
+    }
+}

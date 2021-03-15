@@ -26,7 +26,7 @@ import java.util.HashSet;
 
 @RunWith(Parameterized.class)
 public class SelfSmokeWithTemplateTest extends RUJUnit4Case {
-    public RRRCase(StatementModel sm) {
+    public SelfSmokeWithTemplateTest(StatementModel sm) {
         super(sm);
     }
 

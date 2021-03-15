@@ -101,8 +101,7 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
         if (opRawType.isInterface || opRawType.isAbstract()) {
             for (eachClz in getSubTypes(opRawType))
                 operationManager.addClazz(eachClz)
-            // and remove itself
-            return
+            // should remove itself?
         }
 
         logger.info("start scanning op: ${opRawType.canonicalName}")
