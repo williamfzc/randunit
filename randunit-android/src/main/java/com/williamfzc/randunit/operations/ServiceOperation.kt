@@ -7,7 +7,7 @@ import java.lang.reflect.Method
 class ServiceOperation : AbstractAndroidOperation() {
     override fun getInstance(): Service {
         @Suppress("UNCHECKED_CAST")
-        return Robolectric.buildService(type as Class<Service>).create().bind().get()
+        return Robolectric.buildService(type as Class<Service>).create().get()
     }
 
     override fun canInvoke(method: Method): Boolean {

@@ -19,9 +19,16 @@ package com.williamfzc.randunit.operations
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.testing.FragmentScenario
+import androidx.lifecycle.Lifecycle
 
 class FragmentOperation : AbstractAndroidOperation() {
     override fun getInstance(): Any {
-        return FragmentScenario.launch(type as Class<Fragment>)
+        val scenario = FragmentScenario.launchInContainer<Fragment>(type as Class<Fragment>)
+        scenario.moveToState(Lifecycle.State.CREATED)
+        var fragment: Fragment? = null
+        scenario.onFragment {
+            fragment = it
+        }
+        return fragment!!
     }
 }
