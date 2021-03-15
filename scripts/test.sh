@@ -7,6 +7,6 @@ echo `pwd`
 
 ./gradlew ktlintFormat
 ./gradlew randunit:jacocoTestReport
-./gradlew randunit-android:jacocoTestReportDebug
+./gradlew randunit-android:test
 ./gradlew randunit-demo:jacocoTestReport
 ./gradlew randunit-android-demo:test
