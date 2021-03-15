@@ -17,6 +17,7 @@ package com.williamfzc.randunit
 
 import com.williamfzc.randunit.env.EnvConfig
 import com.williamfzc.randunit.env.NormalTestEnv
+import com.williamfzc.randunit.mock.MockConfig
 import com.williamfzc.randunit.models.StatementModel
 import com.williamfzc.randunit.operations.*
 import com.williamfzc.randunit.scanner.Scanner
@@ -30,7 +31,7 @@ import org.robolectric.annotation.Config
 @RunWith(ParameterizedRobolectricTestRunner::class)
 class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
     companion object {
-        private val envConfig = EnvConfig(ignoreExceptions = setOf(IllegalStateException::class.java))
+        private val envConfig = EnvConfig(MockConfig(ktFirst = true), ignoreExceptions = setOf(IllegalStateException::class.java))
         private val testEnv = NormalTestEnv(envConfig)
 
         @JvmStatic
@@ -39,7 +40,7 @@ class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
             val scannerConfig = ScannerConfig(
                 includeFilter = setOf("com.williamfzc.randunit"),
                 excludeFilter = setOf("org.jeasy"),
-                excludeMethodFilter = setOf("toJson"),
+                excludeMethodFilter = setOf("toJson", "collectStatementsWithAutoSearch"),
                 recursively = true,
                 includePrivateMethod = true
             )
@@ -63,6 +64,7 @@ class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
 
     @Test
     fun run() {
+        testEnv.removeAll()
         testEnv.add(statementModel)
         testEnv.start()
         testEnv.removeAll()

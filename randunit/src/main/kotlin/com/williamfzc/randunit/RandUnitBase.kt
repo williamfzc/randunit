@@ -89,7 +89,6 @@ abstract class RandUnitBase {
         if (statementCache.isEmpty()) {
             val ret = collectStatements(targetClasses, cfg)
             statementCache = ret
-            return ret
         }
         return statementCache
     }

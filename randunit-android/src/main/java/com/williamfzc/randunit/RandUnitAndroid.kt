@@ -20,7 +20,7 @@ object RandUnitAndroid : RandUnitBase() {
         cfg: ScannerConfig? = null,
         packageName: String
     ): List<StatementModel> {
-        val finalTargetClasses = targetClasses.toMutableSet()
+        val extra = mutableSetOf<Class<*>>()
         val reflections = Reflections(packageName)
 
         for (
@@ -31,7 +31,10 @@ object RandUnitAndroid : RandUnitBase() {
                 Fragment::class.java
             )
         )
-            reflections.getSubTypesOf(eachBaseType).forEach { finalTargetClasses.add(it) }
-        return collectStatements(finalTargetClasses, cfg)
+            // should not cause any errors
+            kotlin.runCatching {
+                reflections.getSubTypesOf(eachBaseType).forEach { extra.add(it) }
+            }
+        return collectStatements(extra.plus(targetClasses), cfg)
     }
 }
