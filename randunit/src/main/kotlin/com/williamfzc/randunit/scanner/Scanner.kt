@@ -75,7 +75,7 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
         }
 
         // exclude protected and private methods
-        method.isAccessible = true
+        method.trySetAccessible()
         if (method.isPrivateOrProtected()) {
             if (!cfg.includePrivateMethod)
                 return false
