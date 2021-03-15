@@ -53,7 +53,7 @@ open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
         }
 
         // some test cases (self scan may cause some jvm errors
-        if (t.name.contains("test", ignoreCase = true))
+        if (t.simpleName.contains("test", ignoreCase = true))
             return false
 
         // include filter?
