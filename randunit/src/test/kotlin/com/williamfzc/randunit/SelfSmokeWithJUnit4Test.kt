@@ -15,6 +15,7 @@
  */
 package com.williamfzc.randunit
 
+import com.williamfzc.randunit.cases.RUJUnit4Case
 import com.williamfzc.randunit.env.EnvConfig
 import com.williamfzc.randunit.env.NormalTestEnv
 import com.williamfzc.randunit.exceptions.RUException
@@ -36,8 +37,7 @@ class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
         fun data(): Collection<StatementModel> {
             val scannerConfig = ScannerConfig(
                 includeFilter = setOf("com.williamfzc.randunit"),
-                recursively = true,
-                includePrivateMethod = true
+                recursively = true
             )
             return RandUnit.collectStatementsWithCache(
                 setOf(
@@ -49,6 +49,7 @@ class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
                     EnvConfig::class.java,
                     RUTypeException::class.java,
                     RUException::class.java,
+                    RUJUnit4Case::class.java
                 ),
                 scannerConfig
             )
@@ -58,7 +59,8 @@ class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
     @Test
     fun run() {
         val mockConfig = MockConfig(ktFirst = true)
-        val envConfig = EnvConfig(mockConfig, ignoreExceptions = setOf(IllegalStateException::class.java))
+        val envConfig =
+            EnvConfig(mockConfig, ignoreExceptions = setOf(IllegalStateException::class.java))
         val env = NormalTestEnv(envConfig)
         env.add(statementModel)
         env.start()
