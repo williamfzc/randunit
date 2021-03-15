@@ -15,9 +15,11 @@
  */
 package com.williamfzc.randunit.operations
 
+import com.williamfzc.randunit.models.DefaultMocker
+
 class NormalOperation : AbstractOperation() {
     override fun getInstance(): Any {
-        return type.newInstance()
+        return DefaultMocker.mock(type)!!
     }
 
     companion object {
