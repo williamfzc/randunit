@@ -15,7 +15,7 @@
  *
  */
 
-package com.wlliamfzc.randunit;
+package com.williamfzc.randunit;
 
 import com.williamfzc.randunit.RandUnit;
 import com.williamfzc.randunit.env.AbstractTestEnv;
@@ -32,11 +32,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @RunWith(Parameterized.class)
-public class SelfSmokeWithJUnit4InJava {
+public class SelfSmokeWithJUnit4InJavaTest {
     private final StatementModel sm;
     private static final AbstractTestEnv testEnv = new NormalTestEnv();
 
-    public SelfSmokeWithJUnit4InJava(StatementModel s) {
+    public SelfSmokeWithJUnit4InJavaTest(StatementModel s) {
         sm = s;
     }
 

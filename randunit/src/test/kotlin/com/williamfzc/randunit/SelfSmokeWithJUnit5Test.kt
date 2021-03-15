@@ -21,6 +21,7 @@ import com.williamfzc.randunit.exceptions.RUException
 import com.williamfzc.randunit.exceptions.RUTypeException
 import com.williamfzc.randunit.mock.MockConfig
 import com.williamfzc.randunit.mock.MockkMocker
+import com.williamfzc.randunit.operations.AbstractOperation
 import com.williamfzc.randunit.operations.OperationManager
 import com.williamfzc.randunit.scanner.Scanner
 import com.williamfzc.randunit.scanner.ScannerConfig
@@ -45,8 +46,7 @@ class SelfSmokeWithJUnit5Test {
         val scannerConfig = ScannerConfig(
             includeFilter = setOf("com.williamfzc.randunit"),
             excludeFilter = setOf("org.jeasy"),
-            recursively = true,
-            includePrivateMethod = true
+            recursively = true
         )
 
         val clzSet = setOf(
@@ -65,10 +65,10 @@ class SelfSmokeWithJUnit5Test {
         Assert.assertTrue(statements.isNotEmpty())
     }
 
-    @TestFactory
-    fun scanAndRun(): Iterable<DynamicTest> {
+    @Test
+    fun scanOnly() {
         val clsSet = setOf(CCC::class.java, AAA::class.java)
-        return RandUnit.runWithTestFactory(clsSet)
+        RandUnit.collectOperations(clsSet)
     }
 
     @TestFactory
