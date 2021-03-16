@@ -37,7 +37,11 @@ class SelfSmokeWithJUnit5Test {
         val opm = OperationManager()
         opm.addClazz(CCC::class.java)
         opm.addClazz(AAA::class.java)
-        Scanner().scanAll(opm)
+
+        val scannerConfig = ScannerConfig(
+            includeFilter = setOf("com.williamfzc.randunit")
+        )
+        Scanner(scannerConfig).scanAll(opm)
     }
 
     @Test
