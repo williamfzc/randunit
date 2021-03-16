@@ -7,16 +7,20 @@ buildscript {
         android_product_name = "randunit-android"
         cur_version = "0.1.0"
 
+        // switch
+        // when enabled, use some local mirrors
+        is_dev = true
+
         // --------
         // kotlin
         kotlin_version = "1.4.20"
         // androidx
         core_ktx_version = "1.2.0"
         androidx_test_core_version = "1.2.0"
-        androidx_fragment_test_version = "1.2.4"
+        androidx_fragment_test_version = "1.2.0"
         // dep
         gson_version = "2.8.6"
-        reflections_version = "0.9.12"
+        reflections_version = "0.9.8"
         // mock
         easy_random_version = "4.3.0"
         mockk_version = "1.10.6"
@@ -29,8 +33,12 @@ buildscript {
     }
 
     repositories {
-        mavenLocal()
-        maven {url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+        if (is_dev) {
+            mavenLocal()
+            maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+            maven { url 'https://maven.aliyun.com/nexus/content/repositories/google' }
+        }
+
         google()
         jcenter()
 
@@ -61,11 +69,15 @@ buildscript {
 
 allprojects {
     repositories {
-        mavenLocal()
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        if (is_dev) {
+            mavenLocal()
+            maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+            maven { url 'https://maven.aliyun.com/nexus/content/repositories/google' }
+        }
+
         mavenCentral()
-        jcenter()
         google()
+        jcenter()
     }
 }
 
