@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-@Config(sdk = {29})
+@Config(sdk = {28})
 @RunWith(ParameterizedRobolectricTestRunner.class)
 public class SelfSmokeWithJUnit4TestInJava {
     private final StatementModel sm;
