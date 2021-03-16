@@ -68,12 +68,6 @@ class SelfSmokeWithJUnit5Test {
         Assert.assertTrue(statements.isNotEmpty())
     }
 
-    @Test
-    fun scanOnly() {
-        val clsSet = setOf(CCC::class.java, AAA::class.java)
-        RandUnit.collectOperations(clsSet)
-    }
-
     @TestFactory
     fun scanItself(): Iterable<DynamicTest> {
         val scannerConfig = ScannerConfig(

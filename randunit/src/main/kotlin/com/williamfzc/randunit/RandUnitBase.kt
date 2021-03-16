@@ -33,39 +33,20 @@ abstract class RandUnitBase : RandUnitBaseImpl() {
         private val logger = Logger.getGlobal()
     }
 
-    private var statementCache: List<StatementModel> = listOf()
-
-    fun scanClassesFromPackage(pkgName: String): Iterable<Class<*>> {
-        val result = mutableSetOf<Class<*>>()
-        val reflections = Reflections(pkgName)
-        reflections.store.storeMap.forEach {
-            for (each in it.value.asMap()) {
-                kotlin.runCatching { result.add(Class.forName(each.key)) }
-            }
-        }
-        return result
-    }
-
-    fun scanClassesFromPackages(packages: Iterable<String>): Iterable<Class<*>> {
-        val ret = mutableSetOf<Class<*>>()
-        packages.forEach { ret.plus(scanClassesFromPackage(it)) }
-        return ret
-    }
-
-    fun collectStatementsWithCache(
-        targetClasses: Iterable<Class<*>>,
-        cfg: ScannerConfig? = null
-    ): List<StatementModel> {
-        if (statementCache.isEmpty())
-            statementCache = collectStatements(targetClasses, cfg)
-        return statementCache
-    }
-
+    @JvmOverloads
     fun collectStatementsWithPackage(
         targetPackage: String,
         cfg: ScannerConfig? = null
-    ): List<StatementModel> = collectStatements(scanClassesFromPackage(targetPackage), cfg)
+    ): Collection<StatementModel> = collectStatements(scanClassesFromPackage(targetPackage), cfg)
 
+    @JvmOverloads
+    fun collectStatementsWithPackages(
+        targetPackages: Iterable<String>,
+        cfg: ScannerConfig? = null
+    ): Collection<StatementModel> =
+        collectStatements(scanClassesFromPackages(targetPackages), cfg)
+
+    @JvmOverloads
     fun runWithTestFactory(
         targetClasses: Iterable<Class<*>>,
         scannerConfig: ScannerConfig? = null,
@@ -100,8 +81,9 @@ abstract class RandUnitBaseImpl {
 
     abstract fun getOperationManager(): OperationManager
 
+    @JvmOverloads
     fun collectOperations(
-        targetClasses: Set<Class<*>>,
+        targetClasses: Iterable<Class<*>>,
         cfg: ScannerConfig? = null
     ): List<AbstractOperation> {
         val ret = mutableListOf<AbstractOperation>()
@@ -124,6 +106,7 @@ abstract class RandUnitBaseImpl {
         return ret
     }
 
+    @JvmOverloads
     fun collectStatements(
         targetClasses: Iterable<Class<*>>,
         cfg: ScannerConfig? = null
@@ -144,6 +127,30 @@ abstract class RandUnitBaseImpl {
         CustomScanner(finalCfg).scanAll(opm)
 
         logger.info(ret.toJson())
+        return ret
+    }
+
+    fun scanClassesFromPackage(pkgName: String): Iterable<Class<*>> {
+        // see: https://github.com/ronmamo/reflections/issues/296
+        val result = mutableSetOf<Class<*>>()
+        val reflections = Reflections(pkgName)
+        reflections.store.storeMap.forEach { abstractOrInterfaceKey ->
+            for (each in abstractOrInterfaceKey.value.asMap()) {
+                // whatever, it should not cause errors
+                kotlin.runCatching {
+                    result.add(Class.forName(each.key))
+                    each.value.forEach { absClazzName ->
+                        result.add(Class.forName(absClazzName))
+                    }
+                }
+            }
+        }
+        return result
+    }
+
+    fun scanClassesFromPackages(packages: Iterable<String>): Iterable<Class<*>> {
+        val ret = mutableSetOf<Class<*>>()
+        packages.forEach { ret.plus(scanClassesFromPackage(it)) }
         return ret
     }
 }

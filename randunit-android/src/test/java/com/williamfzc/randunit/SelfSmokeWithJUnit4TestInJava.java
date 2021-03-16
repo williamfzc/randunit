@@ -1,9 +1,7 @@
 package com.williamfzc.randunit;
 
 import com.williamfzc.randunit.env.AbstractTestEnv;
-import com.williamfzc.randunit.env.EnvConfig;
 import com.williamfzc.randunit.env.NormalTestEnv;
-import com.williamfzc.randunit.mock.MockConfig;
 import com.williamfzc.randunit.models.StatementModel;
 import com.williamfzc.randunit.scanner.ScannerConfig;
 
@@ -20,10 +18,7 @@ import java.util.Set;
 @RunWith(ParameterizedRobolectricTestRunner.class)
 public class SelfSmokeWithJUnit4TestInJava {
     private final StatementModel sm;
-    private static final AbstractTestEnv testEnv = new NormalTestEnv(
-            new EnvConfig(
-                    new MockConfig(null, true)
-            ));
+    private static final AbstractTestEnv testEnv = new NormalTestEnv();
 
     public SelfSmokeWithJUnit4TestInJava(StatementModel s) {
         sm = s;
@@ -36,20 +31,17 @@ public class SelfSmokeWithJUnit4TestInJava {
 
         Set<String> excludeMethodFilter = new HashSet<>();
         excludeMethodFilter.add("toJson");
-        excludeMethodFilter.add("collectStatementsWithAutoSearch");
         Set<String> empty = new HashSet<>();
 
         ScannerConfig scannerConfig = new ScannerConfig(includeFilter, empty, excludeMethodFilter, 500, false, true);
 
         Set<Class<?>> clzSet = new HashSet<>();
         clzSet.add(RandUnitAndroid.class);
-
         return RandUnitAndroid.INSTANCE.collectStatementsWithCache(clzSet, scannerConfig);
     }
 
     @Test
     public void run() {
-        testEnv.removeAll();
         testEnv.add(sm);
         testEnv.start();
         testEnv.removeAll();

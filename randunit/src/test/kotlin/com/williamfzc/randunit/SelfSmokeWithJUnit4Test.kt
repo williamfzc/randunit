@@ -41,7 +41,7 @@ class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
                 includeFilter = setOf("com.williamfzc.randunit"),
                 recursively = true
             )
-            return RandUnit.collectStatementsWithCache(
+            return RandUnit.collectStatements(
                 setOf(
                     RandUnit::class.java,
                     RandUnitBase::class.java,

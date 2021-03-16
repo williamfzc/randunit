@@ -36,6 +36,6 @@ public class SelfSmokeWithTemplateTest extends RUJUnit4Case {
         scannerConfig.setIncludeFilter(new HashSet<String>() {{
             add("com.williamfzc.randunit");
         }});
-        return RandUnit.INSTANCE.collectStatementsWithCache(targetClasses, scannerConfig);
+        return RandUnit.INSTANCE.collectStatements(targetClasses, scannerConfig);
     }
 }

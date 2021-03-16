@@ -41,7 +41,7 @@ abstract public class RUJUnit4Case {
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<StatementModel> data() {
-        return RandUnit.INSTANCE.collectStatementsWithCache(targetClasses, scannerConfig);
+        return RandUnit.INSTANCE.collectStatements(targetClasses, scannerConfig);
     }
 
     @Test

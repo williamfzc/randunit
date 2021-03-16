@@ -58,7 +58,7 @@ public class SelfSmokeWithJUnit4InJavaTest {
 
         Set<Class<?>> clzSet = new HashSet<>();
         clzSet.add(RandUnit.class);
-        return RandUnit.INSTANCE.collectStatementsWithCache(clzSet, scannerConfig);
+        return RandUnit.INSTANCE.collectStatements(clzSet, scannerConfig);
     }
 
     @Test
