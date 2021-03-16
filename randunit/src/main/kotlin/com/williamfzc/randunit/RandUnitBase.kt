@@ -25,76 +25,49 @@ import com.williamfzc.randunit.scanner.Scanner
 import com.williamfzc.randunit.scanner.ScannerConfig
 import io.mockk.MockKException
 import org.junit.jupiter.api.DynamicTest
-import java.lang.Exception
+import org.reflections.Reflections
 import java.util.logging.Logger
 
-abstract class RandUnitBase {
+abstract class RandUnitBase : RandUnitBaseImpl() {
     companion object {
         private val logger = Logger.getGlobal()
     }
 
-    abstract fun getOperationManager(): OperationManager
     private var statementCache: List<StatementModel> = listOf()
 
-    fun collectOperations(
-        targetClasses: Set<Class<*>>,
-        cfg: ScannerConfig? = null
-    ): List<AbstractOperation> {
-        val ret = mutableListOf<AbstractOperation>()
-
-        class CustomScanner(cfg: ScannerConfig) : Scanner(cfg) {
-            override fun beforeOperation(
-                operation: AbstractOperation,
-                operationManager: OperationManager
-            ) {
-                ret.add(operation)
+    fun scanClassesFromPackage(pkgName: String): Iterable<Class<*>> {
+        val result = mutableSetOf<Class<*>>()
+        val reflections = Reflections(pkgName)
+        reflections.store.storeMap.forEach {
+            for (each in it.value.asMap()) {
+                kotlin.runCatching { result.add(Class.forName(each.key)) }
             }
         }
-        val finalCfg = cfg ?: ScannerConfig()
-        val opm = getOperationManager()
-        for (eachClazz in targetClasses)
-            opm.addClazz(eachClazz)
-        logger.info("start scanning with cfg: $finalCfg")
-        CustomScanner(finalCfg).scanAll(opm)
-        return ret
+        return result
     }
 
-    fun collectStatements(
-        targetClasses: Set<Class<*>>,
-        cfg: ScannerConfig? = null
-    ): List<StatementModel> {
-        val ret = mutableListOf<StatementModel>()
-
-        class CustomScanner(cfg: ScannerConfig) : Scanner(cfg) {
-            override fun handle(statementModel: StatementModel) {
-                ret.add(statementModel)
-            }
-        }
-
-        val finalCfg = cfg ?: ScannerConfig()
-        val opm = getOperationManager()
-        for (eachClazz in targetClasses)
-            opm.addClazz(eachClazz)
-        logger.info("start scanning with cfg: $finalCfg")
-        CustomScanner(finalCfg).scanAll(opm)
-
-        logger.info(ret.toJson())
+    fun scanClassesFromPackages(packages: Iterable<String>): Iterable<Class<*>> {
+        val ret = mutableSetOf<Class<*>>()
+        packages.forEach { ret.plus(scanClassesFromPackage(it)) }
         return ret
     }
 
     fun collectStatementsWithCache(
-        targetClasses: Set<Class<*>>,
+        targetClasses: Iterable<Class<*>>,
         cfg: ScannerConfig? = null
     ): List<StatementModel> {
-        if (statementCache.isEmpty()) {
-            val ret = collectStatements(targetClasses, cfg)
-            statementCache = ret
-        }
+        if (statementCache.isEmpty())
+            statementCache = collectStatements(targetClasses, cfg)
         return statementCache
     }
 
+    fun collectStatementsWithPackage(
+        targetPackage: String,
+        cfg: ScannerConfig? = null
+    ): List<StatementModel> = collectStatements(scanClassesFromPackage(targetPackage), cfg)
+
     fun runWithTestFactory(
-        targetClasses: Set<Class<*>>,
+        targetClasses: Iterable<Class<*>>,
         scannerConfig: ScannerConfig? = null,
         envConfig: EnvConfig = EnvConfig()
     ): Iterable<DynamicTest> {
@@ -117,5 +90,60 @@ abstract class RandUnitBase {
         }
 
         return dynamicTests
+    }
+}
+
+abstract class RandUnitBaseImpl {
+    companion object {
+        private val logger = Logger.getGlobal()
+    }
+
+    abstract fun getOperationManager(): OperationManager
+
+    fun collectOperations(
+        targetClasses: Set<Class<*>>,
+        cfg: ScannerConfig? = null
+    ): List<AbstractOperation> {
+        val ret = mutableListOf<AbstractOperation>()
+
+        class CustomScanner(cfg: ScannerConfig) : Scanner(cfg) {
+            override fun beforeOperation(
+                operation: AbstractOperation,
+                operationManager: OperationManager
+            ) {
+                ret.add(operation)
+            }
+        }
+
+        val finalCfg = cfg ?: ScannerConfig()
+        val opm = getOperationManager()
+        for (eachClazz in targetClasses)
+            opm.addClazz(eachClazz)
+        logger.info("start scanning with cfg: $finalCfg")
+        CustomScanner(finalCfg).scanAll(opm)
+        return ret
+    }
+
+    fun collectStatements(
+        targetClasses: Iterable<Class<*>>,
+        cfg: ScannerConfig? = null
+    ): List<StatementModel> {
+        val ret = mutableListOf<StatementModel>()
+
+        class CustomScanner(cfg: ScannerConfig) : Scanner(cfg) {
+            override fun handle(statementModel: StatementModel) {
+                ret.add(statementModel)
+            }
+        }
+
+        val finalCfg = cfg ?: ScannerConfig()
+        val opm = getOperationManager()
+        for (eachClazz in targetClasses)
+            opm.addClazz(eachClazz)
+        logger.info("start scanning with cfg: $finalCfg")
+        CustomScanner(finalCfg).scanAll(opm)
+
+        logger.info(ret.toJson())
+        return ret
     }
 }
