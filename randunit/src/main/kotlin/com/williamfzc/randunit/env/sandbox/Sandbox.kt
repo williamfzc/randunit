@@ -17,23 +17,36 @@
 
 package com.williamfzc.randunit.env.sandbox
 
+import com.williamfzc.randunit.env.rules.IgnoreBuiltinExceptionRule
 import com.williamfzc.randunit.models.StatementModel
+import java.lang.reflect.InvocationTargetException
 import java.util.logging.Logger
 
 class Sandbox(cfg: SandboxConfig) {
-    private val rules = cfg.rules
+    private val rules = cfg.rules.plus(DEFAULT_RULES)
 
     companion object {
         private val logger = Logger.getLogger("Sandbox")
+        private val DEFAULT_RULES = setOf(IgnoreBuiltinExceptionRule)
     }
 
-    fun runSafely(statementModel: StatementModel, realRun: (StatementModel) -> Unit) {
+    fun runSafely(statementModel: StatementModel, realRun: (StatementModel) -> Unit): Throwable? {
         try {
             realRun(statementModel)
         } catch (e: Throwable) {
-            if (!checkRules(statementModel, e))
-                throw e
+            val realException =
+                if ((e is InvocationTargetException).and(null != e.cause))
+                // it can be an Error type
+                    e.cause as Throwable
+                else
+                    e
+
+            // no rules match
+            if (!checkRules(statementModel, realException))
+                return realException
         }
+        // nothing happened
+        return null
     }
 
     private fun checkRules(statementModel: StatementModel, e: Throwable): Boolean {

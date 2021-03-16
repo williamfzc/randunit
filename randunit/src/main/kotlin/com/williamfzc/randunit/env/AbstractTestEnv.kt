@@ -55,7 +55,8 @@ abstract class AbstractTestEnv @JvmOverloads constructor(val envConfig: EnvConfi
         afterRun()
     }
 
-    private fun runInSandbox(statementModel: StatementModel) {
-        Sandbox(envConfig.sandboxConfig).runSafely(statementModel, ::run)
+    private fun runInSandbox(statementModel: StatementModel): Throwable? {
+        // sandbox should always be safe
+        return Sandbox(envConfig.sandboxConfig).runSafely(statementModel, ::run)
     }
 }

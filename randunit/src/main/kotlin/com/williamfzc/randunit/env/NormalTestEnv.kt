@@ -19,10 +19,7 @@ import com.williamfzc.randunit.exceptions.RUTypeException
 import com.williamfzc.randunit.extensions.isStatic
 import com.williamfzc.randunit.models.StatementModel
 import com.williamfzc.randunit.operations.AbstractOperation
-import io.mockk.MockKException
-import org.mockito.exceptions.base.MockitoException
 import java.lang.Exception
-import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.util.logging.Logger
 
@@ -30,22 +27,8 @@ class NormalTestEnv @JvmOverloads constructor(envConfig: EnvConfig = EnvConfig()
     AbstractTestEnv(envConfig) {
     companion object {
         private val logger = Logger.getGlobal()
-        private val BUILTIN_IGNORED_EXCEPTIONS = setOf(
-            MockKException::class.java,
-            MockitoException::class.java,
-            VerifyError::class.java
-        )
-
-        // ignore current exception if these words appeared in traceback msg
-        private val IGNORED_EXCEPTIONS_WORDS = setOf(
-            "org.mockito",
-            ".mockk",
-            "MockitoMock",
-            "com.williamfzc.randunit"
-        )
     }
 
-    private val ignoredExceptions = BUILTIN_IGNORED_EXCEPTIONS.plus(envConfig.ignoreExceptions)
     private val callerCache = mutableMapOf<String, Any>()
 
     private fun getCallerInstFromCache(curCallOp: AbstractOperation): Any? {
@@ -92,83 +75,41 @@ class NormalTestEnv @JvmOverloads constructor(envConfig: EnvConfig = EnvConfig()
         return true
     }
 
+    // this method only will be running inside sandbox
+    // so it need no try-catch
     override fun run(statementModel: StatementModel) {
         logger.info("running: ${statementModel.getDesc()}")
 
         // at least it will not cause any crashes because of mock
-        runFuncSafely {
-            val caller = generateCaller(statementModel)
-            if (!verifyCallerInst(caller))
-                return@runFuncSafely
-            caller as Any
+        val caller = generateCaller(statementModel)
+        if (!verifyCallerInst(caller))
+            return
+        caller as Any
 
-            val parameters = generateParameters(statementModel)
-            if (parameters.size != statementModel.parametersTypes.size) {
-                logger.warning("parameters mock failed, skipped")
-                return@runFuncSafely
-            }
-
-            // ok
-            logger.info(
-                """
-                statement initiated:
-                - params: $parameters
-                - caller: $caller
-                - method: ${statementModel.method}
-                """.trimIndent()
-            )
-            return@runFuncSafely runSafely(
-                caller,
-                statementModel.method,
-                parameters,
-                statementModel.callerOperation
-            )
+        val parameters = generateParameters(statementModel)
+        if (parameters.size != statementModel.parametersTypes.size) {
+            logger.warning("parameters mock failed, skipped")
+            return
         }
+
+        // ok
+        logger.info(
+            """
+            statement initiated:
+            - params: $parameters
+            - caller: $caller
+            - method: ${statementModel.method}
+            """.trimIndent()
+        )
+        return actualRun(
+            caller,
+            statementModel.method,
+            parameters,
+            statementModel.callerOperation
+        )
     }
 
-    private fun isIgnoredException(e: Throwable): Boolean {
-        for (eachIgnoreException in ignoredExceptions) {
-            if (e::class.java == eachIgnoreException)
-                return true
-        }
-        // and msg check
-        e.message?.let { errMsg ->
-            for (eachStopWord in IGNORED_EXCEPTIONS_WORDS) {
-                if (errMsg.contains(eachStopWord))
-                    return true
-            }
-        }
-        e.stackTrace.firstOrNull()?.let {
-            for (eachStopWord in IGNORED_EXCEPTIONS_WORDS) {
-                if (it.toString().contains(eachStopWord))
-                    return true
-            }
-        }
-
-        return false
-    }
-
-    private fun runFuncSafely(func: () -> Unit): Any? {
-        return try {
-            func()
-        } catch (e: Exception) {
-            logger.warning("error happened in runFuncSafely: $e")
-            val realException =
-                if ((e is InvocationTargetException).and(null != e.cause))
-                // it can be an Error type
-                    e.cause as Throwable
-                else
-                    e
-            if (!isIgnoredException(realException))
-                throw realException
-
-            // else, ignore
-            logger.info("error $realException happened but allowed")
-            null
-        }
-    }
-
-    private fun runSafely(
+    private fun actualRun(
         caller: Any,
         method: Method,
         parameters: List<Any?>,
@@ -176,9 +117,7 @@ class NormalTestEnv @JvmOverloads constructor(envConfig: EnvConfig = EnvConfig()
     ) {
         val returnValueOfInvoke = synchronized(method) {
             try {
-                runFuncSafely {
-                    method.invoke(caller, *parameters.toTypedArray())
-                }
+                method.invoke(caller, *parameters.toTypedArray())
             } finally {
                 operation.tearDown(caller)
             }
