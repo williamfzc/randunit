@@ -22,9 +22,7 @@ import com.williamfzc.randunit.models.StatementModel
 import java.lang.reflect.InvocationTargetException
 import java.util.logging.Logger
 
-class Sandbox(cfg: SandboxConfig) {
-    private val rules = cfg.rules.plus(DEFAULT_RULES)
-
+class Sandbox(var cfg: SandboxConfig) {
     companion object {
         private val logger = Logger.getLogger("Sandbox")
         private val DEFAULT_RULES = setOf(IgnoreBuiltinExceptionRule)
@@ -50,7 +48,7 @@ class Sandbox(cfg: SandboxConfig) {
     }
 
     private fun checkRules(statementModel: StatementModel, e: Throwable): Boolean {
-        for (each in rules)
+        for (each in cfg.rules.plus(DEFAULT_RULES))
             if (each.judge(statementModel, e)) {
                 logger.info("$e happened but allowed by rule: $each")
                 return true

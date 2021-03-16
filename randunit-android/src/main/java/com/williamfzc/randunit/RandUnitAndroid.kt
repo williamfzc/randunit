@@ -24,4 +24,8 @@ object RandUnitAndroid : RandUnitBase() {
             stCache = collectStatements(targetClasses, cfg)
         return stCache
     }
+
+    fun cleanCache() {
+        stCache = setOf()
+    }
 }

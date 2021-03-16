@@ -17,6 +17,7 @@ package com.williamfzc.randunit
 
 import com.williamfzc.randunit.env.EnvConfig
 import com.williamfzc.randunit.env.NormalTestEnv
+import com.williamfzc.randunit.env.rules.AbstractRule
 import com.williamfzc.randunit.mock.MockConfig
 import com.williamfzc.randunit.models.StatementModel
 import com.williamfzc.randunit.operations.*
@@ -30,17 +31,35 @@ import org.robolectric.annotation.Config
 @Config(sdk = [28])
 @RunWith(ParameterizedRobolectricTestRunner::class)
 class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
+    init {
+        // custom rules
+        class CustomRule : AbstractRule() {
+            override fun judge(statementModel: StatementModel, e: Throwable): Boolean {
+                return when (e) {
+                    is IllegalStateException -> true
+                    is UnsupportedOperationException -> true
+                    is InternalError -> true
+                    else -> false
+                }
+            }
+        }
+        envConfig.sandboxConfig.rules.add(CustomRule())
+    }
+
     companion object {
-        private val envConfig = EnvConfig(MockConfig(ktFirst = true), ignoreExceptions = setOf(IllegalStateException::class.java))
+        private val envConfig = EnvConfig(
+            mockConfig = MockConfig(ktFirst = true),
+            ignoreExceptions = mutableSetOf(IllegalStateException::class.java)
+        )
         private val testEnv = NormalTestEnv(envConfig)
 
         @JvmStatic
         @ParameterizedRobolectricTestRunner.Parameters
         fun data(): Collection<StatementModel> {
             val scannerConfig = ScannerConfig(
-                includeFilter = setOf("com.williamfzc.randunit"),
-                excludeFilter = setOf("org.jeasy"),
-                excludeMethodFilter = setOf("toJson", "collectStatementsWithAutoSearch"),
+                includeFilter = mutableSetOf("com.williamfzc.randunit"),
+                excludeFilter = mutableSetOf("org.jeasy"),
+                excludeMethodFilter = mutableSetOf("toJson", "collectStatementsWithAutoSearch"),
                 recursively = true,
                 includePrivateMethod = true
             )
@@ -64,9 +83,6 @@ class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
 
     @Test
     fun run() {
-        testEnv.removeAll()
-        testEnv.add(statementModel)
-        testEnv.start()
-        testEnv.removeAll()
+        testEnv.runWithSandbox(statementModel)
     }
 }

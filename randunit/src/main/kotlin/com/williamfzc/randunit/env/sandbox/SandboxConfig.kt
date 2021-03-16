@@ -20,5 +20,5 @@ package com.williamfzc.randunit.env.sandbox
 import com.williamfzc.randunit.env.rules.AbstractRule
 
 class SandboxConfig @JvmOverloads constructor(
-    var rules: Set<AbstractRule> = setOf()
+    var rules: MutableSet<AbstractRule> = mutableSetOf()
 )

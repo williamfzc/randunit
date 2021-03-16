@@ -20,7 +20,7 @@ import com.williamfzc.randunit.operations.AbstractOperation
 import java.lang.reflect.Method
 import java.lang.reflect.Type
 
-class StatementModel(
+data class StatementModel(
     // a `method call` may looks like:
     // methodA(caller, param1, param2)
     val method: Method,

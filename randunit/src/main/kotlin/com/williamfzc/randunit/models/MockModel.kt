@@ -19,12 +19,13 @@ import com.williamfzc.randunit.mock.*
 import java.lang.Exception
 import java.util.logging.Logger
 
-open class MockModel(mockConfig: MockConfig) {
+open class MockModel @JvmOverloads constructor(mockConfig: MockConfig = MockConfig()) {
     companion object {
         private val logger = Logger.getGlobal()
     }
 
     private val mockerList = mutableListOf<AbstractMocker>()
+
     init {
         mockerList.add(MockitoMocker(mockConfig))
         mockerList.add(EasyRandomMocker(mockConfig))

@@ -17,10 +17,12 @@ package com.williamfzc.randunit
 
 import com.williamfzc.randunit.env.EnvConfig
 import com.williamfzc.randunit.env.NormalTestEnv
+import com.williamfzc.randunit.env.rules.AbstractRule
 import com.williamfzc.randunit.exceptions.RUException
 import com.williamfzc.randunit.exceptions.RUTypeException
 import com.williamfzc.randunit.mock.MockConfig
 import com.williamfzc.randunit.mock.MockkMocker
+import com.williamfzc.randunit.models.StatementModel
 import com.williamfzc.randunit.operations.OperationManager
 import com.williamfzc.randunit.scanner.Scanner
 import com.williamfzc.randunit.scanner.ScannerConfig
@@ -38,19 +40,15 @@ class SelfSmokeWithJUnit5Test {
         opm.addClazz(CCC::class.java)
         opm.addClazz(AAA::class.java)
 
-        val scannerConfig = ScannerConfig(
-            includeFilter = setOf("com.williamfzc.randunit")
-        )
+        val scannerConfig = ScannerConfig()
+        scannerConfig.includeFilter.add("com.williamfzc.randunit")
         Scanner(scannerConfig).scanAll(opm)
     }
 
     @Test
     fun scanAndCollect() {
-        val scannerConfig = ScannerConfig(
-            includeFilter = setOf("com.williamfzc.randunit"),
-            excludeFilter = setOf("org.jeasy"),
-            recursively = true
-        )
+        val scannerConfig = ScannerConfig()
+        scannerConfig.includeFilter.add("com.williamfzc.randunit")
 
         val clzSet = setOf(
             RandUnit::class.java,
@@ -70,15 +68,24 @@ class SelfSmokeWithJUnit5Test {
 
     @TestFactory
     fun scanItself(): Iterable<DynamicTest> {
-        val scannerConfig = ScannerConfig(
-            includeFilter = setOf("com.williamfzc.randunit"),
-            excludeFilter = setOf("org.jeasy"),
-            recursively = true,
-            includePrivateMethod = true
-        )
+        class CustomRule : AbstractRule() {
+            override fun judge(statementModel: StatementModel, e: Throwable): Boolean {
+                return when (e) {
+                    is IllegalStateException -> true
+                    is UnsupportedOperationException -> true
+                    is InternalError -> true
+                    else -> false
+                }
+            }
+        }
+
+        val scannerConfig = ScannerConfig()
+        scannerConfig.includeFilter.add("com.williamfzc.randunit")
+
         val mockConfig = MockConfig(ktFirst = true)
-        val envConfig =
-            EnvConfig(mockConfig, ignoreExceptions = setOf(IllegalStateException::class.java))
+        val envConfig = EnvConfig(mockConfig)
+        envConfig.sandboxConfig.rules.add(CustomRule())
+
         val clsSet = setOf(Scanner::class.java)
         return RandUnit.runWithTestFactory(clsSet, scannerConfig, envConfig = envConfig)
     }

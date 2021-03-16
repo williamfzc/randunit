@@ -26,7 +26,7 @@ import java.util.*
 import java.util.logging.Logger
 import kotlin.reflect.jvm.javaMethod
 
-open class Scanner(private val cfg: ScannerConfig = ScannerConfig()) :
+open class Scanner @JvmOverloads constructor(private var cfg: ScannerConfig = ScannerConfig()) :
     ScannerHookLayer {
     companion object {
         private val logger = Logger.getGlobal()

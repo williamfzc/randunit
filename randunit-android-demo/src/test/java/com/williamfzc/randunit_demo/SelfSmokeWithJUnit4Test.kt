@@ -15,15 +15,16 @@ import org.robolectric.annotation.Config
 @RunWith(ParameterizedRobolectricTestRunner::class)
 class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
     companion object {
-        private val envConfig = EnvConfig(ignoreExceptions = setOf(IllegalStateException::class.java))
+        private val envConfig =
+            EnvConfig(ignoreExceptions = mutableSetOf(IllegalStateException::class.java))
         val env = NormalTestEnv(envConfig)
 
         @JvmStatic
         @ParameterizedRobolectricTestRunner.Parameters
         fun data(): Collection<StatementModel> {
             val scannerConfig = ScannerConfig(
-                includeFilter = setOf("com.williamfzc.randunit_demo"),
-                excludeFilter = setOf("org.jeasy"),
+                includeFilter = mutableSetOf("com.williamfzc.randunit_demo"),
+                excludeFilter = mutableSetOf("org.jeasy"),
                 recursively = true,
                 includePrivateMethod = true
             )
@@ -34,8 +35,6 @@ class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
 
     @Test
     fun run() {
-        env.add(statementModel)
-        env.start()
-        env.removeAll()
+        env.runWithSandbox(statementModel)
     }
 }

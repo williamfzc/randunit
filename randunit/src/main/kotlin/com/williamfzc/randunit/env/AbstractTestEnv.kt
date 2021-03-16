@@ -24,7 +24,7 @@ import com.williamfzc.randunit.models.StatementModel
 // it manages:
 // - statement model (s)
 // - about how to gen runnable statement from statement model
-abstract class AbstractTestEnv @JvmOverloads constructor(val envConfig: EnvConfig = EnvConfig()) {
+abstract class AbstractTestEnv @JvmOverloads constructor(var envConfig: EnvConfig = EnvConfig()) {
     val mockModel = MockModel(envConfig.mockConfig)
 
     open fun prepareEnv() {}
@@ -55,7 +55,7 @@ abstract class AbstractTestEnv @JvmOverloads constructor(val envConfig: EnvConfi
         afterRun()
     }
 
-    private fun runWithSandbox(statementModel: StatementModel) {
+    fun runWithSandbox(statementModel: StatementModel) {
         // sandbox should always be safe
         Sandbox(envConfig.sandboxConfig).runSafely(statementModel, ::run)?.let {
             // env make the decision

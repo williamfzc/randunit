@@ -17,7 +17,6 @@
 
 package com.williamfzc.randunit;
 
-import com.williamfzc.randunit.RandUnit;
 import com.williamfzc.randunit.env.AbstractTestEnv;
 import com.williamfzc.randunit.env.NormalTestEnv;
 import com.williamfzc.randunit.models.StatementModel;
@@ -63,8 +62,6 @@ public class SelfSmokeWithJUnit4InJavaTest {
 
     @Test
     public void run() {
-        testEnv.add(sm);
-        testEnv.start();
-        testEnv.removeAll();
+        testEnv.runWithSandbox(sm);
     }
 }

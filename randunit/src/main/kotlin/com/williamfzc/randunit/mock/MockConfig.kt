@@ -18,6 +18,6 @@ package com.williamfzc.randunit.mock
 import org.jeasy.random.EasyRandomParameters
 
 data class MockConfig @JvmOverloads constructor(
-    val easyRandomParameters: EasyRandomParameters? = null,
-    val ktFirst: Boolean = false
+    var easyRandomParameters: EasyRandomParameters? = null,
+    var ktFirst: Boolean = false
 )

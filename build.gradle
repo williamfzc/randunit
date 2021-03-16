@@ -9,7 +9,7 @@ buildscript {
 
         // switch
         // when enabled, use some local mirrors
-        is_dev = true
+        is_dev = false
 
         // --------
         // kotlin

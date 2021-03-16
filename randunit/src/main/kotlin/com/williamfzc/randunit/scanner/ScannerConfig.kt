@@ -16,9 +16,9 @@
 package com.williamfzc.randunit.scanner
 
 data class ScannerConfig @JvmOverloads constructor(
-    var includeFilter: Set<String> = setOf(),
-    var excludeFilter: Set<String> = setOf(),
-    var excludeMethodFilter: Set<String> = setOf(),
+    var includeFilter: MutableSet<String> = mutableSetOf(),
+    var excludeFilter: MutableSet<String> = mutableSetOf(),
+    var excludeMethodFilter: MutableSet<String> = mutableSetOf(),
     var statementLimit: Int = 1000,
     var includePrivateMethod: Boolean = false,
     var recursively: Boolean = true

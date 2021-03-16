@@ -15,17 +15,12 @@
  */
 package com.williamfzc.randunit
 
-import com.williamfzc.randunit.cases.RUJUnit4Case
 import com.williamfzc.randunit.env.EnvConfig
 import com.williamfzc.randunit.env.NormalTestEnv
 import com.williamfzc.randunit.env.rules.AbstractRule
-import com.williamfzc.randunit.env.sandbox.Sandbox
-import com.williamfzc.randunit.exceptions.RUException
-import com.williamfzc.randunit.exceptions.RUTypeException
+import com.williamfzc.randunit.env.sandbox.SandboxConfig
 import com.williamfzc.randunit.mock.MockConfig
-import com.williamfzc.randunit.mock.MockkMocker
 import com.williamfzc.randunit.models.StatementModel
-import com.williamfzc.randunit.scanner.Scanner
 import com.williamfzc.randunit.scanner.ScannerConfig
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -34,39 +29,45 @@ import org.junit.runners.Parameterized
 @RunWith(Parameterized::class)
 class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
     companion object {
+        private val testEnv = NormalTestEnv()
+        private const val packageName = "com.williamfzc.randunit"
+
         @JvmStatic
         @Parameterized.Parameters(name = "{0}")
         fun data(): Collection<StatementModel> {
-            val scannerConfig = ScannerConfig(
-                includeFilter = setOf("com.williamfzc.randunit"),
-                recursively = true
-            )
-            return RandUnit.collectStatements(
-                setOf(
-                    RandUnit::class.java,
-                    RandUnitBase::class.java,
-                    NormalTestEnv::class.java,
-                    Scanner::class.java,
-                    MockkMocker::class.java,
-                    EnvConfig::class.java,
-                    RUTypeException::class.java,
-                    RUException::class.java,
-                    RUJUnit4Case::class.java,
-                    Sandbox::class.java,
-                    AbstractRule::class.java
-                ),
-                scannerConfig
-            )
+            // env setup
+            val envConfig = EnvConfig()
+            // mock first
+            envConfig.mockConfig = MockConfig(ktFirst = true)
+            // sandbox setup
+            val sandboxConfig = SandboxConfig()
+
+            // custom rules
+            class CustomRule : AbstractRule() {
+                override fun judge(statementModel: StatementModel, e: Throwable): Boolean {
+                    return when (e) {
+                        is IllegalStateException -> true
+                        is UnsupportedOperationException -> true
+                        is InternalError -> true
+                        else -> false
+                    }
+                }
+            }
+            sandboxConfig.rules.add(CustomRule())
+            envConfig.sandboxConfig = sandboxConfig
+
+            testEnv.envConfig = envConfig
+
+            // setup ok, start scanning
+            val scannerConfig = ScannerConfig()
+            scannerConfig.includeFilter.add(packageName)
+
+            return RandUnit.collectStatementsWithPackage(packageName, scannerConfig)
         }
     }
 
     @Test
-    fun run() {
-        val mockConfig = MockConfig(ktFirst = true)
-        val envConfig =
-            EnvConfig(mockConfig, ignoreExceptions = setOf(IllegalStateException::class.java))
-        val env = NormalTestEnv(envConfig)
-        env.add(statementModel)
-        env.start()
+    fun runStatements() {
+        testEnv.runWithSandbox(statementModel)
     }
 }

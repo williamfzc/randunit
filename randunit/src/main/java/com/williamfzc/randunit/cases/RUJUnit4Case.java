@@ -46,9 +46,6 @@ abstract public class RUJUnit4Case {
 
     @Test
     public void runStatements() {
-        testEnv.removeAll();
-        testEnv.add(sm);
-        testEnv.start();
-        testEnv.removeAll();
+        testEnv.runWithSandbox(sm);
     }
 }
