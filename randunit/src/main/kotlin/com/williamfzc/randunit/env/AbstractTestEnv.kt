@@ -49,14 +49,17 @@ abstract class AbstractTestEnv @JvmOverloads constructor(val envConfig: EnvConfi
         // because maybe it will be reused after that
         for (each in statementModels) {
             beforeEachRun(each)
-            runInSandbox(each)
+            runWithSandbox(each)
             afterEachRun(each)
         }
         afterRun()
     }
 
-    private fun runInSandbox(statementModel: StatementModel): Throwable? {
+    private fun runWithSandbox(statementModel: StatementModel) {
         // sandbox should always be safe
-        return Sandbox(envConfig.sandboxConfig).runSafely(statementModel, ::run)
+        Sandbox(envConfig.sandboxConfig).runSafely(statementModel, ::run)?.let {
+            // env make the decision
+            throw it
+        }
     }
 }

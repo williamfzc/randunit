@@ -45,7 +45,7 @@ class Sandbox(cfg: SandboxConfig) {
             if (!checkRules(statementModel, realException))
                 return realException
         }
-        // nothing happened
+        // nothing happened if match
         return null
     }
 
@@ -53,6 +53,7 @@ class Sandbox(cfg: SandboxConfig) {
         for (each in rules)
             if (each.judge(statementModel, e)) {
                 logger.info("$e happened but allowed by rule: $each")
+                return true
             }
         return false
     }
