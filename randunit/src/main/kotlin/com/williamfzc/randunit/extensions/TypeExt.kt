@@ -56,16 +56,24 @@ fun Class<*>.isPrivateOrProtected(): Boolean = this.isPrivate().or(this.isProtec
 fun Class<*>.getDeclaredMethodsSafely(): Array<out Method> {
     return try {
         this.declaredMethods
-    } catch (e: VerifyError) {
-        arrayOf()
+    } catch (e: Exception) {
+        when (e) {
+            is VerifyError -> arrayOf()
+            is ClassNotFoundException -> arrayOf()
+            else -> throw e
+        }
     }
 }
 
 fun Class<*>.getMethodsSafely(): Array<out Method> {
     return try {
         this.methods
-    } catch (e: VerifyError) {
-        arrayOf()
+    } catch (e: Exception) {
+        when (e) {
+            is VerifyError -> arrayOf()
+            is ClassNotFoundException -> arrayOf()
+            else -> throw e
+        }
     }
 }
 
@@ -84,7 +92,11 @@ fun Class<*>.getDeclaredClassesSafely(): Array<out Class<*>> {
 fun Class<*>.getDeclaredFieldsSafely(): Array<out Field> {
     return try {
         this.declaredFields
-    } catch (e: VerifyError) {
-        arrayOf()
+    } catch (e: Exception) {
+        when (e) {
+            is VerifyError -> arrayOf()
+            is ClassNotFoundException -> arrayOf()
+            else -> throw e
+        }
     }
 }
