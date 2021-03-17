@@ -15,7 +15,6 @@
  */
 package com.williamfzc.randunit.extensions
 
-import java.lang.Exception
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
@@ -56,10 +55,11 @@ fun Class<*>.isPrivateOrProtected(): Boolean = this.isPrivate().or(this.isProtec
 fun Class<*>.getDeclaredMethodsSafely(): Array<out Method> {
     return try {
         this.declaredMethods
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         when (e) {
             is VerifyError -> arrayOf()
             is ClassNotFoundException -> arrayOf()
+            is NoClassDefFoundError -> arrayOf()
             else -> throw e
         }
     }
@@ -68,10 +68,11 @@ fun Class<*>.getDeclaredMethodsSafely(): Array<out Method> {
 fun Class<*>.getMethodsSafely(): Array<out Method> {
     return try {
         this.methods
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         when (e) {
             is VerifyError -> arrayOf()
             is ClassNotFoundException -> arrayOf()
+            is NoClassDefFoundError -> arrayOf()
             else -> throw e
         }
     }
@@ -80,10 +81,11 @@ fun Class<*>.getMethodsSafely(): Array<out Method> {
 fun Class<*>.getDeclaredClassesSafely(): Array<out Class<*>> {
     return try {
         this.declaredClasses
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         when (e) {
             is VerifyError -> arrayOf()
             is ClassNotFoundException -> arrayOf()
+            is NoClassDefFoundError -> arrayOf()
             else -> throw e
         }
     }
@@ -92,10 +94,11 @@ fun Class<*>.getDeclaredClassesSafely(): Array<out Class<*>> {
 fun Class<*>.getDeclaredFieldsSafely(): Array<out Field> {
     return try {
         this.declaredFields
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         when (e) {
             is VerifyError -> arrayOf()
             is ClassNotFoundException -> arrayOf()
+            is NoClassDefFoundError -> arrayOf()
             else -> throw e
         }
     }
