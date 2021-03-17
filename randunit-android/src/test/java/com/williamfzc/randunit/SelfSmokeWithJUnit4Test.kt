@@ -27,6 +27,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.ParameterizedRobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.lang.IllegalArgumentException
 
 @Config(sdk = [28])
 @RunWith(ParameterizedRobolectricTestRunner::class)
@@ -37,6 +38,7 @@ class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
             override fun judge(statementModel: StatementModel, e: Throwable): Boolean {
                 return when (e) {
                     is IllegalStateException -> true
+                    is IllegalArgumentException -> true
                     is UnsupportedOperationException -> true
                     is InternalError -> true
                     else -> false

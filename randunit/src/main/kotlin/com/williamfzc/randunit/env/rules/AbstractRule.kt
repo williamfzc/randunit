@@ -19,6 +19,8 @@ package com.williamfzc.randunit.env.rules
 
 import com.williamfzc.randunit.models.StatementModel
 
+// rule was designed for judging exceptions
+// return true to mark this err invalid, and it will not be reported
 abstract class AbstractRule {
     abstract fun judge(statementModel: StatementModel, e: Throwable): Boolean
 }
