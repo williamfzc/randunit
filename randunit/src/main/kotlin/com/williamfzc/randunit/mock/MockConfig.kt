@@ -16,8 +16,10 @@
 package com.williamfzc.randunit.mock
 
 import org.jeasy.random.EasyRandomParameters
+import org.mockito.MockSettings
 
 data class MockConfig @JvmOverloads constructor(
     var easyRandomParameters: EasyRandomParameters? = null,
-    var ktFirst: Boolean = false
+    var ktFirst: Boolean = false,
+    var mockitoSettings: MockSettings? = null
 )

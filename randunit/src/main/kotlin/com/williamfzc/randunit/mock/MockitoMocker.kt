@@ -18,5 +18,6 @@ package com.williamfzc.randunit.mock
 import org.mockito.Mockito
 
 class MockitoMocker(cfg: MockConfig) : AbstractMocker(cfg) {
-    override fun mock(t: Class<*>): Any = Mockito.mock(t)
+    override fun mock(t: Class<*>): Any =
+        Mockito.mock(t, cfg.mockitoSettings ?: Mockito.withSettings())
 }
