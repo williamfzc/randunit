@@ -31,7 +31,7 @@ class SmokeTest(private val statementModel: StatementModel) {
         @Parameterized.Parameters(name = "{0}")
         fun data(): Collection<StatementModel> {
             val scannerConfig = ScannerConfig(
-                includeFilter = setOf("com.williamfzc.randunit_demo"),
+                includeFilter = mutableSetOf("com.williamfzc.randunit_demo"),
                 recursively = true,
                 includePrivateMethod = true
             )
@@ -48,7 +48,10 @@ class SmokeTest(private val statementModel: StatementModel) {
     fun run() {
         val mockConfig = MockConfig(ktFirst = true)
         val envConfig =
-            EnvConfig(mockConfig, ignoreExceptions = setOf(IllegalStateException::class.java))
+            EnvConfig(
+                mockConfig,
+                ignoreExceptions = mutableSetOf(IllegalStateException::class.java)
+            )
         val env = NormalTestEnv(envConfig)
         env.add(statementModel)
         env.start()
