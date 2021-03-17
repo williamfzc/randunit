@@ -32,7 +32,7 @@ dependencies {
     // mock libs
     api "org.jeasy:easy-random-core:$easy_random_version"
     implementation "io.mockk:mockk:$mockk_version"
-    implementation "org.mockito:mockito-core:$mockito_version"
+    api "org.mockito:mockito-core:$mockito_version"
 
     // for generating junit format cases
     implementation "junit:junit:$junit4_version"
