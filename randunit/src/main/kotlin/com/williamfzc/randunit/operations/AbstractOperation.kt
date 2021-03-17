@@ -20,10 +20,7 @@ import java.lang.reflect.Method
 
 object DefaultOperationType
 
-abstract class AbstractOperation {
-    // todo: label for identify??
-    open var type: Class<*> = DefaultOperationType::class.java
-
+abstract class AbstractOperation(val type: Class<*> = DefaultOperationType::class.java) {
     // will only be called inside env in runtime
     abstract fun getInstance(): Any
 

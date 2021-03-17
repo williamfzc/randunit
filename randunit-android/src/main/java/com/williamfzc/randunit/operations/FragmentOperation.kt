@@ -21,8 +21,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.lifecycle.Lifecycle
 
-class FragmentOperation : AbstractAndroidOperation() {
+class FragmentOperation(t: Class<*>) : AbstractAndroidOperation(t) {
     override fun getInstance(): Any {
+        @Suppress("UNCHECKED_CAST")
         val scenario = FragmentScenario.launchInContainer<Fragment>(type as Class<Fragment>)
         scenario.moveToState(Lifecycle.State.CREATED)
         var fragment: Fragment? = null

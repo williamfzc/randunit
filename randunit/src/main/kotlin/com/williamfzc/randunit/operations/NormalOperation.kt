@@ -17,16 +17,14 @@ package com.williamfzc.randunit.operations
 
 import com.williamfzc.randunit.models.DefaultMocker
 
-class NormalOperation : AbstractOperation() {
+class NormalOperation(t: Class<*>) : AbstractOperation(t) {
     override fun getInstance(): Any {
         return DefaultMocker.mock(type)!!
     }
 
     companion object {
         fun of(t: Class<*>): NormalOperation {
-            val op = NormalOperation()
-            op.type = t
-            return op
+            return NormalOperation(t)
         }
     }
 }

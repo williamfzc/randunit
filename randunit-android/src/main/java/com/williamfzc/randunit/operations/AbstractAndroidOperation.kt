@@ -24,22 +24,20 @@ import androidx.fragment.app.Fragment
 import java.lang.reflect.Method
 import java.util.logging.Logger
 
-abstract class AbstractAndroidOperation : AbstractOperation() {
+abstract class AbstractAndroidOperation(t: Class<*>) : AbstractOperation(t) {
     companion object {
         private val logger = Logger.getGlobal()
 
         fun of(t: Class<*>): AbstractAndroidOperation {
             // classify
             val op = when {
-                Activity::class.java.isAssignableFrom(t) -> ActivityOperation()
-                Service::class.java.isAssignableFrom(t) -> ServiceOperation()
-                ContentProvider::class.java.isAssignableFrom(t) -> ContentProviderOperation()
-                Fragment::class.java.isAssignableFrom(t) -> FragmentOperation()
-                else -> OtherAndroidOperation()
+                Activity::class.java.isAssignableFrom(t) -> ActivityOperation(t)
+                Service::class.java.isAssignableFrom(t) -> ServiceOperation(t)
+                ContentProvider::class.java.isAssignableFrom(t) -> ContentProviderOperation(t)
+                Fragment::class.java.isAssignableFrom(t) -> FragmentOperation(t)
+                else -> OtherAndroidOperation(t)
             }
             logger.info("new op: $op, type is: $t")
-
-            op.type = t
             return op
         }
     }
