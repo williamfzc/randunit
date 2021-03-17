@@ -15,6 +15,8 @@
  */
 package com.williamfzc.randunit.operations
 
+import java.lang.Exception
+
 open class OperationManager {
     private var operations = mutableSetOf<AbstractOperation>()
 
@@ -24,7 +26,11 @@ open class OperationManager {
 
     fun poll(): AbstractOperation? {
         synchronized(operations) {
-            return operations.randomOrNull()?.also { operations.remove(it) }
+            return try {
+                operations.random().also { operations.remove(it) }
+            } catch (e: Exception) {
+                null
+            }
         }
     }
 
