@@ -16,6 +16,7 @@
 package com.williamfzc.randunit;
 
 import com.williamfzc.randunit.cases.RUJUnit4Case;
+import com.williamfzc.randunit.mock.MockkMocker;
 import com.williamfzc.randunit.models.StatementModel;
 
 import org.junit.runner.RunWith;
@@ -33,9 +34,14 @@ public class SelfSmokeWithTemplateTest extends RUJUnit4Case {
     @Parameterized.Parameters(name = "{0}")
     public static Collection<StatementModel> data() {
         targetClasses.add(RandUnit.class);
+        targetClasses.add(MockkMocker.class);
         scannerConfig.setIncludeFilter(new HashSet<String>() {{
             add("com.williamfzc.randunit");
         }});
-        return RandUnit.INSTANCE.collectStatements(targetClasses, scannerConfig);
+        // causes by java
+        scannerConfig.setExcludeMethodFilter(new HashSet<String>() {{
+            add("toJson");
+        }});
+        return RandUnit.INSTANCE.collectStatementsWithPackage("com.williamfzc.randunit", scannerConfig);
     }
 }

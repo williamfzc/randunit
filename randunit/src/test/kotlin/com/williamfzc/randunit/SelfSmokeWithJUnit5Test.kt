@@ -58,7 +58,7 @@ class SelfSmokeWithJUnit5Test {
             MockkMocker::class.java,
             EnvConfig::class.java,
             RUTypeException::class.java,
-            RUException::class.java,
+            RUException::class.java
         )
         val operations = RandUnit.collectOperations(clzSet, scannerConfig)
         val statements = RandUnit.collectStatements(clzSet, scannerConfig)

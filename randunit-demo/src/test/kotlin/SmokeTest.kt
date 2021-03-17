@@ -37,7 +37,7 @@ class SmokeTest(private val statementModel: StatementModel) {
             )
             return RandUnit.collectStatements(
                 setOf(
-                    HereIsAClass::class.java,
+                    HereIsAClass::class.java
                 ),
                 scannerConfig
             )
