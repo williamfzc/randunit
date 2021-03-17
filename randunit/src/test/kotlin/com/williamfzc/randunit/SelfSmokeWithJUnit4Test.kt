@@ -25,6 +25,7 @@ import com.williamfzc.randunit.scanner.ScannerConfig
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import java.lang.NullPointerException
 
 @RunWith(Parameterized::class)
 class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
@@ -49,6 +50,9 @@ class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
                         is IllegalStateException -> true
                         is UnsupportedOperationException -> true
                         is InternalError -> true
+                        is NullPointerException -> {
+                            e.stackTrace[0].className.contains("java.io.File")
+                        }
                         else -> false
                     }
                 }

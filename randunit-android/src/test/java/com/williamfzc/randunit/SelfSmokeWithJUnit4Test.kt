@@ -28,6 +28,7 @@ import org.junit.runner.RunWith
 import org.robolectric.ParameterizedRobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.lang.IllegalArgumentException
+import java.lang.NullPointerException
 
 @Config(sdk = [28])
 @RunWith(ParameterizedRobolectricTestRunner::class)
@@ -41,6 +42,9 @@ class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
                     is IllegalArgumentException -> true
                     is UnsupportedOperationException -> true
                     is InternalError -> true
+                    is NullPointerException -> {
+                        e.stackTrace[0].className.contains("FileInputStream")
+                    }
                     else -> false
                 }
             }

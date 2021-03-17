@@ -16,12 +16,25 @@ object RandUnitAndroid : RandUnitBase() {
     // Instead, we compute the parameters within the test's class loader.
     private var stCache: Collection<StatementModel> = setOf()
 
+    @JvmStatic
+    @JvmOverloads
     fun collectStatementsWithCache(
         targetClasses: Iterable<Class<*>>,
         cfg: ScannerConfig? = null
     ): Collection<StatementModel> {
         if (stCache.isEmpty())
             stCache = collectStatements(targetClasses, cfg)
+        return stCache
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun collectStatementsWithPackageWithCache(
+        targetPackage: String,
+        cfg: ScannerConfig? = null
+    ): Collection<StatementModel> {
+        if (stCache.isEmpty())
+            stCache = collectStatementsWithPackage(targetPackage, cfg)
         return stCache
     }
 

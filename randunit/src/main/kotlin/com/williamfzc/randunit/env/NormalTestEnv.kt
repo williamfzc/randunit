@@ -109,6 +109,13 @@ class NormalTestEnv @JvmOverloads constructor(envConfig: EnvConfig = EnvConfig()
         )
     }
 
+    private fun verifyReturnValue(v: Any, method: Method) {
+        val retType = v.javaClass
+        val shouldBe = method.returnType.javaClass
+        if (shouldBe.isAssignableFrom(retType))
+            throw RUTypeException("return type $retType != $shouldBe")
+    }
+
     private fun actualRun(
         caller: Any,
         method: Method,
@@ -128,10 +135,7 @@ class NormalTestEnv @JvmOverloads constructor(envConfig: EnvConfig = EnvConfig()
             if (envConfig.reuseCaller)
                 callerCache[operation.id()] = caller
 
-            val retType = v.javaClass
-            val shouldBe = method.returnType.javaClass
-            if (shouldBe.isAssignableFrom(retType))
-                throw RUTypeException("return type $retType != $shouldBe")
+            verifyReturnValue(v, method)
         }
     }
 }

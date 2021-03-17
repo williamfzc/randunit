@@ -50,10 +50,7 @@ public class SelfSmokeWithJUnit4InJavaTest {
         ScannerConfig scannerConfig = new ScannerConfig(
                 includeFilter,
                 empty,
-                excludeMethodFilter,
-                20,
-                false,
-                true);
+                excludeMethodFilter);
 
         Set<Class<?>> clzSet = new HashSet<>();
         clzSet.add(RandUnit.class);

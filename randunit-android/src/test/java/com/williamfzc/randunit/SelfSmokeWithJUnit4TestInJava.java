@@ -28,7 +28,8 @@ public class SelfSmokeWithJUnit4TestInJava {
         public boolean judge(@NotNull StatementModel statementModel, @NotNull Throwable e) {
             return (e instanceof IllegalArgumentException) ||
                     (e instanceof UnsupportedOperationException) ||
-                    (e instanceof InternalError);
+                    (e instanceof InternalError) ||
+                    (e instanceof NullPointerException);
         }
     }
 

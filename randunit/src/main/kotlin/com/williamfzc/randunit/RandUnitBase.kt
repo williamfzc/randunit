@@ -19,20 +19,19 @@ import com.williamfzc.randunit.env.EnvConfig
 import com.williamfzc.randunit.env.NormalTestEnv
 import com.williamfzc.randunit.models.StatementModel
 import com.williamfzc.randunit.models.toJson
+import com.williamfzc.randunit.models.toOpSet
 import com.williamfzc.randunit.operations.AbstractOperation
+import com.williamfzc.randunit.operations.NormalOperation
 import com.williamfzc.randunit.operations.OperationManager
 import com.williamfzc.randunit.scanner.Scanner
 import com.williamfzc.randunit.scanner.ScannerConfig
 import io.mockk.MockKException
 import org.junit.jupiter.api.DynamicTest
 import org.reflections.Reflections
+import java.io.File
 import java.util.logging.Logger
 
 abstract class RandUnitBase : RandUnitBaseImpl() {
-    companion object {
-        private val logger = Logger.getGlobal()
-    }
-
     @JvmOverloads
     fun collectStatementsWithPackage(
         targetPackage: String,
@@ -153,4 +152,45 @@ abstract class RandUnitBaseImpl {
         packages.forEach { ret.addAll(scanClassesFromPackage(it)) }
         return ret
     }
+
+    fun scanClassesFromStringList(stringList: Iterable<String>): Iterable<Class<*>> {
+        val ret = mutableSetOf<Class<*>>()
+        stringList.forEach {
+            try {
+                ret.add(Class.forName(it))
+            } catch (e: Exception) {
+                logger.warning("load class $it failed, reason: $e")
+            }
+        }
+        return ret
+    }
+
+    fun scanClassesFromFile(targetFile: File): Iterable<Class<*>> =
+        scanClassesFromStringList(targetFile.readLines())
+
+    fun scanOperationFromFile(targetFile: File): Iterable<AbstractOperation> {
+        val ret = mutableSetOf<AbstractOperation>()
+        scanClassesFromFile(targetFile).forEach { ret.add(NormalOperation.of(it)) }
+        return ret
+    }
+
+    fun writeClassesToFile(clzList: Iterable<Class<*>>, targetFile: File) {
+        targetFile.printWriter().use { out ->
+            clzList.forEach {
+                out.println(it.name)
+            }
+        }
+    }
+
+    fun writeRelativeClassesFromOperationsToFile(
+        opList: Iterable<AbstractOperation>,
+        targetFile: File
+    ) =
+        writeClassesToFile(opList.map { it.type }, targetFile)
+
+    fun writeRelativeClassesFromStatementsToFile(
+        statementModels: Iterable<StatementModel>,
+        targetFile: File
+    ) =
+        writeRelativeClassesFromOperationsToFile(statementModels.toOpSet(), targetFile)
 }

@@ -32,6 +32,7 @@ import org.junit.Assert
 import org.junit.Test
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
+import java.lang.NullPointerException
 
 class SelfSmokeWithJUnit5Test {
     @Test
@@ -74,6 +75,9 @@ class SelfSmokeWithJUnit5Test {
                     is IllegalStateException -> true
                     is UnsupportedOperationException -> true
                     is InternalError -> true
+                    is NullPointerException -> {
+                        e.stackTrace[0].className.contains("FileInputStream")
+                    }
                     else -> false
                 }
             }

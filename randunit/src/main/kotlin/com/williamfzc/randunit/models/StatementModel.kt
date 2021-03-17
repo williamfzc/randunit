@@ -61,3 +61,9 @@ fun Iterable<StatementModel>.toJson(): String {
             .create()
     return gson.toJson(this)
 }
+
+fun Iterable<StatementModel>.toOpSet(): Iterable<AbstractOperation> {
+    val ret = mutableSetOf<AbstractOperation>()
+    this.forEach { ret.add(it.callerOperation) }
+    return ret
+}
