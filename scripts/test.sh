@@ -5,7 +5,7 @@ cd $SHELL_FOLDER
 cd ..
 echo `pwd`
 
-./gradlew ktlintFormat
+./gradlew ktlintFormat licenseFormat
 ./gradlew randunit:jacocoTestReport
 ./gradlew randunit-android:test
 ./gradlew randunit-demo:jacocoTestReport
