@@ -150,7 +150,7 @@ abstract class RandUnitBaseImpl {
 
     fun scanClassesFromPackages(packages: Iterable<String>): Iterable<Class<*>> {
         val ret = mutableSetOf<Class<*>>()
-        packages.forEach { ret.plus(scanClassesFromPackage(it)) }
+        packages.forEach { ret.addAll(scanClassesFromPackage(it)) }
         return ret
     }
 }
