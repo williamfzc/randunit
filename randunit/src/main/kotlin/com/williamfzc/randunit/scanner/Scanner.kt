@@ -42,12 +42,14 @@ open class Scanner @JvmOverloads constructor(private var cfg: ScannerConfig = Sc
         // avoid NoClassDef
         try {
             t.canonicalName
+            t.simpleName
         } catch (e: Throwable) {
             // catch all the throwable (not only exceptions
             // should not cause any errors here whatever
             return when (e) {
                 is IncompatibleClassChangeError -> false
                 is NoClassDefFoundError -> false
+                is InternalError -> false
                 else -> throw e
             }
         }
