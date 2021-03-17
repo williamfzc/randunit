@@ -37,7 +37,7 @@ abstract class AbstractAndroidOperation : AbstractOperation() {
                 Fragment::class.java.isAssignableFrom(t) -> FragmentOperation()
                 else -> OtherAndroidOperation()
             }
-            logger.info("new op: $op")
+            logger.info("new op: $op, type is: $t")
 
             op.type = t
             return op
