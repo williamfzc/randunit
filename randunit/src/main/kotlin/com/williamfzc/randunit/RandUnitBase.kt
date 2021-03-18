@@ -174,6 +174,12 @@ abstract class RandUnitBaseImpl {
         return ret
     }
 
+    @JvmOverloads
+    fun scanStatementsFromFile(
+        targetFile: File,
+        cfg: ScannerConfig? = null
+    ): Iterable<StatementModel> = collectStatements(scanClassesFromFile(targetFile), cfg)
+
     fun writeClassesToFile(clzList: Iterable<Class<*>>, targetFile: File) {
         targetFile.printWriter().use { out ->
             clzList.forEach {
