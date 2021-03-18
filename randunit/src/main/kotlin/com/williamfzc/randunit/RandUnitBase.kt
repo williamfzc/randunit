@@ -158,7 +158,7 @@ abstract class RandUnitBaseImpl {
         stringList.forEach {
             try {
                 ret.add(Class.forName(it))
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 logger.warning("load class $it failed, reason: $e")
             }
         }
