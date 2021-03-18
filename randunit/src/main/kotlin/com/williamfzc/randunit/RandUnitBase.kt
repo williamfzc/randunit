@@ -32,18 +32,22 @@ import java.io.File
 import java.util.logging.Logger
 
 abstract class RandUnitBase : RandUnitBaseImpl() {
+    companion object {
+        private val logger = Logger.getGlobal()
+    }
+
     @JvmOverloads
     fun collectStatementsWithPackage(
         targetPackage: String,
         cfg: ScannerConfig? = null
-    ): Collection<StatementModel> = collectStatements(scanClassesFromPackage(targetPackage), cfg)
+    ): Collection<StatementModel> = collectStatements(collectClassesFromPackage(targetPackage), cfg)
 
     @JvmOverloads
     fun collectStatementsWithPackages(
         targetPackages: Iterable<String>,
         cfg: ScannerConfig? = null
     ): Collection<StatementModel> =
-        collectStatements(scanClassesFromPackages(targetPackages), cfg)
+        collectStatements(collectClassesFromPackages(targetPackages), cfg)
 
     @JvmOverloads
     fun runWithTestFactory(
@@ -71,6 +75,77 @@ abstract class RandUnitBase : RandUnitBaseImpl() {
 
         return dynamicTests
     }
+
+    fun collectClassesFromPackage(pkgName: String): Iterable<Class<*>> {
+        // see: https://github.com/ronmamo/reflections/issues/296
+        val result = mutableSetOf<Class<*>>()
+        val reflections = Reflections(pkgName)
+        reflections.store.storeMap.forEach { abstractOrInterfaceKey ->
+            for (each in abstractOrInterfaceKey.value.asMap()) {
+                // whatever, it should not cause errors
+                kotlin.runCatching {
+                    result.add(Class.forName(each.key))
+                    each.value.forEach { absClazzName ->
+                        result.add(Class.forName(absClazzName))
+                    }
+                }
+            }
+        }
+        return result
+    }
+
+    fun collectClassesFromPackages(packages: Iterable<String>): Iterable<Class<*>> {
+        val ret = mutableSetOf<Class<*>>()
+        packages.forEach { ret.addAll(collectClassesFromPackage(it)) }
+        return ret
+    }
+
+    fun collectClassesFromStringList(stringList: Iterable<String>): Iterable<Class<*>> {
+        val ret = mutableSetOf<Class<*>>()
+        stringList.forEach {
+            try {
+                ret.add(Class.forName(it))
+            } catch (e: Throwable) {
+                logger.warning("load class $it failed, reason: $e")
+            }
+        }
+        return ret
+    }
+
+    fun collectClassesFromFile(targetFile: File): Iterable<Class<*>> =
+        collectClassesFromStringList(targetFile.readLines())
+
+    fun collectOperationFromFile(targetFile: File): Iterable<AbstractOperation> {
+        val ret = mutableSetOf<AbstractOperation>()
+        collectClassesFromFile(targetFile).forEach { ret.add(NormalOperation.of(it)) }
+        return ret
+    }
+
+    @JvmOverloads
+    fun collectStatementsFromFile(
+        targetFile: File,
+        cfg: ScannerConfig? = null
+    ): Iterable<StatementModel> = collectStatements(collectClassesFromFile(targetFile), cfg)
+
+    fun writeClassesToFile(clzList: Iterable<Class<*>>, targetFile: File) {
+        targetFile.printWriter().use { out ->
+            clzList.forEach {
+                out.println(it.name)
+            }
+        }
+    }
+
+    fun writeRelativeClassesFromOperationsToFile(
+        opList: Iterable<AbstractOperation>,
+        targetFile: File
+    ) =
+        writeClassesToFile(opList.map { it.type }, targetFile)
+
+    fun writeRelativeClassesFromStatementsToFile(
+        statementModels: Iterable<StatementModel>,
+        targetFile: File
+    ) =
+        writeRelativeClassesFromOperationsToFile(statementModels.toOpSet(), targetFile)
 }
 
 abstract class RandUnitBaseImpl {
@@ -128,75 +203,4 @@ abstract class RandUnitBaseImpl {
         logger.info(ret.toJson())
         return ret
     }
-
-    fun scanClassesFromPackage(pkgName: String): Iterable<Class<*>> {
-        // see: https://github.com/ronmamo/reflections/issues/296
-        val result = mutableSetOf<Class<*>>()
-        val reflections = Reflections(pkgName)
-        reflections.store.storeMap.forEach { abstractOrInterfaceKey ->
-            for (each in abstractOrInterfaceKey.value.asMap()) {
-                // whatever, it should not cause errors
-                kotlin.runCatching {
-                    result.add(Class.forName(each.key))
-                    each.value.forEach { absClazzName ->
-                        result.add(Class.forName(absClazzName))
-                    }
-                }
-            }
-        }
-        return result
-    }
-
-    fun scanClassesFromPackages(packages: Iterable<String>): Iterable<Class<*>> {
-        val ret = mutableSetOf<Class<*>>()
-        packages.forEach { ret.addAll(scanClassesFromPackage(it)) }
-        return ret
-    }
-
-    fun scanClassesFromStringList(stringList: Iterable<String>): Iterable<Class<*>> {
-        val ret = mutableSetOf<Class<*>>()
-        stringList.forEach {
-            try {
-                ret.add(Class.forName(it))
-            } catch (e: Throwable) {
-                logger.warning("load class $it failed, reason: $e")
-            }
-        }
-        return ret
-    }
-
-    fun scanClassesFromFile(targetFile: File): Iterable<Class<*>> =
-        scanClassesFromStringList(targetFile.readLines())
-
-    fun scanOperationFromFile(targetFile: File): Iterable<AbstractOperation> {
-        val ret = mutableSetOf<AbstractOperation>()
-        scanClassesFromFile(targetFile).forEach { ret.add(NormalOperation.of(it)) }
-        return ret
-    }
-
-    @JvmOverloads
-    fun scanStatementsFromFile(
-        targetFile: File,
-        cfg: ScannerConfig? = null
-    ): Iterable<StatementModel> = collectStatements(scanClassesFromFile(targetFile), cfg)
-
-    fun writeClassesToFile(clzList: Iterable<Class<*>>, targetFile: File) {
-        targetFile.printWriter().use { out ->
-            clzList.forEach {
-                out.println(it.name)
-            }
-        }
-    }
-
-    fun writeRelativeClassesFromOperationsToFile(
-        opList: Iterable<AbstractOperation>,
-        targetFile: File
-    ) =
-        writeClassesToFile(opList.map { it.type }, targetFile)
-
-    fun writeRelativeClassesFromStatementsToFile(
-        statementModels: Iterable<StatementModel>,
-        targetFile: File
-    ) =
-        writeRelativeClassesFromOperationsToFile(statementModels.toOpSet(), targetFile)
 }
