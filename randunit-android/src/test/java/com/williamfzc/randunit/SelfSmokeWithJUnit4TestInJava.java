@@ -1,7 +1,7 @@
 package com.williamfzc.randunit;
 
 import com.williamfzc.randunit.env.AbstractTestEnv;
-import com.williamfzc.randunit.env.NormalTestEnv;
+import com.williamfzc.randunit.env.AndroidNormalTestEnv;
 import com.williamfzc.randunit.env.Statement;
 import com.williamfzc.randunit.env.rules.AbstractRule;
 import com.williamfzc.randunit.models.StatementModel;
@@ -21,7 +21,7 @@ import java.util.Set;
 @RunWith(ParameterizedRobolectricTestRunner.class)
 public class SelfSmokeWithJUnit4TestInJava {
     private final StatementModel sm;
-    private static final AbstractTestEnv testEnv = new NormalTestEnv();
+    private static final AbstractTestEnv testEnv = new AndroidNormalTestEnv();
 
     static class CustomRule extends AbstractRule {
         @Override

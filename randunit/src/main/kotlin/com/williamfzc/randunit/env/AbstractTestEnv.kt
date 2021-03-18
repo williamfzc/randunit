@@ -26,7 +26,7 @@ import com.williamfzc.randunit.models.StatementModel
 // - statement model (s)
 // - about how to gen runnable statement from statement model
 abstract class AbstractTestEnv @JvmOverloads constructor(var envConfig: EnvConfig = EnvConfig()) {
-    private val mockModel = MockModel(envConfig.mockConfig)
+    var mockModel = MockModel(envConfig.mockConfig)
     private val strategy: AbstractStrategy by lazy {
         envConfig.strategy.kotlin.objectInstance ?: envConfig.strategy.newInstance()
     }

@@ -15,8 +15,8 @@
  */
 package com.williamfzc.randunit
 
+import com.williamfzc.randunit.env.AndroidNormalTestEnv
 import com.williamfzc.randunit.env.EnvConfig
-import com.williamfzc.randunit.env.NormalTestEnv
 import com.williamfzc.randunit.env.Statement
 import com.williamfzc.randunit.env.rules.AbstractRule
 import com.williamfzc.randunit.mock.MockConfig
@@ -61,7 +61,7 @@ class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
             mockConfig = MockConfig(ktFirst = true),
             ignoreExceptions = mutableSetOf(IllegalStateException::class.java)
         )
-        private val testEnv = NormalTestEnv(envConfig)
+        private val testEnv = AndroidNormalTestEnv(envConfig)
 
         @JvmStatic
         @ParameterizedRobolectricTestRunner.Parameters

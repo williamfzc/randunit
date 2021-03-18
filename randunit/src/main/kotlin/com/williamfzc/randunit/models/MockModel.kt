@@ -24,7 +24,7 @@ open class MockModel @JvmOverloads constructor(mockConfig: MockConfig = MockConf
         private val logger = Logger.getGlobal()
     }
 
-    private val mockerList = mutableListOf<AbstractMocker>()
+    val mockerList = mutableListOf<AbstractMocker>()
 
     init {
         mockerList.add(MockitoMocker(mockConfig))
