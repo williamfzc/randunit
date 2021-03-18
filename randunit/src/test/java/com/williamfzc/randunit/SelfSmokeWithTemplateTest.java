@@ -16,9 +16,12 @@
 package com.williamfzc.randunit;
 
 import com.williamfzc.randunit.cases.RUJUnit4Case;
+import com.williamfzc.randunit.env.Statement;
+import com.williamfzc.randunit.env.rules.AbstractRule;
 import com.williamfzc.randunit.mock.MockkMocker;
 import com.williamfzc.randunit.models.StatementModel;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -29,6 +32,16 @@ import java.util.HashSet;
 public class SelfSmokeWithTemplateTest extends RUJUnit4Case {
     public SelfSmokeWithTemplateTest(StatementModel sm) {
         super(sm);
+    }
+
+    static class CustomRule extends AbstractRule {
+        @Override
+        public boolean judge(@NotNull Statement statement, @NotNull Throwable e) {
+            return (e instanceof IllegalArgumentException) ||
+                    (e instanceof UnsupportedOperationException) ||
+                    (e instanceof InternalError) ||
+                    (e instanceof NullPointerException);
+        }
     }
 
     @Parameterized.Parameters(name = "{0}")
@@ -42,6 +55,7 @@ public class SelfSmokeWithTemplateTest extends RUJUnit4Case {
         scannerConfig.setExcludeMethodFilter(new HashSet<String>() {{
             add("toJson");
         }});
+        testEnv.getEnvConfig().getSandboxConfig().getRules().add(new CustomRule());
         return RandUnit.INSTANCE.collectStatementsWithPackage("com.williamfzc.randunit", scannerConfig);
     }
 }

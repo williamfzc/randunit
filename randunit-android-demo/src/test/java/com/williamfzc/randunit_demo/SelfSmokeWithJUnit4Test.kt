@@ -35,6 +35,6 @@ class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
 
     @Test
     fun run() {
-        env.runWithSandbox(statementModel)
+        env.runStatementInSandbox(statementModel)
     }
 }

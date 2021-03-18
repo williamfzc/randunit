@@ -2,12 +2,12 @@ package com.williamfzc.randunit;
 
 import com.williamfzc.randunit.env.AbstractTestEnv;
 import com.williamfzc.randunit.env.NormalTestEnv;
+import com.williamfzc.randunit.env.Statement;
 import com.williamfzc.randunit.env.rules.AbstractRule;
 import com.williamfzc.randunit.models.StatementModel;
 import com.williamfzc.randunit.scanner.ScannerConfig;
 
 import org.jetbrains.annotations.NotNull;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.ParameterizedRobolectricTestRunner;
@@ -25,7 +25,7 @@ public class SelfSmokeWithJUnit4TestInJava {
 
     static class CustomRule extends AbstractRule {
         @Override
-        public boolean judge(@NotNull StatementModel statementModel, @NotNull Throwable e) {
+        public boolean judge(@NotNull Statement statement, @NotNull Throwable e) {
             return (e instanceof IllegalArgumentException) ||
                     (e instanceof UnsupportedOperationException) ||
                     (e instanceof InternalError) ||
@@ -56,11 +56,11 @@ public class SelfSmokeWithJUnit4TestInJava {
 
         Set<Class<?>> clzSet = new HashSet<>();
         clzSet.add(RandUnitAndroid.class);
-        return RandUnitAndroid.INSTANCE.collectStatementsWithCache(clzSet, scannerConfig);
+        return RandUnitAndroid.collectStatementsWithCache(clzSet, scannerConfig);
     }
 
     @Test
     public void run() {
-        testEnv.runWithSandbox(sm);
+        testEnv.runStatementInSandbox(sm);
     }
 }

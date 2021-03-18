@@ -17,6 +17,7 @@ package com.williamfzc.randunit
 
 import com.williamfzc.randunit.env.EnvConfig
 import com.williamfzc.randunit.env.NormalTestEnv
+import com.williamfzc.randunit.env.Statement
 import com.williamfzc.randunit.env.rules.AbstractRule
 import com.williamfzc.randunit.mock.MockConfig
 import com.williamfzc.randunit.models.StatementModel
@@ -36,14 +37,17 @@ class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
     init {
         // custom rules
         class CustomRule : AbstractRule() {
-            override fun judge(statementModel: StatementModel, e: Throwable): Boolean {
+            override fun judge(statement: Statement, e: Throwable): Boolean {
                 return when (e) {
                     is IllegalStateException -> true
                     is IllegalArgumentException -> true
                     is UnsupportedOperationException -> true
                     is InternalError -> true
                     is NullPointerException -> {
-                        e.stackTrace[0].className.contains("FileInputStream")
+                        e.stackTrace.firstOrNull()?.let {
+                            return it.className.contains("java.io.File")
+                        }
+                        false
                     }
                     else -> false
                 }
@@ -89,6 +93,6 @@ class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
 
     @Test
     fun run() {
-        testEnv.runWithSandbox(statementModel)
+        testEnv.runStatementInSandbox(statementModel)
     }
 }

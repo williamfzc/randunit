@@ -46,6 +46,6 @@ abstract public class RUJUnit4Case {
 
     @Test
     public void runStatements() {
-        testEnv.runWithSandbox(sm);
+        testEnv.runStatementInSandbox(sm);
     }
 }

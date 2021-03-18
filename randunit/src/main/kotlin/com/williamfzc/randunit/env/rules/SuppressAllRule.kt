@@ -17,10 +17,10 @@
 
 package com.williamfzc.randunit.env.rules
 
-import com.williamfzc.randunit.models.StatementModel
+import com.williamfzc.randunit.env.Statement
 
 object SuppressAllRule : AbstractRule() {
-    override fun judge(statementModel: StatementModel, e: Throwable): Boolean {
+    override fun judge(statement: Statement, e: Throwable): Boolean {
         return true
     }
 }

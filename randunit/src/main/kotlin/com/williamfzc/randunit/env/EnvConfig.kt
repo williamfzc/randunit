@@ -16,6 +16,8 @@
 package com.williamfzc.randunit.env
 
 import com.williamfzc.randunit.env.sandbox.SandboxConfig
+import com.williamfzc.randunit.env.strategy.AbstractStrategy
+import com.williamfzc.randunit.env.strategy.NormalStrategy
 import com.williamfzc.randunit.mock.MockConfig
 import java.lang.Exception
 
@@ -23,5 +25,6 @@ data class EnvConfig @JvmOverloads constructor(
     var mockConfig: MockConfig = MockConfig(),
     var ignoreExceptions: MutableSet<Class<out Exception>> = mutableSetOf(),
     var reuseCaller: Boolean = false,
-    var sandboxConfig: SandboxConfig = SandboxConfig()
+    var sandboxConfig: SandboxConfig = SandboxConfig(),
+    var strategy: Class<out AbstractStrategy> = NormalStrategy::class.java
 )

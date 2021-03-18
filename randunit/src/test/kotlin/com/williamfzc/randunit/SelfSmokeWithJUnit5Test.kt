@@ -17,12 +17,13 @@ package com.williamfzc.randunit
 
 import com.williamfzc.randunit.env.EnvConfig
 import com.williamfzc.randunit.env.NormalTestEnv
+import com.williamfzc.randunit.env.Statement
 import com.williamfzc.randunit.env.rules.AbstractRule
+import com.williamfzc.randunit.env.rules.SuppressAllRule
 import com.williamfzc.randunit.exceptions.RUException
 import com.williamfzc.randunit.exceptions.RUTypeException
 import com.williamfzc.randunit.mock.MockConfig
 import com.williamfzc.randunit.mock.MockkMocker
-import com.williamfzc.randunit.models.StatementModel
 import com.williamfzc.randunit.operations.OperationManager
 import com.williamfzc.randunit.scanner.Scanner
 import com.williamfzc.randunit.scanner.ScannerConfig
@@ -59,7 +60,9 @@ class SelfSmokeWithJUnit5Test {
             MockkMocker::class.java,
             EnvConfig::class.java,
             RUTypeException::class.java,
-            RUException::class.java
+            RUException::class.java,
+            SuppressAllRule::class.java,
+            MockkMocker::class.java
         )
         val operations = RandUnit.collectOperations(clzSet, scannerConfig)
         val statements = RandUnit.collectStatements(clzSet, scannerConfig)
@@ -70,13 +73,13 @@ class SelfSmokeWithJUnit5Test {
     @TestFactory
     fun scanItself(): Iterable<DynamicTest> {
         class CustomRule : AbstractRule() {
-            override fun judge(statementModel: StatementModel, e: Throwable): Boolean {
+            override fun judge(statement: Statement, e: Throwable): Boolean {
                 return when (e) {
                     is IllegalStateException -> true
                     is UnsupportedOperationException -> true
                     is InternalError -> true
                     is NullPointerException -> {
-                        e.stackTrace[0].className.contains("FileInputStream")
+                        e.stackTrace[0].className.contains("java.io.File")
                     }
                     else -> false
                 }

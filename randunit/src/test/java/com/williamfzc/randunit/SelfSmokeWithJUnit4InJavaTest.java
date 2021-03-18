@@ -19,9 +19,12 @@ package com.williamfzc.randunit;
 
 import com.williamfzc.randunit.env.AbstractTestEnv;
 import com.williamfzc.randunit.env.NormalTestEnv;
+import com.williamfzc.randunit.env.Statement;
+import com.williamfzc.randunit.env.rules.AbstractRule;
 import com.williamfzc.randunit.models.StatementModel;
 import com.williamfzc.randunit.scanner.ScannerConfig;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -39,6 +42,16 @@ public class SelfSmokeWithJUnit4InJavaTest {
         sm = s;
     }
 
+    static class CustomRule extends AbstractRule {
+        @Override
+        public boolean judge(@NotNull Statement statement, @NotNull Throwable e) {
+            return (e instanceof IllegalArgumentException) ||
+                    (e instanceof UnsupportedOperationException) ||
+                    (e instanceof InternalError) ||
+                    (e instanceof NullPointerException);
+        }
+    }
+
     @Parameterized.Parameters(name = "{0}")
     public static Collection<StatementModel> data() {
         Set<String> includeFilter = new HashSet<>();
@@ -54,11 +67,12 @@ public class SelfSmokeWithJUnit4InJavaTest {
 
         Set<Class<?>> clzSet = new HashSet<>();
         clzSet.add(RandUnit.class);
+        testEnv.getEnvConfig().getSandboxConfig().getRules().add(new CustomRule());
         return RandUnit.INSTANCE.collectStatements(clzSet, scannerConfig);
     }
 
     @Test
     public void run() {
-        testEnv.runWithSandbox(sm);
+        testEnv.runStatementInSandbox(sm);
     }
 }

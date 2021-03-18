@@ -15,7 +15,7 @@
  */
 package com.williamfzc.randunit.env.rules
 
-import com.williamfzc.randunit.models.StatementModel
+import com.williamfzc.randunit.env.Statement
 import io.mockk.MockKException
 import org.mockito.exceptions.base.MockitoException
 
@@ -31,29 +31,34 @@ object IgnoreBuiltinExceptionRule : AbstractRule() {
         "org.mockito",
         ".mockk",
         "MockitoMock",
-        "com.williamfzc.randunit"
+        "com.williamfzc.randunit",
+        "robolectric"
     )
 
-    override fun judge(statementModel: StatementModel, e: Throwable): Boolean {
+    override fun judge(statement: Statement, e: Throwable): Boolean {
         for (eachIgnoreException in BUILTIN_IGNORED_EXCEPTIONS) {
             if (e::class.java == eachIgnoreException)
                 return true
         }
-        // and msg check
-        e.message?.let { errMsg ->
-            for (eachStopWord in IGNORED_EXCEPTIONS_WORDS) {
+
+        for (eachStopWord in IGNORED_EXCEPTIONS_WORDS) {
+            // and msg check
+            e.message?.let { errMsg ->
                 if (errMsg.contains(eachStopWord))
                     return true
             }
-        }
-        // first line of stacktrace
-        e.stackTrace.firstOrNull()?.let {
-            for (eachStopWord in IGNORED_EXCEPTIONS_WORDS) {
+            // first line of stacktrace
+            e.stackTrace.firstOrNull()?.let {
                 if (it.toString().contains(eachStopWord))
                     return true
             }
+            // ignore inner classes and methods (i have no idea
+            e.stackTrace.firstOrNull()?.let {
+                // directly caused by inner classes
+                if (it.className.contains("$") || it.methodName.contains("$"))
+                    return true
+            }
         }
-
         return false
     }
 }

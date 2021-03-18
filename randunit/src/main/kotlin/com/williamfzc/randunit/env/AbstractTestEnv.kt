@@ -16,6 +16,7 @@
 package com.williamfzc.randunit.env
 
 import com.williamfzc.randunit.env.sandbox.Sandbox
+import com.williamfzc.randunit.env.strategy.AbstractStrategy
 import com.williamfzc.randunit.models.MockModel
 import com.williamfzc.randunit.models.StatementModel
 
@@ -25,12 +26,15 @@ import com.williamfzc.randunit.models.StatementModel
 // - statement model (s)
 // - about how to gen runnable statement from statement model
 abstract class AbstractTestEnv @JvmOverloads constructor(var envConfig: EnvConfig = EnvConfig()) {
-    val mockModel = MockModel(envConfig.mockConfig)
+    private val mockModel = MockModel(envConfig.mockConfig)
+    private val strategy: AbstractStrategy by lazy {
+        envConfig.strategy.kotlin.objectInstance ?: envConfig.strategy.newInstance()
+    }
 
     open fun prepareEnv() {}
     open fun beforeRun() {}
     open fun beforeEachRun(statementModel: StatementModel) {}
-    abstract fun run(statementModel: StatementModel)
+    abstract fun runStatement(statement: Statement)
     open fun afterEachRun(statementModel: StatementModel) {}
     open fun afterRun() {}
 
@@ -49,17 +53,20 @@ abstract class AbstractTestEnv @JvmOverloads constructor(var envConfig: EnvConfi
         // because maybe it will be reused after that
         for (each in statementModels) {
             beforeEachRun(each)
-            runWithSandbox(each)
+            runStatementInSandbox(each)
             afterEachRun(each)
         }
         afterRun()
     }
 
-    fun runWithSandbox(statementModel: StatementModel) {
+    fun runStatementInSandbox(statementModel: StatementModel) {
         // sandbox should always be safe
-        Sandbox(envConfig.sandboxConfig).runSafely(statementModel, ::run)?.let {
-            // env make the decision
-            throw it
+        val sandbox = Sandbox(envConfig.sandboxConfig)
+        strategy.genStatements(statementModel, mockModel).forEach { each ->
+            sandbox.runSafely(each, ::runStatement)?.let { err ->
+                // env make the decision
+                throw err
+            }
         }
     }
 }
