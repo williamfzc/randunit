@@ -28,6 +28,10 @@ import com.williamfzc.randunit.scanner.ScannerConfig
 import io.mockk.MockKException
 import org.junit.jupiter.api.DynamicTest
 import org.reflections.Reflections
+import org.reflections.scanners.SubTypesScanner
+import org.reflections.scanners.TypeAnnotationsScanner
+import org.reflections.util.ClasspathHelper
+import org.reflections.util.ConfigurationBuilder
 import java.io.File
 import java.util.logging.Logger
 
@@ -78,19 +82,17 @@ abstract class RandUnitBase : RandUnitBaseImpl() {
 
     fun collectClassesFromPackage(pkgName: String): Iterable<Class<*>> {
         // see: https://github.com/ronmamo/reflections/issues/296
+        // see: https://stackoverflow.com/a/9571146/10641498
         val result = mutableSetOf<Class<*>>()
-        val reflections = Reflections(pkgName)
-        reflections.store.storeMap.forEach { abstractOrInterfaceKey ->
-            for (each in abstractOrInterfaceKey.value.asMap()) {
-                // whatever, it should not cause errors
-                kotlin.runCatching {
-                    result.add(Class.forName(each.key))
-                    each.value.forEach { absClazzName ->
-                        result.add(Class.forName(absClazzName))
-                    }
-                }
-            }
+        val reflections = Reflections(
+            ConfigurationBuilder()
+                .setUrls(ClasspathHelper.forPackage(pkgName))
+                .setScanners(SubTypesScanner(false), TypeAnnotationsScanner())
+        )
+        reflections.getSubTypesOf(Object::class.java).forEach {
+            result.add(it)
         }
+
         return result
     }
 
