@@ -20,10 +20,17 @@ import io.mockk.MockKException
 import org.mockito.exceptions.base.MockitoException
 
 object IgnoreBuiltinExceptionRule : AbstractRule() {
+    // NOTICE:
+    // by default, randunit ignores some errors for stability
     private val BUILTIN_IGNORED_EXCEPTIONS = setOf(
+        // mock errors
         MockKException::class.java,
         MockitoException::class.java,
-        VerifyError::class.java
+        // java inner
+        VerifyError::class.java,
+        // TODO: improvement in the future
+        IllegalAccessException::class.java,
+        IllegalStateException::class.java
     )
 
     // ignore current exception if these words appeared in traceback msg
@@ -52,7 +59,8 @@ object IgnoreBuiltinExceptionRule : AbstractRule() {
                 if (it.toString().contains(eachStopWord))
                     return true
             }
-            // ignore inner classes and methods (i have no idea
+            // ignore inner classes and methods
+            // TODO: not ready currently, i have to ignore them
             e.stackTrace.firstOrNull()?.let {
                 // directly caused by inner classes
                 if (it.className.contains("$") || it.methodName.contains("$"))
