@@ -15,28 +15,29 @@
  */
 package com.williamfzc.randunit.operations
 
-import com.williamfzc.randunit.models.DefaultMocker
 import java.lang.reflect.Method
 
 object DefaultOperationType
 
 abstract class AbstractOperation(val type: Class<*> = DefaultOperationType::class.java) {
+    // inst cache
+    var cacheInst: Any? = null
+    fun getInstanceWithCache(): Any {
+        cacheInst?.let { return it }
+        // create
+        cacheInst = getInstance()
+        return cacheInst!!
+    }
+    fun cleanInstanceCache() {
+        cacheInst = null
+    }
+
     // will only be called inside env in runtime
     abstract fun getInstance(): Any
 
     open fun canInvoke(method: Method): Boolean = true
+    open fun canMock(): Boolean = true
     open fun tearDown(caller: Any) {}
-
-    fun getInstanceSafely(): Any {
-        try {
-            return getInstance()
-        } catch (e: TypeCastException) {
-            DefaultMocker.mock(this.type)?.let {
-                return it
-            }
-            return DefaultOperationType
-        }
-    }
 
     override fun hashCode(): Int {
         return type.hashCode()

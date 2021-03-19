@@ -29,9 +29,14 @@ object NormalStrategy : AbstractStrategy() {
         // at least it will not cause any crashes because of mock
         var caller = generateCaller(statementModel)
         caller ?: run {
+            // failed and mock not allowed
+            if (!statementModel.callerOperation.canMock()) {
+                logger.warning("type ${statementModel.callerOperation} can not mock, skipped")
+                return setOf()
+            }
             // use the mock one
             val op = statementModel.callerOperation
-            logger.warning("generate caller $op failed, use the mock one")
+            logger.warning("generate caller ${op.type} failed, use the mock one")
             caller = mockModel.mock(op.type)
         }
 
@@ -54,11 +59,18 @@ object NormalStrategy : AbstractStrategy() {
         try {
             if (statementModel.method.isStatic())
                 return callOperation.type
-            return callOperation.getInstanceSafely()
+            return callOperation.getInstanceWithCache()
         } catch (e: Exception) {
             // failed to create a real caller
-            e.printStackTrace()
-            return null
+            // try to recreate
+            callOperation.cleanInstanceCache()
+            return try {
+                callOperation.getInstanceWithCache()
+            } catch (e: Exception) {
+                // give up
+                e.printStackTrace()
+                null
+            }
         }
     }
 

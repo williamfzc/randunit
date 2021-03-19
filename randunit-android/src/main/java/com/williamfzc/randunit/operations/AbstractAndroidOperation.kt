@@ -25,6 +25,8 @@ import java.lang.reflect.Method
 import java.util.logging.Logger
 
 abstract class AbstractAndroidOperation(t: Class<*>) : AbstractOperation(t) {
+    override fun canMock(): Boolean = false
+
     companion object {
         private val logger = Logger.getGlobal()
 
