@@ -17,10 +17,17 @@
 
 package com.williamfzc.randunit.env
 
+import com.williamfzc.randunit.env.sandbox.AndroidSandbox
+import com.williamfzc.randunit.env.sandbox.Sandbox
 import com.williamfzc.randunit.models.AndroidMockModel
 
-class AndroidNormalTestEnv @JvmOverloads constructor(envConfig: EnvConfig = EnvConfig()) : NormalTestEnv(envConfig) {
+class AndroidNormalTestEnv @JvmOverloads constructor(envConfig: EnvConfig = EnvConfig()) :
+    NormalTestEnv(envConfig) {
     init {
         mockModel = AndroidMockModel(envConfig.mockConfig)
+    }
+
+    override fun getSandbox(): Sandbox {
+        return AndroidSandbox(envConfig.sandboxConfig)
     }
 }

@@ -16,13 +16,15 @@
 package com.williamfzc.randunit.env.rules
 
 import com.williamfzc.randunit.env.Statement
+import com.williamfzc.randunit.extensions.firstTraceContains
+import com.williamfzc.randunit.extensions.msgContains
 import io.mockk.MockKException
 import org.mockito.exceptions.base.MockitoException
 
-object IgnoreBuiltinExceptionRule : AbstractRule() {
+open class BuiltinRule : AbstractRule() {
     // NOTICE:
     // by default, randunit ignores some errors for stability
-    private val BUILTIN_IGNORED_EXCEPTIONS = setOf(
+    private val buildInIgnoreExceptions = mutableSetOf(
         // mock errors
         MockKException::class.java,
         MockitoException::class.java,
@@ -34,39 +36,36 @@ object IgnoreBuiltinExceptionRule : AbstractRule() {
     )
 
     // ignore current exception if these words appeared in traceback msg
-    private val IGNORED_EXCEPTIONS_WORDS = setOf(
+    private val ignoredExceptionWords = mutableSetOf(
         "org.mockito",
         ".mockk",
         "MockitoMock",
-        "com.williamfzc.randunit",
-        "robolectric"
+        "com.williamfzc.randunit"
     )
 
     override fun judge(statement: Statement, e: Throwable): Boolean {
-        for (eachIgnoreException in BUILTIN_IGNORED_EXCEPTIONS) {
+        for (eachIgnoreException in buildInIgnoreExceptions) {
             if (e::class.java == eachIgnoreException)
                 return true
         }
 
-        for (eachStopWord in IGNORED_EXCEPTIONS_WORDS) {
+        for (eachStopWord in ignoredExceptionWords) {
             // and msg check
-            e.message?.let { errMsg ->
-                if (errMsg.contains(eachStopWord))
-                    return true
-            }
+            if (e.msgContains(eachStopWord))
+                return true
+
             // first line of stacktrace
-            e.stackTrace.firstOrNull()?.let {
-                if (it.toString().contains(eachStopWord))
-                    return true
-            }
-            // ignore inner classes and methods
-            // TODO: not ready currently, i have to ignore them
-            e.stackTrace.firstOrNull()?.let {
-                // directly caused by inner classes
-                if (it.className.contains("$") || it.methodName.contains("$"))
-                    return true
-            }
+            if (e.firstTraceContains(eachStopWord))
+                return true
         }
+        // ignore inner classes and methods
+        // TODO: not ready currently, i have to ignore them
+        e.stackTrace.firstOrNull()?.let {
+            // directly caused by inner classes
+            if (it.className.contains("$") || it.methodName.contains("$"))
+                return true
+        }
+
         return false
     }
 }

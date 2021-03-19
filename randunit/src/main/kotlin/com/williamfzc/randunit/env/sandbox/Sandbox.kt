@@ -18,20 +18,22 @@
 package com.williamfzc.randunit.env.sandbox
 
 import com.williamfzc.randunit.env.Statement
-import com.williamfzc.randunit.env.rules.IgnoreBuiltinExceptionRule
+import com.williamfzc.randunit.env.rules.BuiltinRule
 import java.lang.reflect.InvocationTargetException
 import java.util.logging.Logger
 
-class Sandbox(var cfg: SandboxConfig) {
+open class Sandbox(open var cfg: SandboxConfig) {
     companion object {
         private val logger = Logger.getLogger("Sandbox")
-        private val DEFAULT_RULES = setOf(IgnoreBuiltinExceptionRule)
     }
+
+    var defaultRules = setOf(BuiltinRule())
 
     fun runSafely(statement: Statement, realRun: (Statement) -> Unit): Throwable? {
         try {
             realRun(statement)
         } catch (e: Throwable) {
+            logger.warning("error happened inside sandbox: $e")
             val realException =
                 if ((e is InvocationTargetException).and(null != e.cause))
                 // it can be an Error type
@@ -48,7 +50,7 @@ class Sandbox(var cfg: SandboxConfig) {
     }
 
     private fun checkRules(statement: Statement, e: Throwable): Boolean {
-        for (each in cfg.rules.plus(DEFAULT_RULES))
+        for (each in cfg.rules.plus(defaultRules))
             if (each.judge(statement, e)) {
                 logger.info("$e happened but allowed by rule: $each")
                 return true

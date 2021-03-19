@@ -15,21 +15,12 @@
  */
 package com.williamfzc.randunit.extensions
 
-import java.lang.reflect.Method
-import java.lang.reflect.Modifier
+fun Throwable.getFirstTrace(): StackTraceElement? = this.stackTrace.firstOrNull()
+fun Throwable.firstTraceContains(s: String): Boolean =
+    this.getFirstTrace()?.toString()?.contains(s, ignoreCase = true) ?: false
 
-fun Method.isStatic(): Boolean = Modifier.isStatic(this.modifiers)
+fun Throwable.msgContains(s: String): Boolean =
+    this.message?.contains(s) ?: false
 
-fun Method.isBuiltin(): Boolean {
-    for (eachPrefix in BUILTIN_TYPE_PREFIX_FILTER) {
-        if (this.declaringClass.name.contains(eachPrefix))
-            return true
-    }
-    return false
-}
-
-fun Method.isPrivateOrProtected(): Boolean = this::class.java.isPrivateOrProtected()
-
-fun Method.isNative(): Boolean = Modifier.isNative(this.modifiers)
-
-fun Method.isAbstract(): Boolean = Modifier.isAbstract(this.modifiers)
+fun Throwable.isRobolectricError(): Boolean =
+    this.firstTraceContains("robolectric")

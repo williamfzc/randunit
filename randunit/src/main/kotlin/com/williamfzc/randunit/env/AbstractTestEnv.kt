@@ -59,9 +59,11 @@ abstract class AbstractTestEnv @JvmOverloads constructor(var envConfig: EnvConfi
         afterRun()
     }
 
+    open fun getSandbox() = Sandbox(envConfig.sandboxConfig)
+
     fun runStatementInSandbox(statementModel: StatementModel) {
         // sandbox should always be safe
-        val sandbox = Sandbox(envConfig.sandboxConfig)
+        val sandbox = getSandbox()
         strategy.genStatements(statementModel, mockModel).forEach { each ->
             sandbox.runSafely(each, ::runStatement)?.let { err ->
                 // env make the decision
