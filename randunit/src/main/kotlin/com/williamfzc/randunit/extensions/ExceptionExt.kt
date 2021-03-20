@@ -21,6 +21,3 @@ fun Throwable.firstTraceContains(s: String): Boolean =
 
 fun Throwable.msgContains(s: String): Boolean =
     this.message?.contains(s) ?: false
-
-fun Throwable.isRobolectricError(): Boolean =
-    this.firstTraceContains("robolectric")
