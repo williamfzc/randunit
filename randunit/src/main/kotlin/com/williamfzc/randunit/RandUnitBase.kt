@@ -202,6 +202,7 @@ abstract class RandUnitBaseImpl {
         logger.info("start scanning with cfg: $finalCfg")
         CustomScanner(finalCfg).scanAll(opm)
 
+        ret.sortBy { it.callerOperation.id() }
         logger.info(ret.toJson())
         return ret
     }
