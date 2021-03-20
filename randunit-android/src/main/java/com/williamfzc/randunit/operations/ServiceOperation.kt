@@ -15,6 +15,8 @@ class ServiceOperation(t: Class<*>) : AbstractAndroidOperation(t) {
     }
 
     override fun tearDown(caller: Any) {
-        (caller as Service).stopSelf()
+        val c = (caller as Service)
+        c.onDestroy()
+        c.stopSelf()
     }
 }

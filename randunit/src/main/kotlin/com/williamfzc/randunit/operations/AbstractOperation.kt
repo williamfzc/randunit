@@ -21,7 +21,7 @@ object DefaultOperationType
 
 abstract class AbstractOperation(val type: Class<*> = DefaultOperationType::class.java) {
     // inst cache
-    var cacheInst: Any? = null
+    private var cacheInst: Any? = null
     fun getInstanceWithCache(): Any {
         cacheInst?.let { return it }
         // create
