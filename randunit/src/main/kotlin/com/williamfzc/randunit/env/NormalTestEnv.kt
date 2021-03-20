@@ -15,8 +15,6 @@
  */
 package com.williamfzc.randunit.env
 
-import com.williamfzc.randunit.exceptions.RUTypeException
-import java.lang.reflect.Method
 import java.util.logging.Logger
 
 open class NormalTestEnv @JvmOverloads constructor(envConfig: EnvConfig = EnvConfig()) :
@@ -30,23 +28,15 @@ open class NormalTestEnv @JvmOverloads constructor(envConfig: EnvConfig = EnvCon
     override fun runStatement(statement: Statement) {
         logger.info("running: ${statement.model.getDesc()}")
 
-        val returnValueOfInvoke = synchronized(statement) {
-            try {
-                statement.invoke()
-            } finally {
-                statement.model.callerOperation.tearDown(statement.caller)
-            }
-        }
+        synchronized(statement) {
+            statement.invoke()
+            statement.model.callerOperation.tearDown(statement.caller)
 
-        returnValueOfInvoke?.let { v ->
-            verifyReturnValue(v, statement.method)
-        }
-    }
+            // handled by sandbox
+            if (statement.isErrorHappened())
+                throw statement.throwExc!!
 
-    private fun verifyReturnValue(v: Any, method: Method) {
-        val retType = v.javaClass
-        val shouldBe = method.returnType.javaClass
-        if (shouldBe.isAssignableFrom(retType))
-            throw RUTypeException("return type $retType != $shouldBe")
+            statement.verifyResult()
+        }
     }
 }

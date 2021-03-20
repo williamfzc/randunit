@@ -17,4 +17,4 @@
 
 package com.williamfzc.randunit.exceptions
 
-class RUInstanceException(reason: String) : RUException(reason)
+class RUVerifyException(reason: String) : RUException(reason)

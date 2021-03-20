@@ -15,6 +15,7 @@
  */
 package com.williamfzc.randunit.env
 
+import com.williamfzc.randunit.exceptions.RUVerifyException
 import com.williamfzc.randunit.models.StatementModel
 import java.lang.reflect.Method
 import java.util.logging.Logger
@@ -25,14 +26,27 @@ data class Statement(
     val method: Method,
     val caller: Any,
     val parameters: Collection<Any?>,
-    val model: StatementModel
+    val model: StatementModel,
+    val verifyResult: (Statement) -> String?
 ) {
     companion object {
         private val logger = Logger.getGlobal()
     }
 
+    var executedResult: Any? = null
+    var throwExc: Throwable? = null
+
     fun invoke(): Any? {
-        method.isAccessible = true
-        return method.invoke(caller, *parameters.toTypedArray())
+        try {
+            method.isAccessible = true
+            executedResult = method.invoke(caller, *parameters.toTypedArray())
+        } catch (e: Throwable) {
+            throwExc = e
+        }
+        return executedResult
     }
+
+    fun isErrorHappened() = (null != throwExc)
+
+    fun verifyResult() = verifyResult(this)?.let { throw RUVerifyException(it) }
 }

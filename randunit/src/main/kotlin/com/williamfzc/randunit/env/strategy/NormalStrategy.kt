@@ -22,10 +22,25 @@ import com.williamfzc.randunit.models.StatementModel
 import java.lang.Exception
 import java.util.logging.Logger
 
+fun verifyFunc(s: Statement): String? {
+    s.executedResult?.let {
+        val retType = it.javaClass
+        val shouldBe = s.method.returnType.javaClass
+        if (shouldBe.isAssignableFrom(retType))
+            return "return type $retType != $shouldBe"
+    }
+
+    // can not verify
+    return null
+}
+
 object NormalStrategy : AbstractStrategy() {
     private val logger = Logger.getGlobal()
 
-    override fun genStatements(statementModel: StatementModel, mockModel: MockModel): Iterable<Statement> {
+    override fun genStatements(
+        statementModel: StatementModel,
+        mockModel: MockModel
+    ): Iterable<Statement> {
         // at least it will not cause any crashes because of mock
         var caller = generateCaller(statementModel)
         caller ?: run {
@@ -51,7 +66,15 @@ object NormalStrategy : AbstractStrategy() {
         }
 
         // by default, gen only one statement
-        return setOf(Statement(statementModel.method, caller!!, parameters, statementModel))
+        return setOf(
+            Statement(
+                statementModel.method,
+                caller!!,
+                parameters,
+                statementModel,
+                ::verifyFunc
+            )
+        )
     }
 
     private fun generateCaller(statementModel: StatementModel): Any? {

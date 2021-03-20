@@ -20,11 +20,14 @@ import com.williamfzc.randunit.env.strategy.AbstractStrategy
 import com.williamfzc.randunit.models.MockModel
 import com.williamfzc.randunit.models.StatementModel
 
-// env was designed for running inside something like TestCase/TestSuite
-// which can be used by different runner
-// it manages:
-// - statement model (s)
-// - about how to gen runnable statement from statement model
+/*
+package `env` contains multiple parts
+- env: used by junit directly, managing everything, making them work together
+- strategy: statement model -> statement s
+- statement: a ready-to-run statement, which contains some real values
+- sandbox: actual statement runner, invoking and suppressing some specific errors provided by rules
+- rules: check if this exception should be thrown
+ */
 abstract class AbstractTestEnv @JvmOverloads constructor(var envConfig: EnvConfig = EnvConfig()) {
     var mockModel = MockModel(envConfig.mockConfig)
     private val strategy: AbstractStrategy by lazy {
