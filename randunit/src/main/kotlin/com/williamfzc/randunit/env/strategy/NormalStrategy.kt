@@ -80,8 +80,13 @@ object NormalStrategy : AbstractStrategy() {
     private fun generateCaller(statementModel: StatementModel): Any? {
         val callOperation = statementModel.callerOperation
         try {
-            if (statementModel.method.isStatic())
+            // https://stackoverflow.com/questions/2474017/using-reflection-to-change-static-final-file-separatorchar-for-unit-testing/2474242#2474242
+            val method = statementModel.method
+            if (method.isStatic()) {
+                logger.info("method $method is static, use `Class` as caller")
                 return callOperation.type
+            }
+            logger.info("method $method is not static, use `instance` as caller")
             return callOperation.getInstanceWithCache()
         } catch (e: Exception) {
             // failed to create a real caller
