@@ -6,6 +6,8 @@
 
 > Build Android/JVM applications with confidence and less effort.
 
+[中文文档](./README.zh_CN.md)
+
 ## what's it?
 
 RandUnit means `Random UnitTest`, which will:
@@ -40,9 +42,11 @@ class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
 }
 ```
 
-And you get a ready-to-use smoke test suite:
+And you get a ready-to-use smoke test suite. Running it as a normal junit case in IDE:
 
 ![ide](./docs/pics/ide.jpg)
+
+randunit has generated 500+ cases for your package!
 
 ## installation
 
@@ -52,7 +56,7 @@ normal java:
 
 ```
 dependencies {
-    implementation 'com.github.williamfzc:randunit:0.1.1'
+    testImplementation "com.github.williamfzc.randunit:randunit-android:0.1.1"
 }
 ```
 
@@ -60,7 +64,7 @@ android:
 
 ```
 dependencies {
-    implementation 'com.github.williamfzc:randunit-android:0.1.1'
+    testImplementation "com.github.williamfzc.randunit:randunit-android:0.1.1"
 }
 ```
 
@@ -70,19 +74,27 @@ dependencies {
 
 randunit supports JDK version >= 8. And thanks to [robolectric](https://github.com/robolectric/robolectric), randunit works fine on Android.
 
-See [android sample](https://github.com/williamfzc/uamp) for details.
+See:
+
+- [normal java demo](./randunit-demo)
+- [android demo](./randunit-android-demo)
+- [google android sample](https://github.com/williamfzc/uamp/commit/af36299bd4f2ce10eba39ec44914d56776a378f9)
 
 ### based on junit4/5
 
 Easily reuse all their extensions. Use it as a normal test case, both IDE and CI.
+
+### extendable
+
+Currently randunit is still using a very simple strategy when invoking statements: `invoke with some mocked/random arguments once`. Of course it can not reach every branches of methods.
+
+At the beginning, randunit has been designed as a framework so maybe we can migrate more advance strategies here in some days. see the part `prototype and its future` or [AbstractTestEnv.kt](./randunit/src/main/kotlin/com/williamfzc/randunit/env/AbstractTestEnv.kt) for details.
 
 ## effect?
 
 randunit has been used for testing itself. See the screenshot above :)
 
 Also you can see [android sample](https://github.com/williamfzc/uamp).
-
-> NOTICE: randunit is still working in progress.
 
 ## prototype and its future
 
@@ -115,6 +127,31 @@ Your project is still running naked yet.
 ### should not use
 
 You want a strict coverage tool.
+
+## FAQ
+
+### how to suppress some invalid errors?
+
+`random` means some unexpected things may happened. Because of dynamically injections (and reflections, etc.), you will see some cases failed. Unfortunately, randunit can not identify if it is a real bug because it will never know what your real anticipation is.
+
+Users can judge the thrown errors from randunit by themselves easily:
+
+```
+// custom rules
+class CustomRule : AbstractRule() {
+    override fun judge(statement: Statement, e: Throwable): Boolean {
+
+        // return true if you do not think that is a bug
+        return when (e) {
+            is IllegalStateException -> true
+            else -> false
+        }
+    }
+}
+
+// and add it to your env
+testEnv.envConfig.sandboxConfig.rules.add(CustomRule())
+```
 
 ## license
 
