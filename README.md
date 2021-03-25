@@ -52,7 +52,7 @@ normal java:
 
 ```
 dependencies {
-    implementation 'com.github.williamfzc:randunit:0.1.0'
+    implementation 'com.github.williamfzc:randunit:0.1.1'
 }
 ```
 
@@ -60,7 +60,7 @@ android:
 
 ```
 dependencies {
-    implementation 'com.github.williamfzc:randunit-android:0.1.0'
+    implementation 'com.github.williamfzc:randunit-android:0.1.1'
 }
 ```
 
