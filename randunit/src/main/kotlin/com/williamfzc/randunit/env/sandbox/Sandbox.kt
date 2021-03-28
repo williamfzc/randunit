@@ -41,6 +41,14 @@ open class Sandbox(open var cfg: SandboxConfig) {
                 else
                     e
 
+            // declared exceptions?
+            statement.method.exceptionTypes.let { declaredExceptions ->
+                if (declaredExceptions.contains(e::class.java)) {
+                    logger.info("error happened but it's declared in $declaredExceptions")
+                    return null
+                }
+            }
+
             // no rules match
             if (!checkRules(statement, realException))
                 return realException
