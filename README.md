@@ -6,57 +6,164 @@
 
 > Build Android/JVM applications with confidence and less effort.
 
-[中文文档](./README.zh_CN.md)
+[English verison](README_en.md)
 
-## what's it?
+## 这是什么？
 
-RandUnit means `Random UnitTest`, which will:
+RandUnit 取义自 `Random UnitTest`，他会：
 
-- scan all the classes in your project by package name or class name
-- pick, generate serious of statements
-- run them with junit 
+- 根据提供的包名或入口类，搜索所有相关的待测试类与方法
+- 根据搜索结果，为每个方法生成一系列 statements 用于测试
+- 像常规单测流程一般，在 junit 上运行这些 statements ，得到测试结果
 
-All you need is a simple copy-paste:
+而这一切只需要一次简单的复制粘贴：
 
 ```kotlin
+import com.williamfzc.randunit.env.NormalTestEnv
+import com.williamfzc.randunit.models.StatementModel
+import com.williamfzc.randunit.scanner.ScannerConfig
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
+
 @RunWith(Parameterized::class)
-class SelfSmokeWithJUnit4Test(private val statementModel: StatementModel) {
+class MinExampleTest(private val statementModel: StatementModel) {
     companion object {
         private val testEnv = NormalTestEnv()
         private const val packageName = "com.your.package"
+        private val cases by lazy {
+            val scannerConfig = ScannerConfig()
+            scannerConfig.includeFilter.add(packageName)
+
+            RandUnit.collectStatementsWithPackage(packageName, scannerConfig)
+        }
 
         @JvmStatic
         @Parameterized.Parameters(name = "{0}")
         fun data(): Collection<StatementModel> {
-            val scannerConfig = ScannerConfig()
-            scannerConfig.includeFilter.add(packageName)
-
-            return RandUnit.collectStatementsWithPackage(packageName, scannerConfig)
+            return cases
         }
     }
 
     @Test
     fun runStatements() {
-        testEnv.runWithSandbox(statementModel)
+        testEnv.runStatementInSandbox(statementModel)
     }
 }
 ```
 
-And you get a ready-to-use smoke test suite. Running it as a normal junit case in IDE:
+由于它是合法的junit用例，所以你可以在ide里直接运行它。直接 run with coverage 的话：
 
 ![ide](./docs/pics/ide.jpg)
 
-randunit has generated 500+ cases for your package!
+你就可以无痛得到一份自动化冒烟测试用例了。
+
+## 为什么使用 randunit?
+
+### 支持 常规JVM应用 与 android
+
+randunit supports JDK version >= 8. 得益于 [robolectric](https://github.com/robolectric/robolectric) 的支持, randunit 能够很好地被应用到 android 项目中。不过上面的模板需要有微调：
+
+```kotlin
+import com.williamfzc.randunit.RandUnitAndroid
+import com.williamfzc.randunit.env.NormalTestEnv
+import com.williamfzc.randunit.models.StatementModel
+import com.williamfzc.randunit.scanner.ScannerConfig
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.ParameterizedRobolectricTestRunner
+import org.robolectric.annotation.Config
+
+@Config(sdk = [28])
+@RunWith(ParameterizedRobolectricTestRunner::class)
+class MinExampleTest(private val statementModel: StatementModel) {
+    companion object {
+        private val testEnv = NormalTestEnv()
+        private const val packageName = "com.your.package"
+        private val cases by lazy {
+            val scannerConfig = ScannerConfig()
+            scannerConfig.includeFilter.add(packageName)
+
+            RandUnitAndroid.collectStatementsWithPackage(packageName, scannerConfig)
+        }
+
+        @JvmStatic
+        @ParameterizedRobolectricTestRunner.Parameters(name = "{0}")
+        fun data(): Collection<StatementModel> {
+            return cases
+        }
+    }
+
+    @Test
+    fun runStatements() {
+        testEnv.runStatementInSandbox(statementModel)
+    }
+}
+```
+
+可以查看：
+
+- [normal java demo](./randunit-demo)
+- [android demo](./randunit-android-demo)
+- [google android sample](https://github.com/williamfzc/uamp/commit/af36299bd4f2ce10eba39ec44914d56776a378f9)
+
+### 良好 junit4/5 适配
+
+原生支持了 junit4/5 ，这也使得我们能够直接利用他们原有的各种特性（包括报告、插件等），也可以很好地与 IDE、CI环境 进行协同。
+
+### 发现问题
+
+做这个东西除了覆盖率，当然预期是他能够发现真正的问题。
+
+```kotlin
+override fun getCastOptions(context: Context?): CastOptions? {
+
+    // oh, you import a non-existed class here!
+    // it should cause a ClassNotFoundException
+    Class.forName("import unknown class here!")
+
+    ...
+}
+```
+
+该类型问题在编译期并不能被发现，问题越晚暴露 == 修复成本越高。randunit可以无痛发现该类型问题：
+
+```text
+WARNING: error happened inside sandbox: java.lang.reflect.InvocationTargetException
+
+java.lang.ClassNotFoundException: import unknown class here!
+
+	at org.robolectric.internal.bytecode.SandboxClassLoader.getByteCode(SandboxClassLoader.java:158)
+```
+
+当然，不局限于该类型问题。它能够侦测所有会抛出异常的情况，并呈现在测试报告里。
+
+### 扩展与演进
+
+目前，randunit 的执行还在使用较为原始的策略：直接使用随机的mock参数，invoke。所以很显然它并不能很好覆盖所有的分支，可以看到他的方法、类覆盖率虽然还可以，但是行覆盖率一般般。
+
+所以在最初期，randunit 的定位就是一个框架（不同于 randoop 与 evosuite），算法只是它的其中一部分，还需要考虑兼容与适配运行环境来提供良好的扩展性。在此基础上，后期将这些算法迁移到这上面之后，这些算法将可以无痛运行在不同环境上了。更多展开详见下文。
 
 ## installation
 
 randunit released on [jitpack.io/#williamfzc/randunit](https://jitpack.io/#williamfzc/randunit).
 
+maven repo:
+
+```
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
 normal java:
 
 ```
 dependencies {
-    testImplementation "com.github.williamfzc.randunit:randunit-android:0.1.1"
+    testImplementation "com.github.williamfzc.randunit:randunit:0.1.1"
 }
 ```
 
@@ -68,73 +175,62 @@ dependencies {
 }
 ```
 
-## why randunit?
+## 效果如何？
 
-### running on JVM, Android, and more
+randunit 自身的单元测试是由它自己完成的。（注：badge中的覆盖率并不准确，你可以在 IDE 中试试 ：）
 
-randunit supports JDK version >= 8. And thanks to [robolectric](https://github.com/robolectric/robolectric), randunit works fine on Android.
+或者，你可以尝试一下上面的三个demo。
 
-See:
+> NOTICE: 目前 randunit 还处在持续迭代的阶段，对于不准确的情况还请多谅解。对于这个项目的预期请参见下文。
 
-- [normal java demo](./randunit-demo)
-- [android demo](./randunit-android-demo)
-- [google android sample](https://github.com/williamfzc/uamp/commit/af36299bd4f2ce10eba39ec44914d56776a378f9)
+## 原型与演进方向
 
-### based on junit4/5
+在单元测试领域，有两个优秀的学院派先行者：
 
-Easily reuse all their extensions. Use it as a normal test case, both IDE and CI.
+- [randoop](https://github.com/randoop/randoop)
+- [evosuite](https://github.com/EvoSuite/evosuite)
 
-### extendable
+他们都在生成算法与策略上有非常成熟的经验，感兴趣的同学可以到他们主页中查阅论文，后者比前者要更为先进一些。
 
-Currently randunit is still using a very simple strategy when invoking statements: `invoke with some mocked/random arguments once`. Of course it can not reach every branches of methods.
+但从另一个方面来说，这两个项目几乎将大部分的精力投入在算法上（例如 evosuite 的目标是尽可能提高分支覆盖率），这也使得他们在落地与使用上存在一定的壁垒与门槛：
 
-At the beginning, randunit has been designed as a framework so maybe we can migrate more advance strategies here in some days. see the part `prototype and its future` or [AbstractTestEnv.kt](./randunit/src/main/kotlin/com/williamfzc/randunit/env/AbstractTestEnv.kt) for details.
+- 严格来说他们是用例生成器，生成后还要处理执行的问题，兼容其他平台会比较困难
+- 大部分场景他们推荐使用命令行工具，这也使得与其他工具的联动能力并不是很好
 
-## effect?
+randunit 的定位是一个框架，由三个部分组成:
 
-randunit has been used for testing itself. See the screenshot above :)
+- scanner: 基于用户提供的入口类或包，搜索所有待测的类与方法，形成一系列 statement model
+- generator: 根据前者生成的 statement model，结合策略生成一系列的 statements
+- runner(env): 适配并提供运行环境，用于真正运行 statements，得到测试结果等
 
-Also you can see [android sample](https://github.com/williamfzc/uamp).
+基于这一结构：
 
-## prototype and its future
+- 算法工程师可以专心在 generator 的设计上，而不需要关心其他例如运行环境之类的事情
+- 框架工程师可以专心在其他事情上，而无需纠结算法问题
 
-In this area (unittest generator), [randoop](https://github.com/randoop/randoop) and [evosuite](https://github.com/EvoSuite/evosuite) are in the lead. Both of them have provided some great ideas/algorithms for references.
+虽然目前的 generator 距离先进水平还有很大差距。
 
-But on the other hand, these two projects focused on algorithm research more (reach higher branch coverage and so on), which cared less on users (no offense, projects are still good).
+## 什么时候推荐使用 randunit
 
-randunit looks more like a framework. It consists of 3 parts:
+- 在之前很长一段时间的观察里，无论项目大小，依旧有大量开发中的项目处在没有任何单元测试的状态中。随着 devops 的流行，持续化的自动化测试几乎已经成为整个敏捷流程中最为关键的一环。
+- 而在这种情况下其实很多业务认知到了这一阶段的重要性，但不知道从何下手
+- 这个项目的出发点就是，用尽可能少的成本将单元测试跑起来，至少将这里的空缺填补起来
 
-- scanner: trying to collect all the data, such as classes, methods.
-- generator: using data from scanner, generating series of statements.
-- runner(env): actually invoke these statements and show their results.
+### 推荐使用的情况
 
-Based on this structure, 
+你的项目目前还处于裸奔的状态，或单元测试做得不好的状态
 
-- algo developers only need to focus on designing `generator`.
-- framework developers take the rest.
+### 不推荐使用的情况
 
-Current `generator` still has a long way to go.
-
-## should use / should not use
-
-In these days, there are still tons of projects developing without any unittest. `Continuous Test` is nearly the most important part of DevOps workflow. 
-At the beginning, this repo was designed for providing smoke tests quickly, without any extra efforts.
-
-### should use
-
-Your project is still running naked yet.
-
-### should not use
-
-You want a strict coverage tool.
+你想要一个彻底发现问题并能完整覆盖整个项目的工具
 
 ## FAQ
 
-### how to suppress some invalid errors?
+### 如何忽略无效错误？
 
-`random` means some unexpected things may happened. Because of dynamically injections (and reflections, etc.), you will see some cases failed. Unfortunately, randunit can not identify if it is a real bug because it will never know what your real anticipation is.
+随机性意味着可能会出现随机问题。因为动态注入与反射之类机制的存在，randunit目前并不能甄别抛出的问题就是一个真实的bug：例如框架发现一些参数没有初始化导致NPE，其实只是因为这些参数是由动态注入来初始化的；但屏蔽也不可以，因为在其他场景下这确实是个问题。
 
-Users can judge the thrown errors from randunit by themselves easily:
+所以我们决定不在框架内进行武断判定（当然其实已经屏蔽了一些框架本身引起的问题），而是将判定交由用户自己决定。你可以通过添加 rule 来决定一个被抛出的异常是否为意料内的：
 
 ```
 // custom rules
@@ -152,6 +248,24 @@ class CustomRule : AbstractRule() {
 // and add it to your env
 testEnv.envConfig.sandboxConfig.rules.add(CustomRule())
 ```
+
+### 一些类发现不了
+
+按包名搜索的实现来自 [reflections](https://github.com/ronmamo/reflections) ，确实可能出现搜索不彻底的情况。可以在 cases 生成过程中自行添加特定的类：
+
+```kotlin
+val statements = RandUnit.collectStatements(
+    setOf(
+        SomeClass::class.java, 
+        SomeOtherClass::class.java
+    )
+)
+ 
+// 再将其加入即可           
+RandUnitAndroid.collectStatementsWithPackage(packageName, scannerConfig).plus(statements)
+```
+
+这些搜索都是递归的，所以只需要添加几个最关键的即可。另外，randunit的方法遍历机制也能够潜移默化地推动开发者写出更加适合单测的代码。
 
 ## license
 
