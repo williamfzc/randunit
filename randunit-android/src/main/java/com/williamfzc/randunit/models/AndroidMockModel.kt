@@ -25,6 +25,7 @@ class AndroidMockModel @JvmOverloads constructor(mockConfig: MockConfig = MockCo
         mockerList.add(MockitoMocker(mockConfig))
         mockerList.add(EasyRandomMocker(mockConfig))
         if (mockConfig.ktFirst)
-            mockerList.add(0, MockkMocker(mockConfig))
+            // android mocker is always the first choice
+            mockerList.add(1, MockkMocker(mockConfig))
     }
 }
