@@ -146,7 +146,11 @@ java.lang.ClassNotFoundException: import unknown class here!
 
 ## installation
 
+> 最新版本请以顶部徽章显示的版本为准。
+
 randunit released on [jitpack.io/#williamfzc/randunit](https://jitpack.io/#williamfzc/randunit).
+
+### gradle
 
 maven repo:
 
@@ -159,7 +163,7 @@ allprojects {
 }
 ```
 
-normal java:
+常规 java/kotlin 项目：
 
 ```
 dependencies {
@@ -167,13 +171,64 @@ dependencies {
 }
 ```
 
-android:
+android 项目：
 
 ```
 dependencies {
     testImplementation "com.github.williamfzc.randunit:randunit-android:0.1.1"
 }
 ```
+
+### maven
+
+maven repo：
+
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+```
+
+首先需要添加 kotlin 依赖（如有请忽略）：
+
+```xml
+<dependency>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-stdlib-jdk8</artifactId>
+    <version>${kotlin.version}</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-test</artifactId>
+    <version>${kotlin.version}</version>
+    <scope>test</scope>
+</dependency>
+```
+
+常规 java/kotlin 项目：
+
+```
+<dependency>
+    <groupId>com.github.williamfzc.randunit</groupId>
+    <artifactId>randunit</artifactId>
+    <version>0.1.1</version>
+</dependency>
+```
+
+android 项目（微调 artifactId 即可）：
+
+```
+<dependency>
+    <groupId>com.github.williamfzc.randunit</groupId>
+    <artifactId>randunit-android</artifactId>
+    <version>0.1.1</version>
+</dependency>
+```
+
 
 ## 效果如何？
 
