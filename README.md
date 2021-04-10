@@ -229,7 +229,6 @@ android 项目（微调 artifactId 即可）：
 </dependency>
 ```
 
-
 ## 效果如何？
 
 randunit 自身的单元测试是由它自己完成的。（注：badge中的覆盖率并不准确，你可以在 IDE 中试试 ：）
@@ -321,6 +320,10 @@ RandUnitAndroid.collectStatementsWithPackage(packageName, scannerConfig).plus(st
 ```
 
 这些搜索都是递归的，所以只需要添加几个最关键的即可。另外，randunit的方法遍历机制也能够潜移默化地推动开发者写出更加适合单测的代码。
+
+## 参与该项目 & 二次开发
+
+请参见：[issue 2](https://github.com/williamfzc/randunit/issues/2)
 
 ## license
 
