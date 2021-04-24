@@ -5,7 +5,7 @@ buildscript {
         group_name = "com.williamfzc"
         product_name = "randunit"
         android_product_name = "randunit-android"
-        cur_version = "0.1.1"
+        cur_version = "0.1.2"
 
         // switch
         // when enabled, use some local mirrors

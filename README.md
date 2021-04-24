@@ -167,7 +167,7 @@ allprojects {
 
 ```
 dependencies {
-    testImplementation "com.github.williamfzc.randunit:randunit:0.1.1"
+    testImplementation "com.github.williamfzc.randunit:randunit:0.1.2"
 }
 ```
 
@@ -175,7 +175,7 @@ android 项目：
 
 ```
 dependencies {
-    testImplementation "com.github.williamfzc.randunit:randunit-android:0.1.1"
+    testImplementation "com.github.williamfzc.randunit:randunit-android:0.1.2"
 }
 ```
 
@@ -215,7 +215,7 @@ maven repo：
 <dependency>
     <groupId>com.github.williamfzc.randunit</groupId>
     <artifactId>randunit</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
 </dependency>
 ```
 
@@ -225,7 +225,7 @@ android 项目（微调 artifactId 即可）：
 <dependency>
     <groupId>com.github.williamfzc.randunit</groupId>
     <artifactId>randunit-android</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
 </dependency>
 ```
 
@@ -302,6 +302,15 @@ class CustomRule : AbstractRule() {
 // and add it to your env
 testEnv.envConfig.sandboxConfig.rules.add(CustomRule())
 ```
+
+这里的判定可以非常灵活，举个例子，我们不可能忽略所有的 NPE 问题，但我们可以选择性地忽略某个模块或某个类。例如，你希望屏蔽某个特定模块（例如com.abc.def）引发的异常：
+
+```kotlin
+if (isHappenedInPackage(e, "com.abc.def"))
+    return true
+```
+
+或者可以自定义进行任意形态的判定。更多可参见 AbstractRule 中的方法。
 
 ### 一些类发现不了
 
