@@ -167,7 +167,7 @@ allprojects {
 
 ```
 dependencies {
-    testImplementation "com.github.williamfzc.randunit:randunit:0.1.2"
+    testImplementation "com.github.williamfzc.randunit:randunit:0.1.3"
 }
 ```
 
@@ -175,7 +175,7 @@ android 项目：
 
 ```
 dependencies {
-    testImplementation "com.github.williamfzc.randunit:randunit-android:0.1.2"
+    testImplementation "com.github.williamfzc.randunit:randunit-android:0.1.3"
 }
 ```
 
@@ -215,7 +215,7 @@ maven repo：
 <dependency>
     <groupId>com.github.williamfzc.randunit</groupId>
     <artifactId>randunit</artifactId>
-    <version>0.1.2</version>
+    <version>0.1.3</version>
 </dependency>
 ```
 
@@ -225,7 +225,7 @@ android 项目（微调 artifactId 即可）：
 <dependency>
     <groupId>com.github.williamfzc.randunit</groupId>
     <artifactId>randunit-android</artifactId>
-    <version>0.1.2</version>
+    <version>0.1.3</version>
 </dependency>
 ```
 
