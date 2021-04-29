@@ -19,13 +19,17 @@ package com.williamfzc.randunit.models
 
 import com.williamfzc.randunit.mock.*
 
-class AndroidMockModel @JvmOverloads constructor(mockConfig: MockConfig = MockConfig()) : MockModel(mockConfig) {
+class AndroidMockModel @JvmOverloads constructor(mockConfig: MockConfig = MockConfig()) :
+    MockModel(mockConfig) {
     init {
         mockerList.add(AndroidMocker(mockConfig))
         mockerList.add(MockitoMocker(mockConfig))
         mockerList.add(EasyRandomMocker(mockConfig))
-        if (mockConfig.ktFirst)
+
+        if (mockConfig.ktFirst) {
             // android mocker is always the first choice
+            // so set it to 1, not 0
             mockerList.add(1, MockkMocker(mockConfig))
+        }
     }
 }
